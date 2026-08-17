@@ -1,0 +1,12 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+tests
+Buldak Directions.dc.html
+Buldak Showroom.dc.html
+_ds
+shots
+uploads
+support.js
+.thumbnail

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_ds/modernist-05ec99f2-dcbf-4428-84ab-d442424947de/styles.css">
+<style>
+  html { scroll-behavior:auto; }
+  body { margin:0; background:#f6dfe4; font-family:"Archivo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  a { color:inherit; text-decoration:none; }
+  a:hover { opacity:.7; }
+  ::selection { background:rgba(0,0,0,.12); }
+  button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+  input::placeholder { color:currentColor; opacity:.32; }
+  @keyframes drift { 0%,100% { transform:translate3d(0,0,0); } 50% { transform:translate3d(0,-26px,0); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.001ms !important; transition-duration:.001ms !important; } }
+</style>
+</helmet>
+
+<div data-root style="position:relative; --ink:#2b1a1f; --accent:#b3123f; --soft:rgba(43,26,31,.58);">
+
+  <div data-bg style="position:fixed; inset:0; z-index:0; background:linear-gradient(175deg,#f6dfe4 0%,#fbf1ee 100%);"></div>
+  <div data-glow style="position:fixed; inset:0; z-index:1; background:radial-gradient(58% 52% at 52% 40%, rgba(255,199,214,.95) 0%, rgba(255,199,214,0) 68%);"></div>
+  <div data-vig style="position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 90% at 50% 45%, transparent 52%, rgba(0,0,0,.16) 100%);"></div>
+
+  <div data-orbs style="position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden;">
+    <div data-orb="0" data-depth="0.30" style="position:absolute; left:8%; top:22%; width:230px; height:230px; border-radius:50%; filter:blur(34px); opacity:.55; background:rgba(255,255,255,.6); animation:drift 13s ease-in-out infinite;"></div>
+    <div data-orb="1" data-depth="0.55" style="position:absolute; left:78%; top:16%; width:150px; height:150px; border-radius:50%; filter:blur(24px); opacity:.5; background:rgba(255,255,255,.5); animation:drift 17s ease-in-out infinite 1.5s;"></div>
+    <div data-orb="2" data-depth="0.85" style="position:absolute; left:66%; top:68%; width:96px; height:96px; border-radius:50%; filter:blur(14px); opacity:.6; background:rgba(255,255,255,.55); animation:drift 11s ease-in-out infinite .8s;"></div>
+    <div data-orb="3" data-depth="1.25" style="position:absolute; left:17%; top:71%; width:64px; height:64px; border-radius:50%; filter:blur(8px); opacity:.7; background:rgba(255,255,255,.6); animation:drift 9s ease-in-out infinite 2.2s;"></div>
+    <div data-orb="4" data-depth="1.60" style="position:absolute; left:41%; top:84%; width:38px; height:38px; border-radius:50%; filter:blur(4px); opacity:.75; background:rgba(255,255,255,.75); animation:drift 8s ease-in-out infinite 1.1s;"></div>
+    <div data-orb="5" data-depth="0.45" style="position:absolute; left:30%; top:10%; width:120px; height:120px; border-radius:50%; filter:blur(22px); opacity:.4; background:rgba(255,255,255,.5); animation:drift 15s ease-in-out infinite 3s;"></div>
+  </div>
+
+  <!-- ============ NAV ============ -->
+  <nav style="position:fixed; top:0; left:0; right:0; z-index:20; height:clamp(60px,8vh,76px); display:flex; align-items:center; gap:clamp(16px,2.4vw,40px); padding:0 clamp(16px,3vw,44px); color:var(--ink);">
+    <a href="#top" style="font-size:19px; font-weight:800; letter-spacing:-.02em;">Buldak</a>
+    <div style="display:flex; gap:clamp(14px,1.8vw,30px); font-size:clamp(12px,1vw,13.5px); font-weight:500; letter-spacing:.01em; opacity:.85;">
+      <a href="#shop">Shop</a><a href="#flavors">Flavors</a><a href="#story">Story</a><a href="#mobile">App</a>
+    </div>
+    <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+      <button onClick="{{ openSearch }}" aria-label="Search" style="all:unset; cursor:pointer; display:flex; align-items:center; gap:9px; font-family:'Archivo',sans-serif; font-size:13.5px; font-weight:500; padding:9px 16px; border-radius:999px; background:rgba(255,255,255,.42); color:var(--ink); transition:background 280ms cubic-bezier(.22,1,.36,1), transform 280ms cubic-bezier(.22,1,.36,1);" style-hover="background:rgba(255,255,255,.85); transform:translateY(-1px);">
+        <span style="width:13px; height:13px; border:1.6px solid currentColor; border-radius:50%; display:inline-block;"></span>Search
+      </button>
+      <button data-cart-btn onClick="{{ openCart }}" style="all:unset; cursor:pointer; display:flex; align-items:center; gap:10px; font-family:'Archivo',sans-serif; font-size:13.5px; font-weight:600; padding:9px 18px; border-radius:999px; background:var(--ink); color:#fff; transition:background 280ms cubic-bezier(.22,1,.36,1), transform 280ms cubic-bezier(.22,1,.36,1);" style-hover="transform:translateY(-1px);">
+        Cart<span data-cart-count style="min-width:20px; height:20px; border-radius:999px; background:rgba(255,255,255,.22); display:inline-flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:700; transition:transform 420ms cubic-bezier(.34,1.56,.64,1);">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <main data-main style="position:relative; z-index:3;">
+
+    <div data-travel style="position:relative;">
+      <div style="position:sticky; top:0; height:0; z-index:5;">
+        <div data-stage style="position:absolute; top:0; left:0; right:0; height:100vh; pointer-events:none; perspective:1700px; perspective-origin:50% 42%;">
+          <div data-track style="transform:scale(0.6); position:absolute; inset:0; transform-style:preserve-3d; will-change:transform;">
+            <div data-card="0" style="transform:translate3d(0,0,0); opacity:1; position:absolute; left:50%; top:40%; width:560px; height:500px; margin-left:-280px; margin-top:-250px; pointer-events:auto; cursor:grab; touch-action:pan-y; transform-style:preserve-3d; will-change:transform;">
+              <img src="assets/carbonara.png" alt="Buldak Carbonara" draggable="false" style="width:100%; height:100%; object-fit:contain; user-select:none; -webkit-user-drag:none; filter:drop-shadow(0 46px 46px rgba(0,0,0,.34));">
+            </div>
+            <div data-card="1" style="transform:translate3d(407px,0,-645px) rotateY(-26deg) scale(0.837); opacity:0.75; filter:blur(2.2px); position:absolute; left:50%; top:40%; width:560px; height:500px; margin-left:-280px; margin-top:-250px; pointer-events:auto; cursor:grab; touch-action:pan-y; transform-style:preserve-3d; will-change:transform;">
+              <img src="assets/original.png" alt="Buldak Original" draggable="false" style="width:100%; height:100%; object-fit:contain; user-select:none; -webkit-user-drag:none; filter:drop-shadow(0 46px 46px rgba(0,0,0,.34));">
+            </div>
+            <div data-card="2" style="transform:translate3d(-407px,0,-645px) rotateY(26deg) scale(0.837); opacity:0.75; filter:blur(2.2px); position:absolute; left:50%; top:40%; width:560px; height:500px; margin-left:-280px; margin-top:-250px; pointer-events:auto; cursor:grab; touch-action:pan-y; transform-style:preserve-3d; will-change:transform;">
+              <img src="assets/quattro.png" alt="Buldak Quattro Cheese" draggable="false" style="width:100%; height:100%; object-fit:contain; user-select:none; -webkit-user-drag:none; filter:drop-shadow(0 46px 46px rgba(0,0,0,.34));">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- ============ HERO ============ -->
+    <section id="top" style="position:relative; height:100vh; min-height:560px;">
+      <div style="position:absolute; left:clamp(20px,3vw,44px); top:26%; width:min(400px,34vw); color:var(--ink);">
+        <div style="font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:18px;">Stir-fried ramen · No. <span data-num>01</span></div>
+        <div style="position:relative; height:clamp(150px,21vh,210px);">
+          <div data-info="0" style="position:absolute; inset:0;">
+            <h1 style="margin:0; font-size:clamp(34px,4.6vw,74px); line-height:.94; letter-spacing:-.045em; font-weight:800;">Carbonara</h1>
+            <p style="margin:16px 0 0; font-size:clamp(13px,1.15vw,17px); line-height:1.5; color:var(--soft); max-width:330px; text-wrap:pretty;">Creamy heat. Still dangerous. Milk and cheese soften the burn without ever putting it out.</p>
+          </div>
+          <div data-info="1" style="position:absolute; inset:0; opacity:0;">
+            <h1 style="margin:0; font-size:clamp(34px,4.6vw,74px); line-height:.94; letter-spacing:-.045em; font-weight:800;">Original</h1>
+            <p style="margin:16px 0 0; font-size:clamp(13px,1.15vw,17px); line-height:1.5; color:var(--soft); max-width:330px; text-wrap:pretty;">The one that started the dare. Four thousand Scoville of clean, direct fire and nothing to hide behind.</p>
+          </div>
+          <div data-info="2" style="position:absolute; inset:0; opacity:0;">
+            <h1 style="margin:0; font-size:clamp(34px,4.6vw,74px); line-height:.94; letter-spacing:-.045em; font-weight:800;">Quattro Cheese</h1>
+            <p style="margin:16px 0 0; font-size:clamp(13px,1.15vw,17px); line-height:1.5; color:var(--soft); max-width:330px; text-wrap:pretty;">Four cheeses melted into the sauce. Rich, slow and warm, with the heat arriving late.</p>
+          </div>
+        </div>
+        <div style="margin-top:clamp(16px,3vh,34px); display:flex; align-items:center; gap:clamp(18px,2.4vw,34px); flex-wrap:wrap;">
+          <div style="width:min(190px,16vw);">
+            <div style="font-size:11.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin-bottom:10px;">Heat</div>
+            <div style="position:relative; height:3px; background:rgba(0,0,0,.14); border-radius:2px; overflow:hidden;">
+              <div data-heat-fill style="position:absolute; left:0; top:0; bottom:0; width:40%; background:var(--accent); border-radius:2px;"></div>
+            </div>
+            <div data-heat-label style="margin-top:9px; font-size:12.5px; font-weight:600;">Creamy heat</div>
+          </div>
+          <div>
+            <div style="font-size:11.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin-bottom:10px;">Pack</div>
+            <div data-weight style="font-size:12.5px; font-weight:600;">130 g · single</div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+  <div data-hud style="position:absolute; inset:0; z-index:8; pointer-events:none; transition:opacity 300ms linear;">
+      <!-- purchase -->
+      <div style="pointer-events:auto; position:absolute; right:clamp(20px,3vw,44px); bottom:clamp(96px,13vh,130px); width:min(320px,28vw); z-index:6; color:var(--ink);">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:22px;">
+          <div>
+            <div style="font-size:11.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin-bottom:6px;">Price</div>
+            <div data-price style="font-size:clamp(26px,2.7vw,38px); font-weight:700; letter-spacing:-.035em; line-height:1;">$2.49</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:2px; background:rgba(255,255,255,.45); border-radius:999px; padding:4px;">
+            <button onClick="{{ dec }}" aria-label="Decrease quantity" style="all:unset; cursor:pointer; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:17px; font-weight:600; color:var(--ink); transition:background 220ms;" style-hover="background:rgba(255,255,255,.9);">−</button>
+            <span data-qty style="min-width:24px; text-align:center; font-size:14.5px; font-weight:700;">1</span>
+            <button onClick="{{ inc }}" aria-label="Increase quantity" style="all:unset; cursor:pointer; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:17px; font-weight:600; color:var(--ink); transition:background 220ms;" style-hover="background:rgba(255,255,255,.9);">+</button>
+          </div>
+        </div>
+        <button data-atc onClick="{{ addToCart }}" style="all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:center; justify-content:space-between; width:100%; padding:clamp(14px,1.5vw,20px) clamp(16px,1.7vw,24px); border-radius:14px; background:var(--ink); color:#fff; font-family:'Archivo',sans-serif; font-size:clamp(13px,1.1vw,15px); font-weight:600; letter-spacing:.01em; transition:transform 300ms cubic-bezier(.22,1,.36,1), box-shadow 300ms cubic-bezier(.22,1,.36,1); box-shadow:0 8px 26px rgba(0,0,0,.16);" style-hover="transform:translateY(-2px); box-shadow:0 16px 36px rgba(0,0,0,.22);" style-active="transform:translateY(0) scale(.985);">
+          <span>Add to cart</span><span data-arrow style="transition:transform 300ms cubic-bezier(.22,1,.36,1);">→</span>
+        </button>
+        <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--soft);">
+          <span>Ships tomorrow</span><span>·</span><span>Free over $35</span><span>·</span><a href="#story">Nutrition</a>
+        </div>
+      </div>
+
+
+      <div style="pointer-events:auto; position:absolute; left:50%; bottom:clamp(22px,4vh,46px); transform:translateX(-50%); z-index:6; display:flex; align-items:center; gap:6px; color:var(--ink); max-width:94vw;">
+        <button onClick="{{ prev }}" aria-label="Previous flavor" style="all:unset; cursor:pointer; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.45); font-size:16px; transition:background 260ms cubic-bezier(.22,1,.36,1), transform 260ms;" style-hover="background:rgba(255,255,255,.9); transform:translateX(-2px);">←</button>
+        <div style="display:flex; gap:4px; padding:0 8px;">
+          <button data-tab="0" onClick="{{ go0 }}" style="all:unset; cursor:pointer; padding:10px clamp(10px,1.2vw,18px); border-radius:999px; font-family:'Archivo',sans-serif; font-size:clamp(11px,1vw,13px); white-space:nowrap; font-weight:600; letter-spacing:.01em; color:var(--ink); transition:background 320ms cubic-bezier(.22,1,.36,1);">Carbonara</button>
+          <button data-tab="1" onClick="{{ go1 }}" style="all:unset; cursor:pointer; padding:10px clamp(10px,1.2vw,18px); border-radius:999px; font-family:'Archivo',sans-serif; font-size:clamp(11px,1vw,13px); white-space:nowrap; font-weight:600; letter-spacing:.01em; color:var(--ink); transition:background 320ms cubic-bezier(.22,1,.36,1);">Original</button>
+          <button data-tab="2" onClick="{{ go2 }}" style="all:unset; cursor:pointer; padding:10px clamp(10px,1.2vw,18px); border-radius:999px; font-family:'Archivo',sans-serif; font-size:clamp(11px,1vw,13px); white-space:nowrap; font-weight:600; letter-spacing:.01em; color:var(--ink); transition:background 320ms cubic-bezier(.22,1,.36,1);">Quattro Cheese</button>
+        </div>
+        <button onClick="{{ next }}" aria-label="Next flavor" style="all:unset; cursor:pointer; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.45); font-size:16px; transition:background 260ms cubic-bezier(.22,1,.36,1), transform 260ms;" style-hover="background:rgba(255,255,255,.9); transform:translateX(2px);">→</button>
+      </div>
+      <div data-scrollcue style="position:absolute; left:clamp(20px,3vw,44px); bottom:clamp(22px,4vh,46px); font-size:11.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--soft);">Drag the pack · scroll</div>
+  </div>
+
+    </section>
+
+    <!-- ============ STORY ============ -->
+    <section id="story" data-sec style="position:relative; height:110vh; display:flex; align-items:center;">
+      <div style="width:min(44%,560px); padding-left:clamp(20px,3vw,44px); color:var(--ink);">
+        <div data-rise>
+          <div style="font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:22px;">02 — The burn</div>
+          <h2 data-story-h style="margin:0; font-size:clamp(32px,4vw,62px); line-height:1.02; letter-spacing:-.04em; font-weight:800;">Creamy.<br>Spicy.<br>Dangerously easy.</h2>
+          <p data-story-p style="margin:22px 0 0; font-size:clamp(13px,1.15vw,17px); line-height:1.62; color:var(--soft); max-width:420px; text-wrap:pretty;">Four minutes in boiling water, drained, then folded through the sauce off the heat. The cream carries the capsaicin instead of cutting it, which is why the second bite is always hotter than the first.</p>
+          <div style="margin-top:32px; display:flex; gap:clamp(20px,3vw,44px); flex-wrap:wrap;">
+            <div><div data-shu style="font-size:30px; font-weight:700; letter-spacing:-.03em;">1,200</div><div style="font-size:12.5px; color:var(--soft); margin-top:4px;">Scoville</div></div>
+            <div><div style="font-size:30px; font-weight:700; letter-spacing:-.03em;">4:00</div><div style="font-size:12.5px; color:var(--soft); margin-top:4px;">Cook time</div></div>
+            <div><div style="font-size:30px; font-weight:700; letter-spacing:-.03em;">530</div><div style="font-size:12.5px; color:var(--soft); margin-top:4px;">kcal</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INGREDIENTS ============ -->
+    <section data-sec style="position:relative; height:110vh; display:flex; align-items:center; justify-content:center;">
+      <div data-rise style="text-align:center; color:var(--ink);">
+        <div style="font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:20px;">03 — What's inside</div>
+        <h2 style="margin:0 auto; font-size:clamp(28px,3.8vw,56px); line-height:1.04; letter-spacing:-.04em; font-weight:800; max-width:620px;">Four things doing all the work</h2>
+      </div>
+      <div data-ing-wrap style="position:absolute; inset:0; pointer-events:none;">
+        <div data-ing="0" data-depth="1.5" style="position:absolute; left:12%; top:26%; opacity:0;">
+          <div style="width:150px; height:150px; border-radius:50%; background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.92), rgba(255,255,255,.24)); filter:blur(.4px); box-shadow:0 24px 50px rgba(0,0,0,.14);"></div>
+          <div data-ing-label style="margin-top:16px; font-size:12.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink);">Cream</div>
+        </div>
+        <div data-ing="1" data-depth="0.9" style="position:absolute; right:13%; top:22%; opacity:0;">
+          <div style="width:118px; height:118px; border-radius:50%; background:radial-gradient(circle at 36% 32%, rgba(255,255,255,.85), rgba(255,255,255,.18)); box-shadow:0 20px 44px rgba(0,0,0,.13);"></div>
+          <div data-ing-label style="margin-top:16px; font-size:12.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink);">Cheese</div>
+        </div>
+        <div data-ing="2" data-depth="1.9" style="position:absolute; left:19%; bottom:16%; opacity:0;">
+          <div style="width:92px; height:92px; border-radius:50%; background:radial-gradient(circle at 34% 30%, var(--accent), rgba(0,0,0,.12)); opacity:.85; box-shadow:0 18px 38px rgba(0,0,0,.16);"></div>
+          <div data-ing-label style="margin-top:14px; font-size:12.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink);">Chili</div>
+        </div>
+        <div data-ing="3" data-depth="1.2" style="position:absolute; right:20%; bottom:19%; opacity:0;">
+          <div style="width:130px; height:130px; border-radius:50%; background:radial-gradient(circle at 32% 30%, rgba(255,255,255,.78), rgba(255,255,255,.12)); box-shadow:0 22px 46px rgba(0,0,0,.12);"></div>
+          <div data-ing-label style="margin-top:16px; font-size:12.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink);">Noodles</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FLAVOR REPRISE ============ -->
+    <section id="flavors" data-sec style="position:relative; height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:88px;">
+      <div style="padding:0 clamp(20px,3vw,44px); color:var(--ink);">
+        <div style="font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:26px;">04 — All three</div>
+        <div style="display:flex; gap:0; align-items:flex-end;">
+          <button data-big="0" onClick="{{ go0 }}" style="all:unset; cursor:pointer; flex:1; padding:24px 0; font-family:'Archivo',sans-serif; font-size:clamp(17px,2.7vw,40px); font-weight:800; letter-spacing:-.035em; color:var(--ink); opacity:.34; transition:opacity 500ms cubic-bezier(.22,1,.36,1), transform 500ms cubic-bezier(.22,1,.36,1);">Carbonara</button>
+          <button data-big="1" onClick="{{ go1 }}" style="all:unset; cursor:pointer; flex:1; padding:24px 0; font-family:'Archivo',sans-serif; font-size:clamp(17px,2.7vw,40px); font-weight:800; letter-spacing:-.035em; color:var(--ink); opacity:.34; transition:opacity 500ms cubic-bezier(.22,1,.36,1), transform 500ms cubic-bezier(.22,1,.36,1);">Original</button>
+          <button data-big="2" onClick="{{ go2 }}" style="all:unset; cursor:pointer; flex:1; padding:24px 0; font-family:'Archivo',sans-serif; font-size:clamp(17px,2.7vw,40px); font-weight:800; letter-spacing:-.035em; color:var(--ink); opacity:.34; transition:opacity 500ms cubic-bezier(.22,1,.36,1), transform 500ms cubic-bezier(.22,1,.36,1);">Quattro Cheese</button>
+        </div>
+        <div style="height:1px; background:rgba(0,0,0,.14); position:relative; margin-top:4px;">
+          <div data-underline style="position:absolute; top:-1px; left:0; height:2px; width:33.33%; background:var(--accent); will-change:transform;"></div>
+        </div>
+      </div>
+    </section>
+
+    </div>
+
+    </div>
+
+    <!-- ============ SHOP ============ -->
+    <section id="shop" style="position:relative; z-index:8; padding:clamp(64px,9vh,120px) clamp(20px,3vw,44px) clamp(70px,10vh,130px); background:rgba(255,255,255,.55); backdrop-filter:blur(22px); color:var(--ink);">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:54px;">
+        <h2 style="margin:0; font-size:clamp(26px,3vw,44px); font-weight:800; letter-spacing:-.04em;">Shop the three</h2>
+        <div style="font-size:13.5px; color:var(--soft);">Singles and 5-packs · free shipping over $35</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:clamp(16px,2vw,28px);">
+        <div data-tile="0" onClick="{{ go0 }}" style="cursor:pointer; border-radius:20px; padding:clamp(18px,2.2vw,34px); background:rgba(255,255,255,.7); transition:transform 420ms cubic-bezier(.22,1,.36,1), box-shadow 420ms cubic-bezier(.22,1,.36,1); box-shadow:0 2px 10px rgba(0,0,0,.05);" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(0,0,0,.14);">
+          <div style="height:clamp(150px,16vw,210px); display:grid; place-items:center;"><img src="assets/carbonara.png" alt="Buldak Carbonara" style="max-width:88%; max-height:100%; object-fit:contain; filter:drop-shadow(0 18px 22px rgba(0,0,0,.18));"></div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:26px;"><span style="font-size:20px; font-weight:700; letter-spacing:-.025em;">Carbonara</span><span style="font-size:17px; font-weight:600;">$2.49</span></div>
+          <div style="margin-top:8px; font-size:13.5px; color:var(--soft);">Creamy heat · 130 g</div>
+        </div>
+        <div data-tile="1" onClick="{{ go1 }}" style="cursor:pointer; border-radius:20px; padding:clamp(18px,2.2vw,34px); background:rgba(255,255,255,.7); transition:transform 420ms cubic-bezier(.22,1,.36,1), box-shadow 420ms cubic-bezier(.22,1,.36,1); box-shadow:0 2px 10px rgba(0,0,0,.05);" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(0,0,0,.14);">
+          <div style="height:clamp(150px,16vw,210px); display:grid; place-items:center;"><img src="assets/original.png" alt="Buldak Original" style="max-width:88%; max-height:100%; object-fit:contain; filter:drop-shadow(0 18px 22px rgba(0,0,0,.18));"></div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:26px;"><span style="font-size:20px; font-weight:700; letter-spacing:-.025em;">Original</span><span style="font-size:17px; font-weight:600;">$2.29</span></div>
+          <div style="margin-top:8px; font-size:13.5px; color:var(--soft);">Hot · 140 g</div>
+        </div>
+        <div data-tile="2" onClick="{{ go2 }}" style="cursor:pointer; border-radius:20px; padding:clamp(18px,2.2vw,34px); background:rgba(255,255,255,.7); transition:transform 420ms cubic-bezier(.22,1,.36,1), box-shadow 420ms cubic-bezier(.22,1,.36,1); box-shadow:0 2px 10px rgba(0,0,0,.05);" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(0,0,0,.14);">
+          <div style="height:clamp(150px,16vw,210px); display:grid; place-items:center;"><img src="assets/quattro.png" alt="Buldak Quattro Cheese" style="max-width:88%; max-height:100%; object-fit:contain; filter:drop-shadow(0 18px 22px rgba(0,0,0,.18));"></div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:26px;"><span style="font-size:20px; font-weight:700; letter-spacing:-.025em;">Quattro Cheese</span><span style="font-size:17px; font-weight:600;">$2.79</span></div>
+          <div style="margin-top:8px; font-size:13.5px; color:var(--soft);">Spicy · 145 g</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MOBILE ============ -->
+    <section id="mobile" style="position:relative; z-index:8; padding:clamp(64px,9vh,110px) clamp(20px,3vw,44px) clamp(70px,10vh,130px); background:rgba(255,255,255,.55); backdrop-filter:blur(22px); color:var(--ink); display:flex; gap:clamp(32px,6vw,80px); align-items:center; flex-wrap:wrap; justify-content:center;">
+      <div style="flex:1 1 340px; max-width:460px;">
+        <div style="font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:20px;">Mobile</div>
+        <h2 style="margin:0; font-size:clamp(26px,3vw,44px); line-height:1.04; font-weight:800; letter-spacing:-.04em;">Same track, thumb-sized</h2>
+        <p style="margin:22px 0 0; font-size:clamp(13px,1.15vw,16.5px); line-height:1.6; color:var(--soft); text-wrap:pretty;">The carousel keeps its geometry — the selected pack holds 70% of the width, neighbours stay on the arc. Swipe drives the same momentum model; depth blur and orb count drop to keep frames cheap. Purchase controls dock to the bottom so nothing important sits under a thumb.</p>
+        <div style="margin-top:30px; font-size:13.5px; color:var(--soft);">Drag the pack in the frame →</div>
+      </div>
+      <div style="width:372px; height:756px; border-radius:44px; padding:11px; background:#1a1718; box-shadow:0 40px 90px rgba(0,0,0,.3); flex:0 0 auto; transform:scale(min(1, calc((100vh - 200px) / 756))); transform-origin:top center;">
+        <div data-mob style="position:relative; width:100%; height:100%; border-radius:34px; overflow:hidden; background:linear-gradient(175deg,#f6dfe4,#fbf1ee);">
+          <div data-mob-glow style="position:absolute; inset:0; background:radial-gradient(62% 42% at 50% 38%, rgba(255,199,214,.95), transparent 70%);"></div>
+          <div style="position:absolute; top:0; left:0; right:0; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; font-size:12.5px; font-weight:700; color:var(--mink,#2b1a1f);"><span>9:41</span><span>Buldak</span><span>Cart 0</span></div>
+          <div data-mob-stage style="position:absolute; inset:0; perspective:1100px;">
+            <div data-mob-card="0" style="transform:translate3d(0,0,0); opacity:1; position:absolute; left:50%; top:40%; width:270px; height:250px; margin-left:-135px; margin-top:-125px; touch-action:pan-y; cursor:grab; will-change:transform;"><img src="assets/carbonara.png" alt="" draggable="false" style="width:100%; height:100%; object-fit:contain; -webkit-user-drag:none; filter:drop-shadow(0 24px 26px rgba(0,0,0,.3));"></div>
+            <div data-mob-card="1" style="transform:translate3d(182px,0,-390px) rotateY(-24deg) scale(0.835); opacity:0.72; position:absolute; left:50%; top:40%; width:270px; height:250px; margin-left:-135px; margin-top:-125px; touch-action:pan-y; cursor:grab; will-change:transform;"><img src="assets/original.png" alt="" draggable="false" style="width:100%; height:100%; object-fit:contain; -webkit-user-drag:none; filter:drop-shadow(0 24px 26px rgba(0,0,0,.3));"></div>
+            <div data-mob-card="2" style="transform:translate3d(-182px,0,-390px) rotateY(24deg) scale(0.835); opacity:0.72; position:absolute; left:50%; top:40%; width:270px; height:250px; margin-left:-135px; margin-top:-125px; touch-action:pan-y; cursor:grab; will-change:transform;"><img src="assets/quattro.png" alt="" draggable="false" style="width:100%; height:100%; object-fit:contain; -webkit-user-drag:none; filter:drop-shadow(0 24px 26px rgba(0,0,0,.3));"></div>
+          </div>
+          <div style="position:absolute; left:0; right:0; bottom:0; padding:26px 24px 30px; color:var(--mink,#2b1a1f);">
+            <div data-mob-name style="font-size:32px; font-weight:800; letter-spacing:-.035em;">Carbonara</div>
+            <div data-mob-desc style="margin-top:8px; font-size:14px; line-height:1.5; opacity:.62;">Creamy heat. Still dangerous.</div>
+            <div style="display:flex; align-items:center; gap:14px; margin-top:22px;">
+              <div data-mob-price style="font-size:26px; font-weight:700; letter-spacing:-.03em;">$2.49</div>
+              <div style="flex:1; height:3px; background:rgba(0,0,0,.12); border-radius:2px; overflow:hidden;"><div data-mob-heat style="height:100%; width:40%; background:var(--maccent,#b3123f);"></div></div>
+            </div>
+            <div style="margin-top:20px; padding:19px 22px; border-radius:16px; background:var(--mink,#2b1a1f); color:#fff; font-size:15px; font-weight:600; display:flex; justify-content:space-between;"><span>Add to cart</span><span>→</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer style="position:relative; z-index:8; background:#141112; color:#f4f0ee; padding:clamp(48px,7vh,80px) clamp(20px,3vw,44px) 54px;">
+      <div style="display:flex; justify-content:space-between; gap:60px; flex-wrap:wrap;">
+        <div style="max-width:300px;">
+          <div style="font-size:19px; font-weight:800; letter-spacing:-.02em;">Buldak</div>
+          <p style="margin:16px 0 0; font-size:14px; line-height:1.6; opacity:.55;">A product showroom concept. Packaging photography supplied by the client; flavor artwork remains Samyang's.</p>
+        </div>
+        <div style="display:flex; gap:64px; font-size:14px;">
+          <div style="display:flex; flex-direction:column; gap:12px;"><span style="opacity:.45; font-size:12px; letter-spacing:.14em; text-transform:uppercase;">Shop</span><a href="#shop">All flavors</a><a href="#shop">5-packs</a><a href="#shop">Merch</a></div>
+          <div style="display:flex; flex-direction:column; gap:12px;"><span style="opacity:.45; font-size:12px; letter-spacing:.14em; text-transform:uppercase;">Help</span><a href="#shop">Shipping</a><a href="#shop">Returns</a><a href="#shop">Contact</a></div>
+        </div>
+      </div>
+      <div style="margin-top:64px; padding-top:24px; border-top:1px solid rgba(255,255,255,.12); font-size:12.5px; opacity:.45;">Concept design · not affiliated with Samyang Foods</div>
+    </footer>
+  </main>
+
+
+
+  <div data-search style="position:fixed; inset:0; z-index:50; opacity:0; pointer-events:none; transform:scale(1.03); transition:opacity 460ms cubic-bezier(.22,1,.36,1), transform 460ms cubic-bezier(.22,1,.36,1); backdrop-filter:blur(26px); background:rgba(255,255,255,.55);">
+    <div style="position:absolute; inset:0; display:flex; flex-direction:column; padding:clamp(20px,3vw,44px); overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; color:var(--ink);">
+        <span style="font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; opacity:.5;">Search</span>
+        <button onClick="{{ closeSearch }}" style="all:unset; cursor:pointer; font-family:'Archivo',sans-serif; font-size:13.5px; font-weight:600; padding:9px 18px; border-radius:999px; background:rgba(0,0,0,.06); color:var(--ink);">Close (esc)</button>
+      </div>
+      <div style="margin-top:clamp(28px,7vh,90px); max-width:900px; width:100%; align-self:center;">
+        <input data-search-input onInput="{{ onSearch }}" onKeyDown="{{ onSearchKey }}" placeholder="What are you craving?" style="width:100%; box-sizing:border-box; border:none; background:transparent; outline:none; font-family:'Archivo',sans-serif; font-size:clamp(28px,5vw,60px); font-weight:700; letter-spacing:-.04em; color:var(--ink); padding:0 0 18px; border-bottom:1px solid rgba(0,0,0,.16);">
+        <div style="display:flex; gap:10px; margin-top:26px;">
+          <span style="font-size:12.5px; color:var(--soft); padding:8px 0;">Try</span>
+          <button onClick="{{ sugg0 }}" style="all:unset; cursor:pointer; font-family:'Archivo',sans-serif; font-size:12.5px; padding:8px 15px; border-radius:999px; background:rgba(0,0,0,.05); color:var(--ink);">carb</button>
+          <button onClick="{{ sugg1 }}" style="all:unset; cursor:pointer; font-family:'Archivo',sans-serif; font-size:12.5px; padding:8px 15px; border-radius:999px; background:rgba(0,0,0,.05); color:var(--ink);">extra spicy</button>
+          <button onClick="{{ sugg2 }}" style="all:unset; cursor:pointer; font-family:'Archivo',sans-serif; font-size:12.5px; padding:8px 15px; border-radius:999px; background:rgba(0,0,0,.05); color:var(--ink);">cheese</button>
+        </div>
+        <div style="margin-top:clamp(28px,5vh,52px); display:flex; gap:clamp(10px,1.6vw,24px);">
+          <button data-res="0" onClick="{{ pickSearch0 }}" style="all:unset; cursor:pointer; flex:1; display:flex; flex-direction:column; gap:16px; padding:22px; border-radius:18px; transition:transform 420ms cubic-bezier(.22,1,.36,1), opacity 420ms, background 420ms;" style-hover="background:rgba(255,255,255,.6); transform:translateY(-6px);">
+            <img src="assets/carbonara.png" alt="" style="width:100%; height:clamp(96px,13vw,150px); object-fit:contain; filter:drop-shadow(0 16px 20px rgba(0,0,0,.18));">
+            <span style="font-family:'Archivo',sans-serif; font-size:18px; font-weight:700; letter-spacing:-.02em; color:var(--ink);">Carbonara</span>
+            <span style="font-family:'Archivo',sans-serif; font-size:13px; color:var(--soft);">Creamy heat · $2.49</span>
+          </button>
+          <button data-res="1" onClick="{{ pickSearch1 }}" style="all:unset; cursor:pointer; flex:1; display:flex; flex-direction:column; gap:16px; padding:22px; border-radius:18px; transition:transform 420ms cubic-bezier(.22,1,.36,1), opacity 420ms, background 420ms;" style-hover="background:rgba(255,255,255,.6); transform:translateY(-6px);">
+            <img src="assets/original.png" alt="" style="width:100%; height:clamp(96px,13vw,150px); object-fit:contain; filter:drop-shadow(0 16px 20px rgba(0,0,0,.18));">
+            <span style="font-family:'Archivo',sans-serif; font-size:18px; font-weight:700; letter-spacing:-.02em; color:var(--ink);">Original</span>
+            <span style="font-family:'Archivo',sans-serif; font-size:13px; color:var(--soft);">Hot · $2.29</span>
+          </button>
+          <button data-res="2" onClick="{{ pickSearch2 }}" style="all:unset; cursor:pointer; flex:1; display:flex; flex-direction:column; gap:16px; padding:22px; border-radius:18px; transition:transform 420ms cubic-bezier(.22,1,.36,1), opacity 420ms, background 420ms;" style-hover="background:rgba(255,255,255,.6); transform:translateY(-6px);">
+            <img src="assets/quattro.png" alt="" style="width:100%; height:clamp(96px,13vw,150px); object-fit:contain; filter:drop-shadow(0 16px 20px rgba(0,0,0,.18));">
+            <span style="font-family:'Archivo',sans-serif; font-size:18px; font-weight:700; letter-spacing:-.02em; color:var(--ink);">Quattro Cheese</span>
+            <span style="font-family:'Archivo',sans-serif; font-size:13px; color:var(--soft);">Spicy · $2.79</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CART DRAWER ============ -->
+  <div data-cart-scrim onClick="{{ closeCart }}" style="position:fixed; inset:0; z-index:39; background:rgba(20,17,18,.34); opacity:0; pointer-events:none; transition:opacity 420ms cubic-bezier(.22,1,.36,1);"></div>
+  <aside data-cart style="position:fixed; top:0; right:0; bottom:0; width:min(420px,92vw); z-index:40; background:#faf7f6; color:#201e1d; transform:translateX(102%); transition:transform 520ms cubic-bezier(.22,1,.36,1); box-shadow:-20px 0 60px rgba(0,0,0,.18); display:flex; flex-direction:column;">
+    <div style="padding:28px 30px; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:17px; font-weight:700; letter-spacing:-.02em;">Your cart</span>
+      <button onClick="{{ closeCart }}" style="all:unset; cursor:pointer; font-family:'Archivo',sans-serif; font-size:13.5px; padding:8px 14px; border-radius:999px; background:rgba(0,0,0,.05);">Close</button>
+    </div>
+    <div data-cart-empty style="flex:1; display:grid; place-items:center; padding:0 30px; text-align:center; font-size:14px; color:#7d7979;">Nothing in here yet.<br>Pick a burn.</div>
+    <div data-cart-items style="flex:1; overflow-y:auto; padding:0 30px; display:none; flex-direction:column; gap:20px;"></div>
+    <div style="padding:26px 30px 30px; border-top:1px solid rgba(0,0,0,.09);">
+      <div style="display:flex; justify-content:space-between; font-size:14px; color:#605d5d;"><span>Subtotal</span><span data-subtotal style="color:#201e1d; font-weight:700; font-size:17px;">$0.00</span></div>
+      <div style="margin-top:6px; font-size:12.5px; color:#7d7979;">Shipping calculated at checkout</div>
+      <button style="all:unset; box-sizing:border-box; margin-top:20px; cursor:pointer; display:flex; justify-content:space-between; width:100%; padding:19px 24px; border-radius:14px; background:#201e1d; color:#fff; font-family:'Archivo',sans-serif; font-size:15px; font-weight:600; transition:transform 260ms cubic-bezier(.22,1,.36,1);" style-hover="transform:translateY(-2px);"><span>Checkout</span><span>→</span></button>
+    </div>
+  </aside>
+
+  <div data-toast style="position:fixed; right:32px; bottom:32px; z-index:60; padding:16px 22px; border-radius:14px; background:#141112; color:#fff; font-size:14px; font-weight:500; opacity:0; transform:translateY(14px); pointer-events:none; transition:opacity 340ms cubic-bezier(.22,1,.36,1), transform 340ms cubic-bezier(.22,1,.36,1); box-shadow:0 18px 44px rgba(0,0,0,.28);">Added to cart</div>
+
+  <div data-fly-layer style="position:fixed; inset:0; z-index:55; pointer-events:none;"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const P = [
+  { name:'Carbonara', desc:'Creamy heat. Still dangerous.', price:2.49, weight:'130 g · single', heat:0.40, heatLabel:'Creamy heat', shu:'1,200',
+    bgA:'#f6dfe4', bgB:'#fbf1ee', glow:'#ffc7d6', ink:'#2b1a1f', accent:'#b3123f', soft:'rgba(43,26,31,.58)', orb:'rgba(255,255,255,.60)',
+    story:'Creamy.<br>Spicy.<br>Dangerously easy.',
+    storyP:'Four minutes in boiling water, drained, then folded through the sauce off the heat. The cream carries the capsaicin instead of cutting it, which is why the second bite is always hotter than the first.',
+    ings:['Cream','Cheese','Chili','Noodles'], img:'assets/carbonara.png', kw:'carbonara carb creamy cream mild cheese' },
+  { name:'Original', desc:'The one that started the dare.', price:2.29, weight:'140 g · single', heat:0.82, heatLabel:'Hot', shu:'4,404',
+    bgA:'#0d0b0b', bgB:'#1c100c', glow:'#ff5a20', ink:'#f7f3f1', accent:'#ff5a20', soft:'rgba(247,243,241,.56)', orb:'rgba(255,120,60,.45)',
+    story:'Direct.<br>Dry.<br>Unforgiving.',
+    storyP:'No broth to dilute it and no dairy to soften it. The sauce goes on last and stays where it lands, which is the whole reason this one built the reputation.',
+    ings:['Chili','Sesame','Seaweed','Noodles'], img:'assets/original.png', kw:'original hot extra spicy fire classic ramen' },
+  { name:'Quattro Cheese', desc:'Four cheeses, late heat.', price:2.79, weight:'145 g · single', heat:0.60, heatLabel:'Spicy', shu:'2,600',
+    bgA:'#f3c65f', bgB:'#fdf0d4', glow:'#ffdd8f', ink:'#37260a', accent:'#b8500f', soft:'rgba(55,38,10,.58)', orb:'rgba(255,255,255,.62)',
+    story:'Rich.<br>Warm.<br>Slow to bite.',
+    storyP:'Cheddar, gouda, mozzarella and parmesan go in as powder and melt into the sauce as it cools. The heat is still there — it just arrives a beat behind the richness.',
+    ings:['Cheddar','Gouda','Cream','Noodles'], img:'assets/quattro.png', kw:'quattro cheese cheesy four rich swicy' }
+];
+const TAU = Math.PI * 2;
+const hx = (h) => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+const RGB = P.map(p => ({ bgA:hx(p.bgA), bgB:hx(p.bgB), glow:hx(p.glow), ink:hx(p.ink), accent:hx(p.accent) }));
+const css = (c) => 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')';
+const mix = (key, w) => { const o=[0,0,0]; for(let i=0;i<3;i++){ const c=RGB[i][key]; o[0]+=c[0]*w[i]; o[1]+=c[1]*w[i]; o[2]+=c[2]*w[i]; } return o; };
+const lerp = (a,b,t) => a + (b-a)*t;
+const clamp = (v,a,b) => v<a?a:v>b?b:v;
+const smooth = (t) => { t = clamp(t,0,1); return t*t*(3-2*t); };
+const wrap3 = (d) => { let x = ((d % 3) + 4.5) % 3 - 1.5; return x; };
+
+class Component extends DCLogic {
+  componentDidMount() {
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.cache();
+
+    this.c = { a:0, v:0, drag:false, lx:0, moved:0 };
+    this.m = { a:0, v:0, drag:false, lx:0 };
+    this.ptr = { x:0, y:0, tx:0, ty:0 };
+    this.scroll = { y:0, sm:0 };
+    this.stage = { x:0, y:0, s:1, rad:1, op:1, tx:0, ty:0, ts:1, trad:1, top:1 };
+    this.qty = 1; this.cart = []; this.lastSection = -1;
+
+    this.onPointerMove = (e) => {
+      const w = innerWidth, h = innerHeight;
+      this.ptr.tx = (e.clientX - w/2) / (w/2);
+      this.ptr.ty = (e.clientY - h/2) / (h/2);
+      if (this.c.drag) { const dx = e.clientX - this.c.lx; this.c.lx = e.clientX; this.c.moved += Math.abs(dx); this.c.a -= dx/340; this.c.v = -dx/340; }
+      if (this.m.drag) { const dx = e.clientX - this.m.lx; this.m.lx = e.clientX; this.m.a -= dx/150; this.m.v = -dx/150; }
+    };
+    this.onDown = (e) => {
+      const card = e.target.closest && e.target.closest('[data-card]');
+      const mob = e.target.closest && e.target.closest('[data-mob-card]');
+      if (card) { this.c.drag = true; this.c.lx = e.clientX; this.c.v = 0; this.c.moved = 0; card.style.cursor='grabbing'; e.preventDefault(); }
+      if (mob) { this.m.drag = true; this.m.lx = e.clientX; this.m.v = 0; e.preventDefault(); }
+    };
+    this.onUp = (e) => {
+      if (this.c.drag) {
+        this.c.drag = false;
+        this.el.cards.forEach(c => c.style.cursor='grab');
+        if (this.c.moved < 5) {
+          const card = e.target.closest && e.target.closest('[data-card]');
+          if (card) { const i = +card.dataset.card; const cur = Math.round(this.c.a); this.c.a = cur + wrap3(i - cur); this.goto(i); }
+        }
+      }
+      this.m.drag = false;
+    };
+    this.onWheel = (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { this.c.a += e.deltaX/460; this.c.v = e.deltaX/460; } };
+    this.onKey = (e) => {
+      if (e.key === 'Escape') this.closeS();
+      if (e.key === 'ArrowRight') this.step(1);
+      if (e.key === 'ArrowLeft') this.step(-1);
+    };
+    this.onScroll = () => { this.scroll.y = window.scrollY || 0; };
+
+    addEventListener('pointermove', this.onPointerMove, { passive:true });
+    addEventListener('pointerdown', this.onDown);
+    addEventListener('pointerup', this.onUp);
+    addEventListener('pointercancel', this.onUp);
+    addEventListener('wheel', this.onWheel, { passive:true });
+    addEventListener('keydown', this.onKey);
+    addEventListener('scroll', this.onScroll, { passive:true });
+
+    this.observe();
+    const loop = (t) => { try { this.frame(t); } catch (err) { window.__dcErr = String(err && err.stack || err); } this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+
+  cache() {
+    const root = document.querySelector('[data-root]');
+    if (!root) return false;
+    this.root = root;
+    const q = (k) => root.querySelector(k), qa = (k) => [...root.querySelectorAll(k)];
+    this.el = {
+      bg: q('[data-bg]'), glow: q('[data-glow]'), track: q('[data-track]'), cards: qa('[data-card]'),
+      infos: qa('[data-info]'), tabs: qa('[data-tab]'), bigs: qa('[data-big]'), underline: q('[data-underline]'),
+      price: q('[data-price]'), heatFill: q('[data-heat-fill]'), heatLabel: q('[data-heat-label]'),
+      weight: q('[data-weight]'), num: q('[data-num]'), storyH: q('[data-story-h]'), storyP: q('[data-story-p]'),
+      shu: q('[data-shu]'), orbs: qa('[data-orb]'), ings: qa('[data-ing]'), ingLabels: qa('[data-ing-label]'),
+      rises: qa('[data-rise]'), mobCards: qa('[data-mob-card]'), mob: q('[data-mob]'), mobGlow: q('[data-mob-glow]'),
+      mobName: q('[data-mob-name]'), mobDesc: q('[data-mob-desc]'), mobPrice: q('[data-mob-price]'), mobHeat: q('[data-mob-heat]'),
+      search: q('[data-search]'), searchInput: q('[data-search-input]'), results: qa('[data-res]'),
+      cart: q('[data-cart]'), scrim: q('[data-cart-scrim]'), count: q('[data-cart-count]'), cartBtn: q('[data-cart-btn]'),
+      items: q('[data-cart-items]'), empty: q('[data-cart-empty]'), subtotal: q('[data-subtotal]'),
+      toast: q('[data-toast]'), fly: q('[data-fly-layer]'), atc: q('[data-atc]'), arrow: q('[data-arrow]'),
+      cue: q('[data-scrollcue]'), hud: q('[data-hud]'), hudKids: qa('[data-hud] > div')
+    };
+    this.lead = -1;
+    return !!this.el.track;
+  }
+
+  observe() {
+    if (this.io) this.io.disconnect();
+    this.io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        if (!this.reduced) en.target.animate(
+          [{ opacity: 0, transform: 'translateY(26px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: 900, easing: 'cubic-bezier(.22,1,.36,1)' }
+        );
+        this.io.unobserve(en.target);
+      });
+    }, { threshold: 0.12 });
+    this.el.rises.forEach((r) => this.io.observe(r));
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    if (this.io) this.io.disconnect();
+    removeEventListener('pointermove', this.onPointerMove);
+    removeEventListener('pointerdown', this.onDown);
+    removeEventListener('pointerup', this.onUp);
+    removeEventListener('pointercancel', this.onUp);
+    removeEventListener('wheel', this.onWheel);
+    removeEventListener('keydown', this.onKey);
+    removeEventListener('scroll', this.onScroll);
+  }
+
+  step(n) { this.c.a = Math.round(this.c.a) + n; this.c.v = n * 0.02; }
+  goto(i) { const cur = Math.round(this.c.a); this.c.a = cur + wrap3(i - cur); }
+  sel() { return ((Math.round(this.c.a) % 3) + 3) % 3; }
+
+  /* ---------- physics ---------- */
+  settle(c, k, damp) {
+    if (c.drag) { c.v *= 0.6; return; }
+    c.a += c.v; c.v *= damp;
+    const snap = Math.round(c.a);
+    c.v += (snap - c.a) * k;
+    if (Math.abs(c.v) < 0.00025 && Math.abs(snap - c.a) < 0.0015) { c.a = snap; c.v = 0; }
+  }
+
+  weights(a) {
+    const w = [0,0,0]; let s = 0;
+    for (let i=0;i<3;i++) { const d = Math.abs(wrap3(i - a)); const v = Math.max(0, 1 - d); w[i] = v*v; s += w[i]; }
+    if (s === 0) return [1,0,0];
+    return w.map(v => v/s);
+  }
+
+  frame(t) {
+    const e0 = this.el;
+    const stale = !e0 || !e0.track || !e0.track.isConnected || !e0.price || !e0.num || !e0.mobPrice || !e0.heatLabel || !e0.weight || !e0.storyH || !e0.underline;
+    if (stale) { if (!this.cache()) return; this.observe(); }
+    if (!this.el.track || !this.el.price || !this.el.mobPrice) return;
+    const R = this.reduced;
+    this.settle(this.c, 0.035, 0.90);
+    this.settle(this.m, 0.06, 0.88);
+    this.ptr.x = lerp(this.ptr.x, this.ptr.tx, 0.045);
+    this.ptr.y = lerp(this.ptr.y, this.ptr.ty, 0.045);
+
+    const w = this.weights(this.c.a);
+    const vh = innerHeight;
+    const sc = this.scroll.y / vh;
+    this.scroll.sm = lerp(this.scroll.sm, sc, 0.10);
+    const s = this.scroll.sm;
+
+    /* environment */
+    const bgA = css(mix('bgA', w)), bgB = css(mix('bgB', w));
+    const gl = mix('glow', w), ink = mix('ink', w), acc = mix('accent', w);
+    this.el.bg.style.background = 'linear-gradient(175deg,' + bgA + ' 0%,' + bgB + ' 100%)';
+    this.el.glow.style.background = 'radial-gradient(58% 52% at ' + (52 + this.ptr.x*4).toFixed(1) + '% ' + (40 + this.ptr.y*3).toFixed(1) + '%, rgba(' + gl.map(Math.round).join(',') + ',.95) 0%, rgba(' + gl.map(Math.round).join(',') + ',0) 68%)';
+    this.root.style.setProperty('--ink', css(ink));
+    this.root.style.setProperty('--accent', css(acc));
+    this.root.style.setProperty('--soft', 'rgba(' + ink.map(Math.round).join(',') + ',.58)');
+
+    /* text crossfade */
+    for (let i=0;i<3;i++) {
+      const o = clamp(w[i]*1.8 - 0.35, 0, 1);
+      const inf = this.el.infos[i];
+      inf.style.opacity = o.toFixed(3);
+      inf.style.transform = 'translateY(' + ((1-o)*16).toFixed(1) + 'px)';
+      this.el.tabs[i].style.background = 'rgba(255,255,255,' + (w[i]*0.55).toFixed(3) + ')';
+      this.el.bigs[i].style.opacity = (0.28 + w[i]*0.72).toFixed(3);
+      this.el.bigs[i].style.transform = 'translateY(' + (-w[i]*6).toFixed(1) + 'px)';
+    }
+    const lead = w.indexOf(Math.max(...w));
+    const p = P[lead];
+    const heat = P[0].heat*w[0] + P[1].heat*w[1] + P[2].heat*w[2];
+    const price = P[0].price*w[0] + P[1].price*w[1] + P[2].price*w[2];
+    this.el.heatFill.style.width = (heat*100).toFixed(1) + '%';
+    this.el.price.textContent = '$' + price.toFixed(2);
+    if (this.lead !== lead) {
+      this.lead = lead;
+      this.el.heatLabel.textContent = p.heatLabel;
+      this.el.weight.textContent = p.weight;
+      this.el.num.textContent = '0' + (lead+1);
+      this.el.storyH.innerHTML = p.story;
+      this.el.storyP.textContent = p.storyP;
+      this.el.shu.textContent = p.shu;
+      this.el.ingLabels.forEach((l,i) => { l.textContent = p.ings[i]; });
+      this.el.mobName.textContent = p.name;
+      this.el.mobDesc.textContent = p.desc;
+      this.el.orbs.forEach(o => { o.style.background = p.orb; });
+    }
+    this.el.underline.style.transform = 'translateX(' + (this.c.a % 3 < 0 ? (this.c.a % 3 + 3) : this.c.a % 3) * 100 + '%)';
+    this.el.mobPrice.textContent = '$' + P[((Math.round(this.m.a)%3)+3)%3].price.toFixed(2);
+    this.el.mobHeat.style.width = (P[((Math.round(this.m.a)%3)+3)%3].heat*100) + '%';
+
+    /* scroll choreography for the stage */
+    const seg = (a,b) => smooth((s-a)/(b-a));
+    let tx = 0, ty = 0, ts = 1, rad = 1, op = 1;
+    tx += seg(0.35,1.35) * 0.19 * innerWidth;
+    ty += seg(0.35,1.35) * -0.02 * vh;
+    ts = lerp(1, 0.9, seg(0.35,1.35));
+    const i2 = seg(1.5,2.4);
+    tx = lerp(tx, 0, i2); ty = lerp(ty, -0.06*vh, i2); ts = lerp(ts, 0.72, i2);
+    const i3 = seg(2.7,3.5);
+    ts = lerp(ts, 0.48, i3); rad = lerp(1, 1.75, i3); ty = lerp(ty, 0.06*vh, i3);
+    op = 1;
+    this.stage.tx = tx; this.stage.ty = ty; this.stage.ts = ts; this.stage.trad = rad; this.stage.top = clamp(op,0,1);
+    this.stage.x = lerp(this.stage.x, tx, 0.09);
+    this.stage.y = lerp(this.stage.y, ty, 0.09);
+    this.stage.s = lerp(this.stage.s, ts, 0.09);
+    this.stage.rad = lerp(this.stage.rad, rad, 0.09);
+    this.stage.op = lerp(this.stage.op, this.stage.top, 0.12);
+    const fit = clamp(Math.min(innerWidth/1460, innerHeight/1060), 0.34, 1.08);
+    this.fit = fit;
+    this.el.track.style.transform = 'translate3d(' + (this.stage.x*fit).toFixed(1) + 'px,' + (this.stage.y*fit).toFixed(1) + 'px,0) scale(' + (this.stage.s*fit).toFixed(3) + ')';
+    this.el.track.style.opacity = this.stage.op.toFixed(3);
+
+    if (this.el.cue) this.el.cue.style.opacity = clamp(1 - s*3, 0, 1).toFixed(2);
+    if (this.el.hud) {
+      const ho = clamp(1 - (s - 0.30)/0.35, 0, 1);
+      this.el.hud.style.opacity = ho.toFixed(3);
+      const pe = ho < 0.2 ? 'none' : 'auto';
+      this.el.hudKids.forEach(n => { n.style.pointerEvents = pe; });
+    }
+
+    /* carousel cards */
+    const RAD = 470 * this.stage.rad * (innerWidth < 1180 ? 0.88 : 1);
+    const DEPTH = 430;
+    for (let i=0;i<3;i++) {
+      const d = wrap3(i - this.c.a);
+      const th = d * (TAU/3);
+      const x = Math.sin(th) * RAD;
+      const z = (Math.cos(th) - 1) * DEPTH;
+      const near = clamp(1 + z/1500, 0, 1);
+      const scale = 0.62 + 0.38 * near;
+      const rotY = -d * 26;
+      const wi = w[i];
+      const float = R ? 0 : Math.sin(t/2600 + i*2.1) * 9 * (0.4 + wi*0.6);
+      const idle = R ? 0 : Math.sin(t/4100 + i) * 1.8;
+      const tiltY = this.ptr.x * 10 * wi;
+      const tiltX = -this.ptr.y * 5 * wi;
+      const el = this.el.cards[i];
+      el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + float.toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotateY(' + (rotY + tiltY + idle).toFixed(2) + 'deg) rotateX(' + tiltX.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
+      el.style.opacity = (0.42 + 0.58*near).toFixed(3);
+      el.style.zIndex = String(1000 + Math.round(z));
+      el.style.filter = near > 0.985 ? 'none' : 'blur(' + ((1-near)*5).toFixed(2) + 'px)';
+      el.style.pointerEvents = 'auto';
+    }
+
+    /* parallax orbs */
+    this.el.orbs.forEach(o => {
+      const dp = parseFloat(o.dataset.depth);
+      o.style.marginLeft = (-this.ptr.x * 26 * dp).toFixed(1) + 'px';
+      o.style.marginTop = (-this.ptr.y * 20 * dp - s * 30 * dp).toFixed(1) + 'px';
+    });
+
+    /* section reveals handled by IntersectionObserver */
+    const ip = seg(1.55, 2.35);
+    this.el.ings.forEach((el, i) => {
+      const dp = parseFloat(el.dataset.depth);
+      const o = clamp(ip*1.5 - i*0.12, 0, 1);
+      el.style.opacity = (o * 0.92).toFixed(3);
+      el.style.transform = 'translate3d(' + (-this.ptr.x*30*dp).toFixed(1) + 'px,' + ((1-o)*60 - this.ptr.y*22*dp).toFixed(1) + 'px,0) scale(' + (0.85 + o*0.15).toFixed(3) + ')';
+    });
+
+    /* mobile frame */
+    const mw = this.weights(this.m.a);
+    const mgl = mix('glow', mw), mink = mix('ink', mw), macc = mix('accent', mw), mbgA = css(mix('bgA', mw)), mbgB = css(mix('bgB', mw));
+    this.el.mob.style.background = 'linear-gradient(175deg,' + mbgA + ',' + mbgB + ')';
+    this.el.mobGlow.style.background = 'radial-gradient(62% 42% at 50% 38%, rgba(' + mgl.map(Math.round).join(',') + ',.95), transparent 70%)';
+    this.el.mob.style.setProperty('--mink', css(mink));
+    this.el.mob.style.setProperty('--maccent', css(macc));
+    for (let i=0;i<3;i++) {
+      const d = wrap3(i - this.m.a);
+      const th = d * (TAU/3);
+      const x = Math.sin(th) * 210, z = (Math.cos(th)-1) * 260;
+      const near = clamp(1 + z/900, 0, 1);
+      const el = this.el.mobCards[i];
+      el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + (R?0:Math.sin(t/2600+i*2)*5).toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotateY(' + (-d*24).toFixed(1) + 'deg) scale(' + (0.62+0.38*near).toFixed(3) + ')';
+      el.style.opacity = (0.35 + 0.65*near).toFixed(3);
+      el.style.zIndex = String(100 + Math.round(z));
+    }
+  }
+
+  /* ---------- cart ---------- */
+  renderCart() {
+    const el = this.el;
+    const n = this.cart.reduce((a,b) => a+b.q, 0);
+    el.count.textContent = String(n);
+    el.count.style.transform = 'scale(1.45)';
+    setTimeout(() => { el.count.style.transform = 'scale(1)'; }, 190);
+    const sum = this.cart.reduce((a,b) => a + b.q * P[b.i].price, 0);
+    el.subtotal.textContent = '$' + sum.toFixed(2);
+    if (!this.cart.length) { el.empty.style.display = 'grid'; el.items.style.display = 'none'; return; }
+    el.empty.style.display = 'none'; el.items.style.display = 'flex';
+    el.items.innerHTML = this.cart.map(it => {
+      const p = P[it.i];
+      return '<div style="display:flex; gap:16px; align-items:center; padding-bottom:20px; border-bottom:1px solid rgba(0,0,0,.07);">'
+        + '<div style="width:96px; height:80px; border-radius:12px; background:rgba(0,0,0,.04); display:grid; place-items:center;"><img src="' + p.img + '" alt="" style="max-width:86%; max-height:86%; object-fit:contain;"></div>'
+        + '<div style="flex:1;"><div style="font-size:15px; font-weight:700; letter-spacing:-.01em;">' + p.name + '</div>'
+        + '<div style="font-size:13px; color:#7d7979; margin-top:3px;">' + p.weight + '</div></div>'
+        + '<div style="text-align:right;"><div style="font-size:15px; font-weight:600;">$' + (p.price*it.q).toFixed(2) + '</div>'
+        + '<div style="font-size:13px; color:#7d7979; margin-top:3px;">Qty ' + it.q + '</div></div></div>';
+    }).join('');
+  }
+
+  fly() {
+    const el = this.el;
+    const from = el.atc.getBoundingClientRect();
+    const to = el.cartBtn.getBoundingClientRect();
+    const node = document.createElement('img');
+    node.src = P[this.sel()].img;
+    node.style.cssText = 'position:absolute; width:110px; height:96px; object-fit:contain; left:0; top:0; will-change:transform,opacity; filter:drop-shadow(0 10px 16px rgba(0,0,0,.3));';
+    el.fly.appendChild(node);
+    const x0 = from.left + from.width/2 - 55, y0 = from.top - 40;
+    const x1 = to.left + to.width/2 - 55, y1 = to.top + to.height/2 - 48;
+    const cx = (x0 + x1)/2 + 60, cy = Math.min(y0, y1) - 220;
+    const dur = 780, t0 = performance.now();
+    const tick = (now) => {
+      const k = clamp((now - t0)/dur, 0, 1);
+      const e = 1 - Math.pow(1-k, 3);
+      const x = (1-e)*(1-e)*x0 + 2*(1-e)*e*cx + e*e*x1;
+      const y = (1-e)*(1-e)*y0 + 2*(1-e)*e*cy + e*e*y1;
+      node.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) scale(' + (1 - 0.72*e) + ') rotate(' + (e*38) + 'deg)';
+      node.style.opacity = String(1 - Math.pow(k, 4));
+      if (k < 1) requestAnimationFrame(tick); else node.remove();
+    };
+    requestAnimationFrame(tick);
+  }
+
+  toast(msg) {
+    const t = this.el.toast;
+    t.textContent = msg;
+    t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+    clearTimeout(this._tt);
+    this._tt = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(14px)'; }, 2100);
+  }
+
+  /* ---------- search ---------- */
+  openS() {
+    const s = this.el.search;
+    s.style.opacity = '1'; s.style.pointerEvents = 'auto'; s.style.transform = 'scale(1)';
+    setTimeout(() => this.el.searchInput.focus(), 120);
+    this.filter('');
+  }
+  closeS() {
+    const s = this.el.search;
+    s.style.opacity = '0'; s.style.pointerEvents = 'none'; s.style.transform = 'scale(1.03)';
+  }
+  filter(q) {
+    q = q.trim().toLowerCase();
+    this.matches = [];
+    this.el.results.forEach((r, i) => {
+      const hit = !q || P[i].kw.includes(q) || q.split(' ').some(w => w && P[i].kw.includes(w));
+      if (hit) this.matches.push(i);
+      r.style.transitionDelay = (i*70) + 'ms';
+      r.style.opacity = hit ? '1' : '0.16';
+      r.style.transform = hit ? 'translateY(0) scale(1)' : 'translateY(10px) scale(.94)';
+      if (hit && q) this.goto(i);
+    });
+  }
+
+  renderVals() {
+    const go = (i) => () => this.goto(i);
+    return {
+      prev: () => this.step(-1),
+      next: () => this.step(1),
+      go0: go(0), go1: go(1), go2: go(2),
+      inc: () => { this.qty = Math.min(9, this.qty+1); this.root.querySelector('[data-qty]').textContent = this.qty; },
+      dec: () => { this.qty = Math.max(1, this.qty-1); this.root.querySelector('[data-qty]').textContent = this.qty; },
+      addToCart: () => {
+        const i = this.sel();
+        const found = this.cart.find(c => c.i === i);
+        if (found) found.q += this.qty; else this.cart.push({ i, q:this.qty });
+        this.fly();
+        this.el.cards[i].animate(
+          [{ transform: this.el.cards[i].style.transform }, { transform: this.el.cards[i].style.transform + ' translateZ(46px)' }, { transform: this.el.cards[i].style.transform }],
+          { duration: 620, easing: 'cubic-bezier(.22,1,.36,1)' }
+        );
+        setTimeout(() => this.renderCart(), 480);
+        setTimeout(() => this.toast(P[i].name + ' added'), 620);
+      },
+      openCart: () => { this.el.cart.style.transform = 'translateX(0)'; this.el.scrim.style.opacity = '1'; this.el.scrim.style.pointerEvents = 'auto'; },
+      closeCart: () => { this.el.cart.style.transform = 'translateX(102%)'; this.el.scrim.style.opacity = '0'; this.el.scrim.style.pointerEvents = 'none'; },
+      openSearch: () => this.openS(),
+      closeSearch: () => this.closeS(),
+      onSearch: (e) => this.filter(e.target.value),
+      onSearchKey: (e) => { if (e.key === 'Enter') { const i = (this.matches && this.matches[0] != null) ? this.matches[0] : this.sel(); this.goto(i); this.closeS(); scrollTo({ top:0, behavior:'smooth' }); } },
+      sugg0: () => { this.el.searchInput.value = 'carb'; this.filter('carb'); },
+      sugg1: () => { this.el.searchInput.value = 'extra spicy'; this.filter('extra spicy'); },
+      sugg2: () => { this.el.searchInput.value = 'cheese'; this.filter('cheese'); },
+      pickSearch0: () => { this.goto(0); this.closeS(); scrollTo({ top:0, behavior:'smooth' }); },
+      pickSearch1: () => { this.goto(1); this.closeS(); scrollTo({ top:0, behavior:'smooth' }); },
+      pickSearch2: () => { this.goto(2); this.closeS(); scrollTo({ top:0, behavior:'smooth' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

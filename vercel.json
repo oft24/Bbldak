@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "flask",
+  "functions": {
+    "app.py": {
+      "excludeFiles": "{Buldak*.dc.html,_ds/**,shots/**,uploads/**,support.js,tests/**}"
+    }
+  }
+}

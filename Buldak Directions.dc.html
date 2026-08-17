@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@600;800;900&family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#e6e4e2; font-family:"Archivo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#ec3013; text-decoration:none; }
+  a:hover { color:#ae1800; }
+  @keyframes spinslow { to { transform:rotate(360deg); } }
+  @keyframes mq { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+  @keyframes pulse { 0%,100% { opacity:.5; } 50% { opacity:1; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; } }
+</style>
+</helmet>
+
+<section style="padding:64px 64px 120px; display:flex; flex-direction:column; gap:40px;">
+
+  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:48px; border-bottom:2px solid #201e1d; padding-bottom:20px; max-width:1600px;">
+    <div style="max-width:820px;">
+      <div style="font-size:12px; letter-spacing:.22em; font-weight:700; color:#ec3013; margin-bottom:14px;">TURN 01 — HERO DIRECTIONS</div>
+      <h1 style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:56px; line-height:.94; letter-spacing:-.035em; margin:0 0 16px; color:#201e1d;">THE PACKAGE IS THE INTERFACE</h1>
+      <p style="margin:0; font-size:15px; line-height:1.55; color:#605d5d; max-width:640px; text-wrap:pretty;">Three live hero concepts, same engine underneath: pointer-driven tilt with spring inertia, continuous float, drag-to-spin, and a flavor switch that morphs the whole environment over 800ms. Hover a package, then drag it. Switch flavors to see the environment transition. Pick one and I build the depth — carousel, PDP, search, cart.</p>
+    </div>
+    <div style="font-size:12px; line-height:1.7; color:#605d5d; text-align:right; flex-shrink:0;">
+      <div style="color:#201e1d; font-weight:700;">SCOPE</div>
+      <div>Carbonara · Original · Quattro Cheese</div>
+      <div>Packages: your uploads, cut out</div>
+      <div>2X Spicy pending artwork</div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:56px; align-items:flex-start;">
+
+    <!-- ============ 1a ============ -->
+    <div id="1a" style="display:flex; flex-direction:column; gap:14px; width:1280px;">
+      <div style="display:flex; align-items:baseline; gap:14px;">
+        <span style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:13px; letter-spacing:.1em; background:#ec3013; color:#fff; padding:5px 10px;">1a</span>
+        <span style="font-weight:800; font-size:22px; letter-spacing:-.02em; color:#201e1d;">CHAOS GRID</span>
+        <span style="font-size:13px; color:#605d5d;">Playful / chaotic / colorful — modernist grid deliberately broken by the product</span>
+      </div>
+
+      <div data-stage="0" data-screen-label="1a Chaos Grid" style="--e-bg:#f7d7e2; --e-ink:#2a1219; --e-acc:#e8447a; --e-glow:#ffc0d6; --e-line:rgba(42,18,25,.10); position:relative; width:1280px; height:800px; overflow:hidden; background:var(--e-bg); border:2px solid #201e1d; transition:background 800ms cubic-bezier(.16,1,.3,1); color:var(--e-ink);">
+
+        <div style="position:absolute; inset:0; background-image:repeating-linear-gradient(to right, var(--e-line) 0 1px, transparent 1px 106.66px), repeating-linear-gradient(to bottom, var(--e-line) 0 1px, transparent 1px 100px); pointer-events:none;"></div>
+
+        <!-- nav -->
+        <div style="position:absolute; top:0; left:0; right:0; height:66px; border-bottom:2px solid var(--e-ink); display:flex; align-items:center; gap:32px; padding:0 28px; z-index:8; transition:border-color 800ms;">
+          <div style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:19px; letter-spacing:-.02em;">SAMYANG</div>
+          <div style="display:flex; gap:26px; font-size:12px; font-weight:700; letter-spacing:.1em;">
+            <span>SHOP</span><span style="color:var(--e-acc);">FLAVORS</span><span>FIND YOUR BURN</span><span>ABOUT</span>
+          </div>
+          <div style="margin-left:auto; display:flex; gap:18px; align-items:center; font-size:12px; font-weight:700; letter-spacing:.1em;">
+            <span>SEARCH</span><span>ACCOUNT</span>
+            <span style="border:2px solid var(--e-ink); padding:5px 10px;">CART (2)</span>
+          </div>
+        </div>
+
+        <!-- big type -->
+        <div style="position:absolute; left:28px; top:118px; z-index:2; font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:142px; line-height:.8; letter-spacing:-.05em; transition:color 800ms;">
+          <div>PICK</div>
+          <div>YOUR</div>
+          <div style="-webkit-text-stroke:3px var(--e-ink); color:transparent;">BURN.</div>
+        </div>
+        <div style="position:absolute; left:32px; top:610px; z-index:6; max-width:300px; font-size:13px; line-height:1.5; color:var(--e-ink); opacity:.75;">Nine flavors. One dare. Drag the pack, spin it, then take it home.</div>
+
+        <!-- glow + ring -->
+        <div style="position:absolute; left:600px; top:120px; width:560px; height:560px; border-radius:50%; background:radial-gradient(circle at 50% 45%, var(--e-glow) 0%, transparent 66%); z-index:1; transition:background 800ms;"></div>
+        <div style="position:absolute; left:588px; top:108px; width:584px; height:584px; border:2px dashed var(--e-ink); border-radius:50%; opacity:.28; z-index:1; animation:spinslow 44s linear infinite;"></div>
+
+        <!-- package -->
+        <div data-tilt="0" data-base-rot="0" style="position:absolute; left:590px; top:130px; width:580px; height:540px; z-index:5; cursor:grab; touch-action:none; will-change:transform;">
+          <img data-pk="carbonara" src="assets/carbonara.png" alt="Buldak Carbonara pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:1; transition:opacity 700ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 30px 30px rgba(42,18,25,.30));">
+          <img data-pk="original" src="assets/original.png" alt="Buldak Original pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 700ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 30px 30px rgba(42,18,25,.30));">
+          <img data-pk="quattro" src="assets/quattro.png" alt="Buldak Quattro Cheese pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 700ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 30px 30px rgba(42,18,25,.30));">
+        </div>
+
+        <div style="position:absolute; left:604px; top:596px; z-index:7; font-size:11px; font-weight:800; letter-spacing:.16em; border:2px solid var(--e-ink); padding:6px 10px; background:var(--e-bg); transition:background 800ms;">↔ DRAG TO SPIN</div>
+
+        <!-- sticker -->
+        <div style="position:absolute; right:250px; top:96px; z-index:7; transform:rotate(-9deg); background:var(--e-acc); color:#fff; font-family:'Noto Sans KR','Archivo',sans-serif; font-weight:900; font-size:15px; letter-spacing:.04em; padding:10px 14px; transition:background 800ms;">매운맛 CHALLENGE</div>
+
+        <!-- flavor rail -->
+        <div style="position:absolute; right:28px; top:110px; width:216px; z-index:7; display:flex; flex-direction:column; gap:10px;">
+          <div style="font-size:11px; font-weight:800; letter-spacing:.18em; opacity:.6;">SELECT FLAVOR</div>
+          <button data-chip="carbonara" onClick="{{ s0.pick.carbonara }}" style="all:unset; box-sizing:border-box; display:block; width:100%; cursor:pointer; border:2px solid var(--e-ink); padding:12px 14px; font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; letter-spacing:.02em; transition:background 300ms,color 300ms;">CARBONARA</button>
+          <button data-chip="original" onClick="{{ s0.pick.original }}" style="all:unset; box-sizing:border-box; display:block; width:100%; cursor:pointer; border:2px solid var(--e-ink); padding:12px 14px; font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; letter-spacing:.02em; transition:background 300ms,color 300ms;">ORIGINAL</button>
+          <button data-chip="quattro" onClick="{{ s0.pick.quattro }}" style="all:unset; box-sizing:border-box; display:block; width:100%; cursor:pointer; border:2px solid var(--e-ink); padding:12px 14px; font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; letter-spacing:.02em; transition:background 300ms,color 300ms;">QUATTRO CHEESE</button>
+          <div style="margin-top:14px; border:2px solid var(--e-ink); background:var(--e-bg); padding:12px 14px; transition:background 800ms;">
+            <div style="font-family:'Noto Sans KR',sans-serif; font-weight:900; font-size:26px; line-height:1;">{{ s0.ko }}</div>
+            <div style="font-size:13px; line-height:1.45; margin-top:8px; opacity:.8;">{{ s0.desc }}</div>
+          </div>
+        </div>
+
+        <!-- bottom bar -->
+        <div style="position:absolute; left:0; right:0; bottom:38px; height:96px; border-top:2px solid var(--e-ink); display:flex; align-items:center; padding:0 28px; gap:28px; z-index:7; background:var(--e-bg); transition:background 800ms;">
+          <div>
+            <div style="font-size:11px; font-weight:800; letter-spacing:.18em; opacity:.6; margin-bottom:8px;">HEAT — {{ s0.heatLabel }}</div>
+            <div style="display:flex; gap:6px;">
+              <div data-heat="1" style="width:44px; height:16px; border:2px solid var(--e-ink);"></div>
+              <div data-heat="2" style="width:44px; height:16px; border:2px solid var(--e-ink);"></div>
+              <div data-heat="3" style="width:44px; height:16px; border:2px solid var(--e-ink);"></div>
+              <div data-heat="4" style="width:44px; height:16px; border:2px solid var(--e-ink);"></div>
+              <div data-heat="5" style="width:44px; height:16px; border:2px solid var(--e-ink);"></div>
+            </div>
+          </div>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:22px;">
+            <div style="text-align:right;">
+              <div style="font-size:11px; font-weight:800; letter-spacing:.18em; opacity:.6;">SINGLE 130G</div>
+              <div style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:34px; letter-spacing:-.03em; line-height:1.1;">{{ s0.price }}</div>
+            </div>
+            <div style="display:flex; align-items:center; border:2px solid var(--e-ink); height:52px;">
+              <span style="width:44px; text-align:center; font-weight:800; font-size:18px;">−</span>
+              <span style="width:44px; text-align:center; font-weight:800; font-size:16px; border-left:2px solid var(--e-ink); border-right:2px solid var(--e-ink); line-height:48px;">1</span>
+              <span style="width:44px; text-align:center; font-weight:800; font-size:18px;">+</span>
+            </div>
+            <button style="all:unset; cursor:pointer; background:var(--e-ink); color:var(--e-bg); font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; padding:17px 30px; transition:background 300ms;" style-hover="background:var(--e-acc); color:#fff;">ADD TO CART →</button>
+          </div>
+        </div>
+
+        <!-- marquee -->
+        <div style="position:absolute; left:0; right:0; bottom:0; height:38px; background:var(--e-acc); color:#fff; overflow:hidden; display:flex; align-items:center; z-index:8; transition:background 800ms;">
+          <div style="display:flex; white-space:nowrap; animation:mq 26s linear infinite; font-family:'Noto Sans KR','Archivo',sans-serif; font-weight:900; font-size:13px; letter-spacing:.14em;">
+            <span style="padding-right:28px;">불닭볶음면 · FREE SHIP OVER $35 · 지금 주문 · NEW SWICY DROP · 매운맛 · PICK YOUR BURN · 불닭볶음면 · FREE SHIP OVER $35 · 지금 주문 · NEW SWICY DROP · 매운맛 · PICK YOUR BURN ·</span>
+            <span style="padding-right:28px;">불닭볶음면 · FREE SHIP OVER $35 · 지금 주문 · NEW SWICY DROP · 매운맛 · PICK YOUR BURN · 불닭볶음면 · FREE SHIP OVER $35 · 지금 주문 · NEW SWICY DROP · 매운맛 · PICK YOUR BURN ·</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:28px; font-size:12px; line-height:1.6; color:#605d5d; border-top:2px solid #d7d3d3; padding-top:12px;">
+        <div style="flex:1;"><b style="color:#201e1d;">Strength</b><br>Highest energy, most shareable. Grid + broken grid reads as designed chaos, not noise.</div>
+        <div style="flex:1;"><b style="color:#201e1d;">Risk</b><br>Type at 142px competes with busy packaging; needs strict color discipline per flavor.</div>
+        <div style="flex:1;"><b style="color:#201e1d;">Commerce</b><br>Price, qty and CTA pinned in a persistent bottom bar — always one click from purchase.</div>
+      </div>
+    </div>
+
+    <!-- ============ 1b ============ -->
+    <div id="1b" style="display:flex; flex-direction:column; gap:14px; width:1280px;">
+      <div style="display:flex; align-items:baseline; gap:14px;">
+        <span style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:13px; letter-spacing:.1em; background:#ec3013; color:#fff; padding:5px 10px;">1b</span>
+        <span style="font-weight:800; font-size:22px; letter-spacing:-.02em; color:#201e1d;">COLD STORAGE</span>
+        <span style="font-size:13px; color:#605d5d;">Premium editorial / cinematic — the pack lit like a museum object</span>
+      </div>
+
+      <div data-stage="1" data-screen-label="1b Cold Storage" style="--e-bg:#141110; --e-ink:#f5f3f2; --e-acc:#ec3013; --e-glow:#ff563c; --e-line:rgba(245,243,242,.08); position:relative; width:1280px; height:800px; overflow:hidden; background:var(--e-bg); border:2px solid #201e1d; transition:background 900ms cubic-bezier(.16,1,.3,1); color:var(--e-ink);">
+
+        <div style="position:absolute; left:50%; top:44%; width:900px; height:700px; transform:translate(-50%,-50%); background:radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--e-glow) 26%, transparent) 0%, transparent 62%); z-index:1; transition:background 900ms;"></div>
+
+        <div style="position:absolute; top:0; left:0; right:0; height:62px; border-bottom:1px solid var(--e-line); display:flex; align-items:center; gap:34px; padding:0 48px; z-index:8; font-size:11px; font-weight:600; letter-spacing:.2em;">
+          <span style="font-weight:900; font-size:15px; letter-spacing:.06em;">SAMYANG</span>
+          <span>SHOP</span><span style="color:var(--e-acc);">FLAVORS</span><span>FIND YOUR BURN</span><span>ABOUT</span>
+          <span style="margin-left:auto;">SEARCH</span><span>ACCOUNT</span><span>CART · 2</span>
+        </div>
+
+        <!-- left column -->
+        <div style="position:absolute; left:48px; top:150px; width:400px; z-index:6;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:.22em; color:var(--e-acc); margin-bottom:22px;">{{ s1.index }} — {{ s1.name }}</div>
+          <h2 style="margin:0; font-family:'Archivo',sans-serif; font-weight:800; font-size:58px; line-height:.95; letter-spacing:-.035em;">HOT<br>CHICKEN<br>FLAVOUR</h2>
+          <p style="margin:22px 0 0; font-size:14px; line-height:1.65; color:color-mix(in srgb, var(--e-ink) 60%, transparent); max-width:320px; text-wrap:pretty;">{{ s1.desc }} Stir-fried, drained, and sauced — no broth, no mercy.</p>
+          <div style="margin-top:38px; border-top:1px solid var(--e-line);">
+            <div style="display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--e-line); font-size:12px; letter-spacing:.06em;"><span style="opacity:.55;">NET WEIGHT</span><span style="font-weight:700;">{{ s1.weight }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--e-line); font-size:12px; letter-spacing:.06em;"><span style="opacity:.55;">SCOVILLE</span><span style="font-weight:700;">{{ s1.shu }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--e-line); font-size:12px; letter-spacing:.06em;"><span style="opacity:.55;">HEAT INDEX</span><span style="font-weight:700;">{{ s1.heatLabel }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--e-line); font-size:12px; letter-spacing:.06em;"><span style="opacity:.55;">FORMAT</span><span style="font-weight:700;">SINGLE · 5-PACK</span></div>
+          </div>
+        </div>
+
+        <!-- package -->
+        <div data-tilt="1" data-base-rot="0" style="position:absolute; left:560px; top:126px; width:600px; height:520px; z-index:5; cursor:grab; touch-action:none; will-change:transform;">
+          <img data-pk="carbonara" src="assets/carbonara.png" alt="Buldak Carbonara pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 800ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 50px 60px rgba(0,0,0,.65));">
+          <img data-pk="original" src="assets/original.png" alt="Buldak Original pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:1; transition:opacity 800ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 50px 60px rgba(0,0,0,.65));">
+          <img data-pk="quattro" src="assets/quattro.png" alt="Buldak Quattro Cheese pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 800ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 50px 60px rgba(0,0,0,.65));">
+        </div>
+
+        <div style="position:absolute; left:640px; top:648px; width:440px; height:26px; z-index:2; border-radius:50%; background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.55) 0%, transparent 70%);"></div>
+
+        <div style="position:absolute; left:610px; top:672px; z-index:6; font-size:10px; font-weight:700; letter-spacing:.22em; opacity:.5;">CLICK + DRAG TO ROTATE</div>
+
+        <!-- right index rail -->
+        <div style="position:absolute; right:48px; top:160px; width:150px; z-index:7; display:flex; flex-direction:column; gap:2px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.22em; opacity:.5; margin-bottom:14px;">INDEX</div>
+          <button data-chip="carbonara" onClick="{{ s1.pick.carbonara }}" style="all:unset; box-sizing:border-box; cursor:pointer; display:flex; justify-content:space-between; padding:12px 12px; font-family:'Archivo',sans-serif; font-size:12px; font-weight:700; letter-spacing:.08em; border-top:1px solid var(--e-line); transition:background 300ms,color 300ms;"><span>01</span><span>CARBONARA</span></button>
+          <button data-chip="original" onClick="{{ s1.pick.original }}" style="all:unset; box-sizing:border-box; cursor:pointer; display:flex; justify-content:space-between; padding:12px 12px; font-family:'Archivo',sans-serif; font-size:12px; font-weight:700; letter-spacing:.08em; border-top:1px solid var(--e-line); transition:background 300ms,color 300ms;"><span>02</span><span>ORIGINAL</span></button>
+          <button data-chip="quattro" onClick="{{ s1.pick.quattro }}" style="all:unset; box-sizing:border-box; cursor:pointer; display:flex; justify-content:space-between; padding:12px 12px; font-family:'Archivo',sans-serif; font-size:12px; font-weight:700; letter-spacing:.08em; border-top:1px solid var(--e-line); border-bottom:1px solid var(--e-line); transition:background 300ms,color 300ms;"><span>03</span><span>QUATTRO</span></button>
+        </div>
+
+        <div style="position:absolute; right:48px; bottom:120px; width:360px; z-index:7; text-align:right;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.22em; opacity:.5; margin-bottom:6px;">HEAT</div>
+          <div style="display:flex; gap:4px; justify-content:flex-end; margin-bottom:20px;">
+            <div data-heat="1" style="width:34px; height:4px; border:1px solid var(--e-ink);"></div>
+            <div data-heat="2" style="width:34px; height:4px; border:1px solid var(--e-ink);"></div>
+            <div data-heat="3" style="width:34px; height:4px; border:1px solid var(--e-ink);"></div>
+            <div data-heat="4" style="width:34px; height:4px; border:1px solid var(--e-ink);"></div>
+            <div data-heat="5" style="width:34px; height:4px; border:1px solid var(--e-ink);"></div>
+          </div>
+          <div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:46px; letter-spacing:-.03em; line-height:1;">{{ s1.price }}</div>
+          <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:18px;">
+            <button style="all:unset; cursor:pointer; white-space:nowrap; font-family:'Archivo',sans-serif; font-size:13px; font-weight:700; letter-spacing:.1em; padding:15px 22px; border:1px solid var(--e-ink); transition:background 260ms,color 260ms;" style-hover="background:var(--e-ink); color:var(--e-bg);">ADD TO CART</button>
+            <button style="all:unset; cursor:pointer; white-space:nowrap; font-family:'Archivo',sans-serif; font-size:13px; font-weight:700; letter-spacing:.1em; padding:15px 26px; background:var(--e-acc); color:#0e0c0b; transition:background 260ms;" style-hover="background:#fff; color:var(--e-bg);">BUY NOW →</button>
+          </div>
+        </div>
+
+        <div style="position:absolute; left:0; right:0; bottom:0; height:56px; border-top:1px solid var(--e-line); display:flex; align-items:center; padding:0 48px; gap:16px; font-size:10px; font-weight:700; letter-spacing:.22em; opacity:.6; z-index:8;">
+          <span style="animation:pulse 2.6s ease-in-out infinite;">↓ SCROLL</span><span>01 / 06 — WHAT'S INSIDE THE HEAT</span>
+          <span style="margin-left:auto;">FREE SHIPPING OVER $35</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:28px; font-size:12px; line-height:1.6; color:#605d5d; border-top:2px solid #d7d3d3; padding-top:12px;">
+        <div style="flex:1;"><b style="color:#201e1d;">Strength</b><br>Darkness makes the packaging glow; the busiest artwork on the market finally gets air.</div>
+        <div style="flex:1;"><b style="color:#201e1d;">Risk</b><br>Reads premium but quiet — less "K-pop", more spirits brand. Pale flavors need a darkened field.</div>
+        <div style="flex:1;"><b style="color:#201e1d;">Commerce</b><br>Spec table answers weight/heat/format before the click. Highest trust of the three.</div>
+      </div>
+    </div>
+
+    <!-- ============ 1c ============ -->
+    <div id="1c" style="display:flex; flex-direction:column; gap:14px; width:1280px;">
+      <div style="display:flex; align-items:baseline; gap:14px;">
+        <span style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:13px; letter-spacing:.1em; background:#ec3013; color:#fff; padding:5px 10px;">1c</span>
+        <span style="font-weight:800; font-size:22px; letter-spacing:-.02em; color:#201e1d;">HANGUL HEAT</span>
+        <span style="font-size:13px; color:#605d5d;">Korean streetwear / poster type — the flavor is the field</span>
+      </div>
+
+      <div data-stage="2" data-screen-label="1c Hangul Heat" style="--e-bg:#f6b526; --e-ink:#2a1c00; --e-acc:#2a1c00; --e-glow:#ffd766; --e-line:rgba(0,0,0,.14); position:relative; width:1280px; height:800px; overflow:hidden; background:var(--e-bg); border:2px solid #201e1d; transition:background 900ms cubic-bezier(.16,1,.3,1); color:var(--e-ink);">
+
+        <div style="position:absolute; top:0; left:0; right:0; height:34px; background:var(--e-ink); overflow:hidden; display:flex; align-items:center; z-index:9; transition:background 900ms;">
+          <div style="display:flex; white-space:nowrap; animation:mq 22s linear infinite; color:var(--e-bg); font-family:'Noto Sans KR','Archivo',sans-serif; font-weight:900; font-size:12px; letter-spacing:.16em;">
+            <span style="padding-right:24px;">DROP 03 · 콰트로 치즈 · LIMITED RUN · 한정판 · DROP 03 · 콰트로 치즈 · LIMITED RUN · 한정판 · DROP 03 · 콰트로 치즈 · LIMITED RUN · 한정판 ·</span>
+            <span style="padding-right:24px;">DROP 03 · 콰트로 치즈 · LIMITED RUN · 한정판 · DROP 03 · 콰트로 치즈 · LIMITED RUN · 한정판 · DROP 03 · 콰트로 치즈 · LIMITED RUN · 한정판 ·</span>
+          </div>
+        </div>
+
+        <div style="position:absolute; top:34px; left:0; right:0; height:58px; display:flex; align-items:center; gap:30px; padding:0 34px; z-index:9; font-size:12px; font-weight:800; letter-spacing:.12em;">
+          <span style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:19px; letter-spacing:-.02em;">SAMYANG</span>
+          <span>SHOP</span><span style="text-decoration:underline; text-underline-offset:5px;">FLAVORS</span><span>FIND YOUR BURN</span>
+          <span style="margin-left:auto;">SEARCH</span><span>CART · 2</span>
+        </div>
+
+        <!-- giant hangul -->
+        <div style="position:absolute; left:-24px; top:96px; z-index:2; font-family:'Noto Sans KR',sans-serif; font-weight:900; font-size:290px; line-height:.82; letter-spacing:-.03em; color:color-mix(in srgb, var(--e-ink) 92%, transparent); transition:color 900ms;">{{ s2.ko }}</div>
+        <div style="position:absolute; left:-14px; top:430px; z-index:2; font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:132px; line-height:.82; letter-spacing:-.05em; -webkit-text-stroke:3px var(--e-ink); color:transparent;">STIR-FRIED</div>
+        <div style="position:absolute; left:0px; top:556px; z-index:6; font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:132px; line-height:.82; letter-spacing:-.05em;">RAMEN</div>
+
+        <!-- package -->
+        <div data-tilt="2" data-base-rot="-9" style="position:absolute; left:560px; top:150px; width:640px; height:560px; z-index:5; cursor:grab; touch-action:none; will-change:transform;">
+          <img data-pk="carbonara" src="assets/carbonara.png" alt="Buldak Carbonara pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 700ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 30px 30px rgba(0,0,0,.32));">
+          <img data-pk="original" src="assets/original.png" alt="Buldak Original pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 700ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 30px 30px rgba(0,0,0,.32));">
+          <img data-pk="quattro" src="assets/quattro.png" alt="Buldak Quattro Cheese pack" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:1; transition:opacity 700ms cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 30px 30px rgba(0,0,0,.32));">
+        </div>
+
+        <!-- ticket -->
+        <div style="position:absolute; right:38px; top:126px; z-index:8; transform:rotate(3deg); background:#f3f2f2; color:#201e1d; padding:16px 20px; box-shadow:8px 8px 0 rgba(0,0,0,.25); width:210px;">
+          <div style="font-size:10px; font-weight:800; letter-spacing:.2em; color:#ec3013;">DROP 03</div>
+          <div style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:24px; letter-spacing:-.03em; line-height:1; margin:8px 0 10px;">{{ s2.name }}</div>
+          <div style="border-top:2px dashed #bab6b6; padding-top:10px; font-size:11px; font-weight:700; letter-spacing:.06em; display:flex; justify-content:space-between;"><span>{{ s2.weight }}</span><span>{{ s2.heatLabel }}</span></div>
+        </div>
+
+        <!-- flavor buttons -->
+        <div style="position:absolute; right:38px; top:300px; z-index:8; display:flex; flex-direction:column; gap:8px; width:210px; box-sizing:border-box; background:var(--e-bg); padding:10px; border:2px solid var(--e-ink); transition:background 900ms;">
+          <button data-chip="carbonara" onClick="{{ s2.pick.carbonara }}" style="all:unset; box-sizing:border-box; cursor:pointer; text-align:left; padding:13px 16px; border:2px solid var(--e-ink); font-family:'Archivo',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; transition:background 300ms,color 300ms;">까르보 CARBONARA</button>
+          <button data-chip="original" onClick="{{ s2.pick.original }}" style="all:unset; box-sizing:border-box; cursor:pointer; text-align:left; padding:13px 16px; border:2px solid var(--e-ink); font-family:'Archivo',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; transition:background 300ms,color 300ms;">불닭 ORIGINAL</button>
+          <button data-chip="quattro" onClick="{{ s2.pick.quattro }}" style="all:unset; box-sizing:border-box; cursor:pointer; text-align:left; padding:13px 16px; border:2px solid var(--e-ink); font-family:'Archivo',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; transition:background 300ms,color 300ms;">치즈 QUATTRO</button>
+        </div>
+
+        <div style="position:absolute; right:38px; top:492px; z-index:8; width:210px; box-sizing:border-box; background:var(--e-bg); padding:10px; border:2px solid var(--e-ink); transition:background 900ms;">
+          <div style="font-size:10px; font-weight:800; letter-spacing:.2em; margin-bottom:8px;">HEAT LEVEL</div>
+          <div style="display:flex; gap:5px;">
+            <div data-heat="1" style="flex:1; height:22px; border:2px solid var(--e-ink);"></div>
+            <div data-heat="2" style="flex:1; height:22px; border:2px solid var(--e-ink);"></div>
+            <div data-heat="3" style="flex:1; height:22px; border:2px solid var(--e-ink);"></div>
+            <div data-heat="4" style="flex:1; height:22px; border:2px solid var(--e-ink);"></div>
+            <div data-heat="5" style="flex:1; height:22px; border:2px solid var(--e-ink);"></div>
+          </div>
+        </div>
+
+        <div style="position:absolute; right:38px; top:592px; z-index:8; width:210px; box-sizing:border-box; border:2px solid var(--e-ink); background:var(--e-bg); padding:12px 14px; font-size:12px; line-height:1.5; transition:background 900ms;">{{ s2.desc }}</div>
+
+        <!-- purchase bar -->
+        <div style="position:absolute; left:0; right:0; bottom:0; height:86px; background:var(--e-ink); color:var(--e-bg); display:flex; align-items:center; padding:0 34px; gap:20px; z-index:9; transition:background 900ms,color 900ms;">
+          <div style="display:flex; gap:0; border:2px solid var(--e-bg);">
+            <span style="padding:11px 18px; font-size:12px; font-weight:800; letter-spacing:.1em; background:var(--e-bg); color:var(--e-ink);">SINGLE</span>
+            <span style="padding:11px 18px; font-size:12px; font-weight:800; letter-spacing:.1em;">5-PACK</span>
+          </div>
+          <div style="font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:32px; letter-spacing:-.03em;">{{ s2.price }}</div>
+          <div style="font-size:11px; font-weight:700; letter-spacing:.16em; opacity:.7;">IN STOCK · SHIPS TOMORROW</div>
+          <button style="all:unset; margin-left:auto; cursor:pointer; background:#ec3013; color:#fff; font-family:'Archivo',sans-serif; font-weight:900; font-size:15px; letter-spacing:.08em; padding:19px 36px; transition:transform 160ms cubic-bezier(.16,1,.3,1), background 260ms;" style-hover="background:#fff; color:#201e1d;" style-active="transform:scale(.97);">ADD TO CART · 담기</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:28px; font-size:12px; line-height:1.6; color:#605d5d; border-top:2px solid #d7d3d3; padding-top:12px;">
+        <div style="flex:1;"><b style="color:#201e1d;">Strength</b><br>Most distinctly Korean and most ownable. Each flavor becomes a poster, so the carousel becomes a drop calendar.</div>
+        <div style="flex:1;"><b style="color:#201e1d;">Risk</b><br>Full-field color fights the packaging; needs one fixed dark bar to keep commerce legible.</div>
+        <div style="flex:1;"><b style="color:#201e1d;">Commerce</b><br>Sticky purchase bar with size toggle — closest to a real PDP already.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:4100,&quot;height&quot;:1100}}">
+const F = {
+  carbonara: { name:'CARBONARA', ko:'까르보', index:'01', desc:'Cream, cheese, and a burn that sneaks up on you.', heat:2, heatLabel:'CREAMY HEAT', price:'$2.49', weight:'130G', shu:'1,200 SHU',
+    bg:'#f7d7e2', ink:'#2a1219', acc:'#e8447a', glow:'#ffc0d6', line:'rgba(42,18,25,.10)', dark:'#1c1013', field:'#e8447a', fieldInk:'#fff6f9' },
+  original: { name:'ORIGINAL', ko:'불닭', index:'02', desc:'The one that started the dare.', heat:4, heatLabel:'HOT', price:'$2.29', weight:'140G', shu:'4,404 SHU',
+    bg:'#141110', ink:'#f5f3f2', acc:'#ec3013', glow:'#ff563c', line:'rgba(245,243,242,.09)', dark:'#141110', field:'#ec3013', fieldInk:'#fff6f4' },
+  quattro: { name:'QUATTRO CHEESE', ko:'치즈', index:'03', desc:'Four cheeses in. Still spicy out.', heat:3, heatLabel:'SPICY', price:'$2.79', weight:'145G', shu:'2,600 SHU',
+    bg:'#f6b526', ink:'#2a1c00', acc:'#d4380d', glow:'#ffd766', line:'rgba(42,28,0,.12)', dark:'#1a1305', field:'#f6b526', fieldInk:'#2a1c00' }
+};
+
+class Component extends DCLogic {
+  state = { sel: ['carbonara', 'original', 'quattro'] };
+
+  componentDidMount() {
+    this.ptr = { x: -9999, y: -9999 };
+    this.st = new Map();
+    this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    this._move = (e) => {
+      this.ptr = { x: e.clientX, y: e.clientY };
+      this.st.forEach((s) => {
+        if (s.drag) { const dx = e.clientX - s.lx; s.lx = e.clientX; s.spin += dx * 0.42; s.dv = dx * 0.42; }
+      });
+    };
+    this._down = (e) => {
+      const el = e.target.closest && e.target.closest('[data-tilt]');
+      if (!el) return;
+      const s = this.slot(el); s.drag = true; s.lx = e.clientX; s.dv = 0;
+      el.style.cursor = 'grabbing';
+      e.preventDefault();
+    };
+    this._up = () => { this.st.forEach((s, el) => { if (s.drag) { s.drag = false; el.style.cursor = 'grab'; } }); };
+
+    window.addEventListener('pointermove', this._move, { passive: true });
+    window.addEventListener('pointerdown', this._down);
+    window.addEventListener('pointerup', this._up);
+    window.addEventListener('pointercancel', this._up);
+
+    this.state.sel.forEach((k, i) => this.applyEnv(i, k));
+    const loop = (t) => { this.frame(t); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener('pointermove', this._move);
+    window.removeEventListener('pointerdown', this._down);
+    window.removeEventListener('pointerup', this._up);
+    window.removeEventListener('pointercancel', this._up);
+  }
+
+  slot(el) {
+    if (!this.st.has(el)) this.st.set(el, { rx: 0, ry: 0, vx: 0, vy: 0, spin: 0, dv: 0, drag: false, lx: 0 });
+    return this.st.get(el);
+  }
+
+  frame(t) {
+    document.querySelectorAll('[data-tilt]').forEach((el) => {
+      const s = this.slot(el);
+      const stage = el.closest('[data-stage]');
+      let tx = 0, ty = 0;
+      if (stage && !this.reduced) {
+        const r = stage.getBoundingClientRect();
+        const p = this.ptr;
+        if (p.x >= r.left && p.x <= r.right && p.y >= r.top && p.y <= r.bottom) {
+          tx = ((p.x - (r.left + r.width / 2)) / (r.width / 2)) * 14;
+          ty = -((p.y - (r.top + r.height / 2)) / (r.height / 2)) * 6;
+        }
+      }
+      s.vx += (tx - s.rx) * 0.055; s.vx *= 0.86; s.rx += s.vx;
+      s.vy += (ty - s.ry) * 0.055; s.vy *= 0.86; s.ry += s.vy;
+      if (!s.drag) { s.spin += s.dv; s.dv *= 0.93; s.spin *= 0.965; }
+      const i = parseFloat(el.dataset.tilt) || 0;
+      const base = parseFloat(el.dataset.baseRot) || 0;
+      const fl = this.reduced ? 0 : Math.sin(t / 1500 + i * 1.7) * 11;
+      const ry = s.rx + s.spin;
+      el.style.transform = 'perspective(1500px) translateY(' + fl.toFixed(2) + 'px) rotateX(' + s.ry.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) rotateZ(' + (base + ry * 0.05).toFixed(2) + 'deg)';
+    });
+  }
+
+  applyEnv(i, key) {
+    const f = F[key];
+    const st = document.querySelector('[data-stage="' + i + '"]');
+    if (!st || !f) return;
+    let bg = f.bg, ink = f.ink, acc = f.acc, line = f.line;
+    if (i === 1) { bg = f.dark; ink = '#f5f3f2'; acc = f.glow; line = 'rgba(245,243,242,.09)'; }
+    if (i === 2) { bg = f.field; ink = f.fieldInk; acc = f.fieldInk; line = 'rgba(0,0,0,.14)'; }
+    st.style.setProperty('--e-bg', bg);
+    st.style.setProperty('--e-ink', ink);
+    st.style.setProperty('--e-acc', acc);
+    st.style.setProperty('--e-glow', f.glow);
+    st.style.setProperty('--e-line', line);
+    st.querySelectorAll('[data-pk]').forEach((im) => { im.style.opacity = im.dataset.pk === key ? '1' : '0'; });
+    st.querySelectorAll('[data-chip]').forEach((c) => {
+      const on = c.dataset.chip === key;
+      c.style.background = on ? ink : 'transparent';
+      c.style.color = on ? bg : ink;
+    });
+    st.querySelectorAll('[data-heat]').forEach((b) => {
+      b.style.background = (+b.dataset.heat <= f.heat) ? acc : 'transparent';
+      b.style.borderColor = ink;
+    });
+  }
+
+  set(i, key) {
+    this.setState((s) => { const sel = s.sel.slice(); sel[i] = key; return { sel }; }, () => this.applyEnv(i, key));
+  }
+
+  stageVals(i) {
+    const f = F[this.state.sel[i]];
+    return Object.assign({}, f, {
+      pick: { carbonara: () => this.set(i, 'carbonara'), original: () => this.set(i, 'original'), quattro: () => this.set(i, 'quattro') }
+    });
+  }
+
+  renderVals() {
+    return { s0: this.stageVals(0), s1: this.stageVals(1), s2: this.stageVals(2) };
+  }
+}
+</script>
+</body>
+</html>
