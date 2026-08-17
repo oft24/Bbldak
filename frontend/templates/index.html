@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=15">
-    <script defer src="/js/i18n.js?v=5"></script>
-    <script defer src="/js/app.js?v=19"></script>
+    <link rel="stylesheet" href="/css/style.css?v=16">
+    <script defer src="/js/i18n.js?v=6"></script>
+    <script defer src="/js/app.js?v=20"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -33,16 +33,16 @@
     </div>
 
     <header class="site-header" data-header>
-      <a class="brand" href="#top" aria-label="Inicio de BuldakShop">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
+      <a class="brand" href="#top" aria-label="Inicio de BuldakShop" data-view-toggle="shop">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
         <span></span><span></span><span></span><span class="sr-only">Abrir menú</span>
       </button>
       <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal" data-nav>
-        <a href="#catalog" data-i18n="nav.catalog">Catálogo</a>
-        <a href="#catalog" data-i18n="nav.buy">Comprar</a>
-        <a href="#story" data-i18n="nav.info">Información</a>
-        <a href="#ritual" data-i18n="nav.preparation">Preparación</a>
-        <a href="#refrescos" data-i18n="nav.refrescos">Refrescos</a>
+        <a href="#catalog" data-i18n="nav.catalog" data-view-toggle="shop">Catálogo</a>
+        <a href="#catalog" data-i18n="nav.buy" data-view-toggle="shop">Comprar</a>
+        <a href="#story" data-i18n="nav.info" data-view-toggle="shop">Información</a>
+        <a href="#ritual" data-i18n="nav.preparation" data-view-toggle="shop">Preparación</a>
+        <a href="#refrescos" class="nav-refrescos" data-i18n="nav.refrescos" data-view-toggle="refrescos">Refrescos</a>
       </nav>
       <div class="header-actions">
         <button class="pill pill--soft header-search" type="button" data-open-search>
@@ -64,6 +64,7 @@
     </header>
 
     <main id="main">
+      <div data-shop-view>
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy reveal">
           <p class="eyebrow"><span data-i18n="hero.type" data-product-type>Ramen salteado</span> · No. <span data-number>01</span> · SKU <span data-sku>811140</span></p>
@@ -238,7 +239,14 @@
           </div>
         </div>
       </section>
+      </div>
 
+      <div data-refrescos-view hidden>
+      <div class="refrescos-view-bar reveal">
+        <button type="button" class="refrescos-back" data-view-toggle="shop">
+          <span aria-hidden="true">←</span> <span data-i18n="refrescos.back">Volver a BuldakShop</span>
+        </button>
+      </div>
       <section class="refrescos section-pad" id="refrescos" aria-labelledby="refrescos-title" data-refrescos-section>
         <div class="refrescos-heading reveal">
           <div>
@@ -356,17 +364,18 @@
           {% endfor %}
         </div>
       </section>
+      </div>
 
     </main>
 
     <footer class="site-footer">
       <div>
-        <a class="brand brand--footer" href="#top">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
+        <a class="brand brand--footer" href="#top" data-view-toggle="shop">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
         <p data-i18n="footer.description">Una tienda con la colección del catálogo y una ficha precisa para el sabor seleccionado.</p>
       </div>
       <div class="footer-links">
-        <div><span data-i18n="footer.explore">Explorar</span><a href="#catalog" data-i18n="nav.catalog">Catálogo</a><a href="#story" data-i18n="nav.info">Información</a><a href="#ritual" data-i18n="nav.preparation">Preparación</a></div>
-        <div><span data-i18n="footer.buy">Comprar</span><a href="#catalog" data-i18n="footer.products">Todos los productos</a><a href="#prepared" data-i18n="footer.looks">Cómo queda</a><button type="button" data-open-cart data-i18n="footer.cart">Tu carrito</button><button type="button" data-open-legal data-i18n="footer.terms">Términos y condiciones</button></div>
+        <div><span data-i18n="footer.explore">Explorar</span><a href="#catalog" data-i18n="nav.catalog" data-view-toggle="shop">Catálogo</a><a href="#story" data-i18n="nav.info" data-view-toggle="shop">Información</a><a href="#ritual" data-i18n="nav.preparation" data-view-toggle="shop">Preparación</a><a href="#refrescos" data-i18n="nav.refrescos" data-view-toggle="refrescos">Refrescos</a></div>
+        <div><span data-i18n="footer.buy">Comprar</span><a href="#catalog" data-i18n="footer.products" data-view-toggle="shop">Todos los productos</a><a href="#prepared" data-i18n="footer.looks" data-view-toggle="shop">Cómo queda</a><button type="button" data-open-cart data-i18n="footer.cart">Tu carrito</button><button type="button" data-open-legal data-i18n="footer.terms">Términos y condiciones</button></div>
       </div>
       <p class="disclaimer" data-i18n="footer.disclaimer">BuldakShop es un concepto independiente y no está afiliado, patrocinado ni respaldado por Samyang Foods o la marca Buldak.</p>
     </footer>

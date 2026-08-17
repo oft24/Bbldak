@@ -121,6 +121,9 @@
     toast: document.querySelector("[data-toast]"),
     nav: document.querySelector("[data-nav]"),
     navToggle: document.querySelector("[data-nav-toggle]"),
+    shopView: document.querySelector("[data-shop-view]"),
+    refrescosView: document.querySelector("[data-refrescos-view]"),
+    viewToggles: [...document.querySelectorAll("[data-view-toggle]")],
     catalogFilters: [...document.querySelectorAll("[data-catalog-filter]")],
     catalogCards: [...document.querySelectorAll("[data-catalog-card]")],
     catalogAdds: [...document.querySelectorAll("[data-catalog-add]")],
@@ -158,6 +161,7 @@
     detailProductId: String(products[initialProductIndex].id),
     toastTimer: null,
     cartAnimationTimer: null,
+    currentView: "shop",
     lastCartFocus: null,
     lastOrder: null,
   };
@@ -516,6 +520,7 @@
     state.velocity += carouselDistance(normalized - state.selected) * 0.015;
     setTheme(normalized);
     if (options.scrollTop) {
+      if (dom.refrescosView && state.currentView !== "shop") setView("shop");
       document.querySelector("#top").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
     }
   }
@@ -908,9 +913,34 @@
     document.body.classList.toggle("is-locked", open);
   }
 
+  function setView(view, { scrollTargetId } = {}) {
+    if (!dom.refrescosView) return;
+    const showRefrescos = view === "refrescos";
+    const changed = state.currentView !== view;
+    state.currentView = showRefrescos ? "refrescos" : "shop";
+    dom.shopView.hidden = showRefrescos;
+    dom.refrescosView.hidden = !showRefrescos;
+    dom.viewToggles.forEach((toggle) => {
+      if (toggle.dataset.viewToggle === "refrescos") toggle.classList.toggle("is-active", showRefrescos);
+    });
+
+    const target = scrollTargetId ? document.getElementById(scrollTargetId) : null;
+    if (target) {
+      target.scrollIntoView({ behavior: changed || reducedMotion ? "auto" : "smooth", block: "start" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+    updateHeader();
+  }
+
   function updateHeader() {
     const y = window.scrollY;
     dom.header.classList.toggle("is-scrolled", y > 20);
+    if (state.currentView === "refrescos") {
+      dom.header.classList.remove("force-light");
+      dom.header.classList.add("force-dark");
+      return;
+    }
     const catalog = document.querySelector("#catalog");
     const story = document.querySelector("#story");
     const ritual = document.querySelector("#ritual");
@@ -973,7 +1003,7 @@
   dom.cartScrim.addEventListener("click", () => closeCart());
   document.querySelector("[data-cart-shop]").addEventListener("click", () => {
     closeCart({ restoreFocus: false });
-    document.querySelector("#catalog").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+    setView("shop", { scrollTargetId: "catalog" });
   });
   dom.cartItems.addEventListener("click", (event) => {
     const minus = event.target.closest("[data-cart-minus]");
@@ -1046,6 +1076,16 @@
 
   dom.navToggle.addEventListener("click", () => toggleNavigation());
   dom.nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => toggleNavigation(false)));
+
+  dom.viewToggles.forEach((toggle) => {
+    toggle.addEventListener("click", (event) => {
+      const href = toggle.getAttribute("href");
+      const rawTargetId = href && href.startsWith("#") ? href.slice(1) : null;
+      const targetId = rawTargetId === "top" || rawTargetId === "refrescos" ? null : rawTargetId;
+      event.preventDefault();
+      setView(toggle.dataset.viewToggle, { scrollTargetId: targetId });
+    });
+  });
 
   window.addEventListener("keydown", (event) => {
     const dialogOpen = dom.searchDialog.open || dom.checkoutDialog.open || dom.legalDialog.open;
@@ -1151,8 +1191,8 @@
         }
 
         const shellWidth = refrescoDom.carousel.clientWidth || 360;
-        const radius = clamp(shellWidth * 0.34, 90, 190);
-        const depth = clamp(shellWidth * 0.3, 80, 170);
+        const radius = clamp(shellWidth * 0.36, 110, 230);
+        const depth = clamp(shellWidth * 0.32, 100, 200);
         refrescoDom.cards.forEach((card, index) => {
           const distance = refrescoDistance(index - refrescoState.angle);
           const absoluteDistance = Math.abs(distance);
