@@ -47,7 +47,13 @@
       "catalog.available": "Disponible",
       "catalog.soldOut": "Agotado",
       "catalog.add": "Agregar",
+      "catalog.quantity": "Cantidad de {name}",
+      "catalog.reduce": "Reducir cantidad de {name}",
+      "catalog.increase": "Aumentar cantidad de {name}",
+      "catalog.details": "Ver descripción",
+      "catalog.selected": "Descripción abierta",
       "story.index": "03 — La bolsa seleccionada",
+      "story.profile": "Su perfil.",
       "story.cook": "Cocción",
       "story.portion": "Porción",
       "story.nutrition": "Valores por paquete. La información puede cambiar por mercado; confirma siempre la etiqueta de tu bolsa.",
@@ -73,6 +79,8 @@
       "search.noResults": "Ningún sabor coincide. Prueba “carbonara”, “picante” o “queso”.",
       "cart.title": "Tu carrito",
       "cart.close": "Cerrar",
+      "cart.clear": "Vaciar todo",
+      "cart.cleared": "El carrito quedó vacío.",
       "cart.emptyTitle": "Tu carrito está vacío.",
       "cart.emptyCopy": "Elige cualquier producto del catálogo para agregarlo.",
       "cart.shop": "Ver catálogo",
@@ -164,7 +172,13 @@
       "catalog.available": "Available",
       "catalog.soldOut": "Sold out",
       "catalog.add": "Add",
+      "catalog.quantity": "Quantity of {name}",
+      "catalog.reduce": "Reduce quantity of {name}",
+      "catalog.increase": "Increase quantity of {name}",
+      "catalog.details": "View description",
+      "catalog.selected": "Description open",
       "story.index": "03 — Selected pack",
+      "story.profile": "Flavor profile.",
       "story.cook": "Cook time",
       "story.portion": "Serving",
       "story.nutrition": "Values are per pack. Information may vary by market; always confirm the label on your package.",
@@ -190,6 +204,8 @@
       "search.noResults": "No flavor matched. Try “carbonara”, “spicy” or “cheese”.",
       "cart.title": "Your cart",
       "cart.close": "Close",
+      "cart.clear": "Remove all",
+      "cart.cleared": "Your cart is now empty.",
       "cart.emptyTitle": "Your cart is empty.",
       "cart.emptyCopy": "Choose any catalog product to add it.",
       "cart.shop": "View catalog",
@@ -281,7 +297,13 @@
       "catalog.available": "有货",
       "catalog.soldOut": "售罄",
       "catalog.add": "添加",
+      "catalog.quantity": "{name} 的数量",
+      "catalog.reduce": "减少 {name} 的数量",
+      "catalog.increase": "增加 {name} 的数量",
+      "catalog.details": "查看描述",
+      "catalog.selected": "正在查看",
       "story.index": "03 — 当前选择",
+      "story.profile": "风味档案。",
       "story.cook": "烹饪时间",
       "story.portion": "每份",
       "story.nutrition": "数值以每袋为准。不同市场的信息可能有所不同，请始终核对包装标签。",
@@ -307,6 +329,8 @@
       "search.noResults": "没有匹配的口味。请尝试“carbonara”“辣”或“芝士”。",
       "cart.title": "购物车",
       "cart.close": "关闭",
+      "cart.clear": "清空购物车",
+      "cart.cleared": "购物车已清空。",
       "cart.emptyTitle": "购物车是空的。",
       "cart.emptyCopy": "从商品目录中选择任意商品加入购物车。",
       "cart.shop": "查看商品目录",
@@ -428,6 +452,279 @@
       "811720": "原味火鸡炒年糕",
       "811910": "哈瓦那辣椒青柠味火鸡薯片",
       "811920": "原味火鸡薯片"
+    }
+  };
+
+  const productDetails = {
+    es: {
+      "811140": {
+        description: "Carbonara combina la salsa picante Buldak con un perfil cremoso y sabroso. El queso suaviza el golpe inicial y deja un final cálido y ligeramente dulce.",
+        note: "Cremosa.\nPicor amable."
+      },
+      "811130": {
+        description: "Carbonara cremosa lleva el perfil lácteo todavía más lejos. Es más suave, redonda y untuosa que la Carbonara clásica, sin perder el carácter picante de Buldak.",
+        note: "Más crema.\nMenos filo."
+      },
+      "811200": {
+        description: "Queso mezcla una base salada y reconfortante con el picor característico de Buldak. El resultado es directo, intenso y pensado para quienes quieren que el queso siga presente hasta el final.",
+        note: "Queso primero.\nPicor después."
+      },
+      "811150": {
+        description: "Cuatro quesos ofrece una salsa más densa y profunda que la versión de queso. Su perfil cremoso envuelve los fideos antes de dar paso a un picor medio y persistente.",
+        note: "Cuatro quesos.\nUn final picante."
+      },
+      "811270": {
+        description: "Rosé se inspira en la salsa coreana del mismo nombre: cremosa, ligeramente dulce y con picor equilibrado. Es una opción suave para quienes prefieren una textura sedosa.",
+        note: "Suave.\nSedosa."
+      },
+      "811320": {
+        description: "Dulce y picante equilibra una entrada azucarada con un picor ligero. Su salsa es más accesible que Original y mantiene un acabado sabroso sin resultar pesada.",
+        note: "Dulce al inicio.\nPicante al final."
+      },
+      "811000": {
+        description: "Taco lleva Buldak hacia un perfil inspirado en especias mexicanas. Combina notas tostadas, chile y un acabado sabroso que funciona especialmente bien con ingredientes frescos.",
+        note: "Especiada.\nEstilo taco."
+      },
+      "811340": {
+        description: "Yakisoba toma como referencia los fideos salteados japoneses. Su salsa es dulce, salada y llena de umami, con un picor firme que aparece después del primer bocado.",
+        note: "Dulce y salada.\nMucho umami."
+      },
+      "811220": {
+        description: "Habanero y lima combina un picor alto con una acidez cítrica brillante. La lima refresca el final y hace que el calor se sienta más ligero y directo.",
+        note: "Cítrica.\nPicante."
+      },
+      "811120": {
+        description: "Original es la referencia clásica de Buldak: una salsa espesa, sabrosa y muy picante que cubre cada fideo. El sésamo y el alga tostada completan el acabado.",
+        note: "La clásica.\nSin atajos."
+      },
+      "811210": {
+        description: "Doble picante concentra el perfil de Original en una experiencia mucho más intensa. Está pensada para quienes buscan calor extremo y un picor que permanece después de comer.",
+        note: "Doble intensidad.\nPicor extremo."
+      },
+      "811616": {
+        description: "La versión en tazón grande de Dulce y picante conserva el equilibrio entre dulzor y calor suave, con una presentación práctica para preparar y comer directamente.",
+        note: "Dulce y picante.\nFormato grande."
+      },
+      "811618": {
+        description: "Cuatro quesos en tazón grande reúne una salsa cremosa y profunda con una porción práctica. El queso domina al principio y el picor aparece de forma gradual.",
+        note: "Cuatro quesos.\nTazón grande."
+      },
+      "811622": {
+        description: "Carbonara en tazón grande mantiene el perfil cremoso, sabroso y ligeramente picante de la bolsa rosa, en un formato cómodo para una preparación rápida.",
+        note: "Cremosa.\nLista en su tazón."
+      },
+      "811624": {
+        description: "Original en tazón grande conserva la salsa clásica, intensa y sin caldo de Buldak. Es el mismo perfil de picor directo en una presentación lista para preparar.",
+        note: "Original.\nFormato grande."
+      },
+      "811640": {
+        description: "Rosé en tazón grande combina una salsa sedosa, dulzor moderado y picor suave. El formato amplio permite mezclar la salsa de forma uniforme antes de comer.",
+        note: "Rosé cremoso.\nTazón grande."
+      },
+      "811650": {
+        description: "Los fideos de cristal anchos Rosé cambian el fideo de trigo por una textura ancha, transparente y elástica. La salsa cremosa se adhiere a cada pliegue con un picor equilibrado.",
+        note: "Textura elástica.\nSalsa Rosé."
+      },
+      "811612": {
+        description: "Esta referencia alterna de Original en tazón grande mantiene el sabor clásico, sabroso y muy picante. Cambia el SKU, no el perfil principal del producto.",
+        note: "Mismo perfil.\nSKU alterno."
+      },
+      "811710": {
+        description: "Tteokbokki Carbonara combina pastel de arroz coreano, elástico y denso, con una salsa cremosa de picor moderado. Cada pieza queda cubierta por una capa suave y sabrosa.",
+        note: "Pastel de arroz.\nCarbonara cremosa."
+      },
+      "811720": {
+        description: "Tteokbokki Original lleva la salsa clásica Buldak a pasteles de arroz masticables. El resultado concentra el picor y la textura en bocados cortos e intensos.",
+        note: "Textura firme.\nSalsa original."
+      },
+      "811910": {
+        description: "Las papas fritas Habanero y lima trasladan el perfil cítrico y picante a una botana crujiente. Primero aparece la lima y después sube el calor del habanero.",
+        note: "Crujientes.\nCítricas."
+      },
+      "811920": {
+        description: "Las papas fritas Original convierten el sabor clásico Buldak en una botana crujiente. Mantienen el equilibrio entre notas sabrosas, dulces y un picor directo.",
+        note: "Crujientes.\nSabor original."
+      }
+    },
+    en: {
+      "811140": {
+        description: "Carbonara combines Buldak's spicy sauce with a creamy, savory profile. Cheese softens the first hit and leaves a warm, lightly sweet finish.",
+        note: "Creamy.\nFriendly heat."
+      },
+      "811130": {
+        description: "Cream Carbonara pushes the dairy profile even further. It is smoother, rounder and richer than classic Carbonara while keeping the unmistakable Buldak character.",
+        note: "More cream.\nSofter edges."
+      },
+      "811200": {
+        description: "Cheese blends a salty, comforting base with Buldak's signature heat. It is direct and intense, with cheese flavor that remains present through the finish.",
+        note: "Cheese first.\nHeat follows."
+      },
+      "811150": {
+        description: "Quattro Cheese delivers a thicker, deeper sauce than the standard Cheese flavor. Creaminess coats the noodles before a medium, lasting heat comes through.",
+        note: "Four cheeses.\nOne spicy finish."
+      },
+      "811270": {
+        description: "Rosé is inspired by the Korean sauce of the same name: creamy, gently sweet and balanced in heat. It suits anyone looking for a smoother, silkier bowl.",
+        note: "Smooth.\nSilky."
+      },
+      "811320": {
+        description: "Swicy balances a sweet opening with mild heat. Its sauce is more approachable than Original and keeps a savory finish without feeling heavy.",
+        note: "Sweet first.\nSpicy finish."
+      },
+      "811000": {
+        description: "Taco moves Buldak toward a Mexican-inspired spice profile. Toasted notes and chili create a savory finish that pairs especially well with fresh toppings.",
+        note: "Spiced.\nTaco inspired."
+      },
+      "811340": {
+        description: "Yakisoba takes cues from Japanese stir-fried noodles. The sauce is sweet, savory and rich in umami, followed by firm heat after the first bite.",
+        note: "Sweet and savory.\nDeep umami."
+      },
+      "811220": {
+        description: "Habanero Lime combines high heat with bright citrus acidity. Lime freshens the finish and makes the burn feel lighter and more direct.",
+        note: "Citrusy.\nHot."
+      },
+      "811120": {
+        description: "Original is the classic Buldak benchmark: a thick, savory and very spicy sauce that coats every noodle, finished with sesame and toasted seaweed.",
+        note: "The classic.\nNo shortcuts."
+      },
+      "811210": {
+        description: "2X Spicy concentrates the Original profile into a far more intense experience. It is made for people who want extreme, lingering heat.",
+        note: "Double intensity.\nExtreme heat."
+      },
+      "811616": {
+        description: "Swicy Big Bowl keeps the balance of sweetness and gentle heat in a practical format designed to be prepared and eaten straight from the bowl.",
+        note: "Sweet and spicy.\nBig bowl."
+      },
+      "811618": {
+        description: "Quattro Cheese Big Bowl pairs a deep creamy sauce with a convenient serving. Cheese leads and the Buldak heat builds gradually.",
+        note: "Four cheeses.\nBig bowl."
+      },
+      "811622": {
+        description: "Carbonara Big Bowl preserves the creamy, savory and gently spicy character of the pink pouch in a convenient quick-prep format.",
+        note: "Creamy.\nReady in its bowl."
+      },
+      "811624": {
+        description: "Original Big Bowl keeps the classic intense, brothless Buldak sauce in a ready-to-prepare format with the same direct heat.",
+        note: "Original.\nBig bowl."
+      },
+      "811640": {
+        description: "Rosé Big Bowl combines a silky sauce, moderate sweetness and mild heat. The larger format gives the sauce room to coat the noodles evenly.",
+        note: "Creamy Rosé.\nBig bowl."
+      },
+      "811650": {
+        description: "Rosé Wide Glass Noodle replaces wheat noodles with a wide, translucent and chewy texture. Creamy sauce clings to every fold with balanced heat.",
+        note: "Chewy texture.\nRosé sauce."
+      },
+      "811612": {
+        description: "This alternate Original Big Bowl reference keeps the classic savory and very spicy flavor. The SKU changes, not the product's main profile.",
+        note: "Same profile.\nAlternate SKU."
+      },
+      "811710": {
+        description: "Carbonara Tteokbokki combines dense, chewy Korean rice cakes with a creamy sauce and moderate heat. Every piece is coated in a smooth, savory layer.",
+        note: "Rice cakes.\nCreamy Carbonara."
+      },
+      "811720": {
+        description: "Original Tteokbokki brings classic Buldak sauce to chewy rice cakes, concentrating bold heat and dense texture into short, intense bites.",
+        note: "Firm chew.\nOriginal sauce."
+      },
+      "811910": {
+        description: "Habanero Lime Potato Chips turn the bright, spicy profile into a crisp snack. Lime arrives first, followed by a rising habanero burn.",
+        note: "Crisp.\nCitrusy."
+      },
+      "811920": {
+        description: "Original Potato Chips translate the classic Buldak flavor into a crisp snack, balancing savory and sweet notes with direct heat.",
+        note: "Crisp.\nOriginal flavor."
+      }
+    },
+    zh: {
+      "811140": {
+        description: "奶油味火鸡面将 Buldak 辣酱与浓郁顺滑的奶香结合。芝士缓和入口辣感，并留下温暖、微甜的尾韵。",
+        note: "浓郁奶香。\n柔和辣感。"
+      },
+      "811130": {
+        description: "奶油干酪味火鸡面进一步强化乳香，比经典奶油味更顺滑、更圆润，同时保留鲜明的 Buldak 辣味。",
+        note: "奶香更浓。\n口感更柔。"
+      },
+      "811200": {
+        description: "芝士味火鸡面将咸香芝士与招牌辣味结合。入口直接浓郁，芝士风味一直延续到最后。",
+        note: "芝士在前。\n辣味随后。"
+      },
+      "811150": {
+        description: "芝士联盟火鸡面比普通芝士味更加浓厚，酱汁包裹面条后，中等辣度逐渐出现并持续停留。",
+        note: "多重芝士。\n香辣收尾。"
+      },
+      "811270": {
+        description: "玫瑰奶油味火鸡面采用韩式 Rosé 风格，口感顺滑、微甜，辣度均衡，适合偏爱丝滑酱汁的人。",
+        note: "柔和。\n丝滑。"
+      },
+      "811320": {
+        description: "焦糖甜辣味火鸡面以甜味开场，再带出轻柔辣感。相比原味更容易入口，尾韵依然鲜香。",
+        note: "先甜。\n后辣。"
+      },
+      "811000": {
+        description: "塔可味火鸡面采用墨西哥风格香料方向，烘烤香气与辣椒带来咸香尾韵，搭配新鲜配料尤其合适。",
+        note: "香料丰富。\n塔可风格。"
+      },
+      "811340": {
+        description: "日式炒面味火鸡面借鉴日式炒面风格，酱汁甜咸平衡、鲜味浓郁，第一口后辣度逐渐增强。",
+        note: "甜咸平衡。\n鲜味浓郁。"
+      },
+      "811220": {
+        description: "哈瓦那辣椒青柠味火鸡面把强烈辣感与明亮酸香结合，青柠让尾韵更清爽，也让灼热感更直接。",
+        note: "清新柑橘。\n强烈辣感。"
+      },
+      "811120": {
+        description: "原味火鸡面是 Buldak 的经典基准：浓稠、鲜香且非常辣的酱汁包裹每根面条，并以芝麻和烤海苔收尾。",
+        note: "经典原味。\n毫不妥协。"
+      },
+      "811210": {
+        description: "双倍辣火鸡面将原味浓缩成更强烈的体验，适合追求极致、持久热感的辣味爱好者。",
+        note: "双倍强度。\n极致辣感。"
+      },
+      "811616": {
+        description: "焦糖甜辣味火鸡面大碗装保留甜味与柔和辣感的平衡，可直接在碗中冲泡食用，更加方便。",
+        note: "甜辣平衡。\n大碗装。"
+      },
+      "811618": {
+        description: "芝士联盟火鸡面大碗装将浓郁奶香与方便份量结合，芝士先出现，Buldak 辣味随后逐渐增强。",
+        note: "多重芝士。\n大碗装。"
+      },
+      "811622": {
+        description: "奶油味火鸡面大碗装保留粉色袋装的浓郁、鲜香和柔和辣感，适合快速冲泡享用。",
+        note: "浓郁奶香。\n碗中即食。"
+      },
+      "811624": {
+        description: "原味火鸡面大碗装保留经典无汤辣酱与直接辣感，以方便冲泡的形式呈现。",
+        note: "经典原味。\n大碗装。"
+      },
+      "811640": {
+        description: "玫瑰奶油味火鸡面大碗装结合丝滑酱汁、适度甜味和柔和辣感，宽大碗身便于均匀拌面。",
+        note: "奶香 Rosé。\n大碗装。"
+      },
+      "811650": {
+        description: "玫瑰奶油味宽粉以宽、透明且弹韧的粉条替代小麦面，浓郁酱汁附着在每个褶皱上，辣度均衡。",
+        note: "弹韧口感。\nRosé 酱汁。"
+      },
+      "811612": {
+        description: "这一备用 SKU 的原味火鸡面大碗装依然保持经典鲜香和高辣度，变化的是编号，不是主要风味。",
+        note: "相同风味。\n备用 SKU。"
+      },
+      "811710": {
+        description: "奶油味火鸡炒年糕将弹韧紧实的韩式年糕与浓郁酱汁结合，辣度适中，每块年糕都裹满顺滑咸香。",
+        note: "弹韧年糕。\n奶油酱汁。"
+      },
+      "811720": {
+        description: "原味火鸡炒年糕把经典 Buldak 辣酱带到弹牙年糕上，在短小浓缩的每一口中呈现强烈辣味。",
+        note: "紧实弹牙。\n原味辣酱。"
+      },
+      "811910": {
+        description: "哈瓦那辣椒青柠味火鸡薯片把清新酸辣风味变成酥脆零食，先尝到青柠，随后哈瓦那辣感升高。",
+        note: "酥脆。\n清新酸香。"
+      },
+      "811920": {
+        description: "原味火鸡薯片把经典 Buldak 风味变成酥脆零食，在鲜香、微甜与直接辣感之间取得平衡。",
+        note: "酥脆。\n经典原味。"
+      }
     }
   };
 
@@ -570,5 +867,5 @@
     }
   };
 
-  window.BuldakI18n = Object.freeze({ locales, productNames, productContent });
+  window.BuldakI18n = Object.freeze({ locales, productNames, productDetails, productContent });
 })();

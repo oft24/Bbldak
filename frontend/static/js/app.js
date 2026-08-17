@@ -15,6 +15,30 @@
   });
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
+  const catalogThemes = Object.freeze({
+    "811140": { bgA: "#f5d9e1", bgB: "#fff8f4", glow: "#ffc1d2", ink: "#2b171e", accent: "#b3123f" },
+    "811130": { bgA: "#e9f3f5", bgB: "#fff7f8", glow: "#f6cadb", ink: "#251b20", accent: "#cf527b" },
+    "811200": { bgA: "#f6cf42", bgB: "#fff3b8", glow: "#ffe36a", ink: "#2c2110", accent: "#ce4b17" },
+    "811150": { bgA: "#ee8a24", bgB: "#ffd27b", glow: "#ffb53c", ink: "#2b170e", accent: "#a51c19" },
+    "811270": { bgA: "#f2b6c4", bgB: "#ffe9ed", glow: "#ff92ae", ink: "#351921", accent: "#b72453" },
+    "811320": { bgA: "#d9c0ef", bgB: "#f7eafb", glow: "#d997e7", ink: "#2d1b35", accent: "#9e2878" },
+    "811000": { bgA: "#e95a17", bgB: "#ffb248", glow: "#ff7d26", ink: "#2a130b", accent: "#8e1a13" },
+    "811340": { bgA: "#4b2418", bgB: "#9b4f2d", glow: "#d05a2f", ink: "#fff4ed", accent: "#ff7a35" },
+    "811220": { bgA: "#4f8a2f", bgB: "#dbe75a", glow: "#b7df44", ink: "#14240f", accent: "#df481a" },
+    "811120": { bgA: "#1e1413", bgB: "#5c271d", glow: "#d94620", ink: "#fff4ef", accent: "#ff572e" },
+    "811210": { bgA: "#220f10", bgB: "#8d121c", glow: "#f02b2b", ink: "#fff4f0", accent: "#ff493d" },
+    "811616": { bgA: "#d9c0ef", bgB: "#f7eafb", glow: "#d997e7", ink: "#2d1b35", accent: "#9e2878" },
+    "811618": { bgA: "#ee8a24", bgB: "#ffd27b", glow: "#ffb53c", ink: "#2b170e", accent: "#a51c19" },
+    "811622": { bgA: "#f5d9e1", bgB: "#fff8f4", glow: "#ffc1d2", ink: "#2b171e", accent: "#b3123f" },
+    "811624": { bgA: "#1e1413", bgB: "#5c271d", glow: "#d94620", ink: "#fff4ef", accent: "#ff572e" },
+    "811640": { bgA: "#f2b6c4", bgB: "#ffe9ed", glow: "#ff92ae", ink: "#351921", accent: "#b72453" },
+    "811650": { bgA: "#e7c9e9", bgB: "#fceff5", glow: "#eca9d5", ink: "#311b30", accent: "#a83172" },
+    "811612": { bgA: "#1e1413", bgB: "#5c271d", glow: "#d94620", ink: "#fff4ef", accent: "#ff572e" },
+    "811710": { bgA: "#f5d9e1", bgB: "#fff8f4", glow: "#ffc1d2", ink: "#2b171e", accent: "#b3123f" },
+    "811720": { bgA: "#1e1413", bgB: "#5c271d", glow: "#d94620", ink: "#fff4ef", accent: "#ff572e" },
+    "811910": { bgA: "#6e8f31", bgB: "#d3dc59", glow: "#b8d347", ink: "#17220e", accent: "#df481a" },
+    "811920": { bgA: "#b51f25", bgB: "#ff7950", glow: "#ed3c2e", ink: "#fff8f2", accent: "#ffd15c" }
+  });
 
   const dom = {
     header: document.querySelector("[data-header]"),
@@ -32,6 +56,7 @@
     heatLabel: document.querySelector("[data-heat-label]"),
     quantity: document.querySelector("[data-quantity]"),
     storyTitle: document.querySelector("[data-story-title]"),
+    storySection: document.querySelector("[data-story-section]"),
     storyCopy: document.querySelector("[data-story-copy]"),
     storyImage: document.querySelector("[data-story-image]"),
     shu: document.querySelector("[data-shu]"),
@@ -55,6 +80,7 @@
     cartDrawer: document.querySelector("[data-cart-drawer]"),
     cartScrim: document.querySelector("[data-cart-scrim]"),
     cartItems: document.querySelector("[data-cart-items]"),
+    clearCart: document.querySelector("[data-clear-cart]"),
     cartEmpty: document.querySelector("[data-cart-empty]"),
     subtotal: document.querySelector("[data-subtotal]"),
     shippingMessage: document.querySelector("[data-shipping-message]"),
@@ -77,6 +103,12 @@
     catalogFilters: [...document.querySelectorAll("[data-catalog-filter]")],
     catalogCards: [...document.querySelectorAll("[data-catalog-card]")],
     catalogAdds: [...document.querySelectorAll("[data-catalog-add]")],
+    catalogSteppers: [...document.querySelectorAll("[data-catalog-stepper]")],
+    catalogQuantityOutputs: [...document.querySelectorAll("[data-catalog-quantity]")],
+    catalogQuantityMinuses: [...document.querySelectorAll("[data-catalog-qty-minus]")],
+    catalogQuantityPluses: [...document.querySelectorAll("[data-catalog-qty-plus]")],
+    catalogDetailButtons: [...document.querySelectorAll("[data-catalog-detail]")],
+    catalogDetailLabels: [...document.querySelectorAll("[data-catalog-detail-label]")],
     catalogCategories: [...document.querySelectorAll("[data-catalog-category]")],
     catalogNames: [...document.querySelectorAll("[data-catalog-name]")],
     catalogImages: [...document.querySelectorAll("[data-catalog-image]")],
@@ -101,6 +133,8 @@
     lookTargetY: 0,
     language: loadLanguage(),
     cart: loadCart(),
+    catalogQuantities: new Map(catalogProducts.map((product) => [String(product.id), 1])),
+    detailProductId: String(products[0].id),
     toastTimer: null,
     cartAnimationTimer: null,
     lastCartFocus: null,
@@ -170,6 +204,100 @@
       .replace(/SKU alterno/gi, "备用 SKU");
   }
 
+  function productDetail(product) {
+    return i18n.productDetails?.[state.language]?.[product.id] || {};
+  }
+
+  function storyThemeFor(product) {
+    return catalogThemes[product.id] || {
+      bgA: product.colors?.bg_a || "#f5d9e1",
+      bgB: product.colors?.bg_b || "#fff8f4",
+      glow: product.colors?.glow || "#ffc1d2",
+      ink: product.colors?.ink || "#2b171e",
+      accent: product.colors?.accent || "#b3123f"
+    };
+  }
+
+  function isDarkColor(hex) {
+    const normalized = String(hex).replace("#", "");
+    if (!/^[0-9a-f]{6}$/i.test(normalized)) return false;
+    const [red, green, blue] = [0, 2, 4].map((offset) => Number.parseInt(normalized.slice(offset, offset + 2), 16));
+    return (red * 299 + green * 587 + blue * 114) / 255000 < .48;
+  }
+
+  function setStoryStat(element, value) {
+    const available = value !== undefined && value !== null && String(value).trim() !== "";
+    element.textContent = available ? value : "—";
+    element.closest("div")?.classList.toggle("is-unavailable", !available);
+  }
+
+  function updateCatalogDetailButtons() {
+    dom.catalogDetailButtons.forEach((button) => {
+      const active = button.dataset.catalogDetail === state.detailProductId;
+      button.setAttribute("aria-pressed", String(active));
+      button.closest("[data-catalog-card]")?.classList.toggle("is-detail-selected", active);
+    });
+    dom.catalogDetailLabels.forEach((label) => {
+      const active = label.dataset.catalogDetailLabel === state.detailProductId;
+      label.textContent = t(active ? "catalog.selected" : "catalog.details");
+    });
+  }
+
+  function renderStoryById(id) {
+    const baseProduct = productById.get(String(id));
+    if (!baseProduct) return;
+    const product = localizedProduct(baseProduct);
+    const detail = productDetail(product);
+    const nameEnding = state.language === "zh" ? "。" : ".";
+    const title = Array.isArray(product.story_title)
+      ? product.story_title
+      : [`${product.name}${nameEnding}`, t("story.profile")];
+    const theme = storyThemeFor(product);
+
+    dom.storySection.dataset.detailId = String(product.id);
+    dom.storySection.style.setProperty("--detail-bg-a", theme.bgA);
+    dom.storySection.style.setProperty("--detail-bg-b", theme.bgB);
+    dom.storySection.style.setProperty("--detail-glow", theme.glow);
+    dom.storySection.style.setProperty("--detail-ink", theme.ink);
+    dom.storySection.style.setProperty("--detail-accent", theme.accent);
+    dom.storySection.classList.toggle("is-dark", isDarkColor(theme.bgA));
+    dom.storySection.classList.remove("is-changing");
+    requestAnimationFrame(() => dom.storySection.classList.add("is-changing"));
+
+    dom.storyTitle.innerHTML = title.map(escapeHtml).join("<br>");
+    dom.storyCopy.textContent = product.story || detail.description || product.description || "";
+    dom.storyImage.src = product.image;
+    dom.storyImage.alt = state.language === "zh"
+      ? `Buldak ${product.name} 包装`
+      : state.language === "en"
+        ? `Buldak ${product.name} pack`
+        : `Paquete Buldak ${product.name}`;
+    setStoryStat(dom.shu, product.shu);
+    setStoryStat(dom.kcal, product.kcal);
+    setStoryStat(dom.cookTime, product.cook_time);
+    setStoryStat(dom.storyWeight, translateWeight(product.weight).split(" · ")[0]);
+    dom.storyNote.innerHTML = escapeHtml(product.story_note || detail.note || product.name).replace("\n", "<br>");
+    dom.nutritionSource.href = product.nutrition_source_url || product.source_url || "#";
+    state.detailProductId = String(product.id);
+    document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
+    updateCatalogDetailButtons();
+    updateHeader();
+  }
+
+  function showProductDetail(id) {
+    renderStoryById(id);
+    dom.storySection.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    window.setTimeout(() => dom.storyTitle.focus({ preventScroll: true }), reducedMotion ? 0 : 650);
+  }
+
+  function changeCatalogQuantity(id, delta) {
+    id = String(id);
+    const next = clamp((state.catalogQuantities.get(id) || 1) + delta, 1, 20);
+    state.catalogQuantities.set(id, next);
+    const output = dom.catalogQuantityOutputs.find((element) => element.dataset.catalogQuantity === id);
+    if (output) output.textContent = String(next);
+  }
+
   function applyLanguage(language, { persist = true } = {}) {
     state.language = ["es", "en", "zh"].includes(language) ? language : "es";
     root.lang = state.language === "zh" ? "zh-CN" : state.language;
@@ -221,6 +349,18 @@
       const product = productById.get(button.dataset.catalogAdd);
       button.textContent = t(product.is_available === false ? "catalog.soldOut" : "catalog.add");
     });
+    dom.catalogSteppers.forEach((stepper) => {
+      const product = localizedProduct(productById.get(stepper.dataset.catalogStepper));
+      stepper.setAttribute("aria-label", t("catalog.quantity", { name: product.name }));
+    });
+    dom.catalogQuantityMinuses.forEach((button) => {
+      const product = localizedProduct(productById.get(button.dataset.catalogQtyMinus));
+      button.setAttribute("aria-label", t("catalog.reduce", { name: product.name }));
+    });
+    dom.catalogQuantityPluses.forEach((button) => {
+      const product = localizedProduct(productById.get(button.dataset.catalogQtyPlus));
+      button.setAttribute("aria-label", t("catalog.increase", { name: product.name }));
+    });
     dom.searchResults.forEach((result, index) => {
       const product = localizedProduct(products[index]);
       const name = result.querySelector("strong");
@@ -251,7 +391,8 @@
       button.textContent = suggestions[index][1];
     });
 
-    setTheme(state.selected);
+    setTheme(state.selected, { syncDetail: false });
+    renderStoryById(state.detailProductId);
     renderCart({ animate: false });
     filterSearch(dom.searchInput.value);
     if (state.lastOrder) {
@@ -272,7 +413,7 @@
     return rounded + carouselDistance(index - current);
   }
 
-  function setTheme(index) {
+  function setTheme(index, { syncDetail = true } = {}) {
     const baseProduct = products[index];
     const product = localizedProduct(baseProduct);
     state.selected = index;
@@ -293,20 +434,6 @@
     dom.weight.textContent = product.weight;
     dom.heatFill.style.width = `${product.heat}%`;
     dom.heatLabel.textContent = product.heat_label;
-    dom.storyTitle.innerHTML = product.story_title.join("<br>");
-    dom.storyCopy.textContent = product.story;
-    dom.storyImage.src = product.image;
-    dom.storyImage.alt = state.language === "zh"
-      ? `Buldak ${product.name} 包装`
-      : state.language === "en"
-        ? `Buldak ${product.name} pack`
-        : `Paquete Buldak ${product.name}`;
-    dom.shu.textContent = product.shu;
-    dom.kcal.textContent = product.kcal;
-    dom.cookTime.textContent = product.cook_time;
-    dom.storyWeight.textContent = product.weight.split(" · ")[0];
-    dom.storyNote.innerHTML = product.story_note.replace("\n", "<br>");
-    dom.nutritionSource.href = product.nutrition_source_url;
     dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
     dom.directionsIntro.textContent = product.directions_intro;
     dom.directionTitles.forEach((element, directionIndex) => {
@@ -338,6 +465,7 @@
       tab.setAttribute("aria-pressed", String(active));
     });
     dom.lines.forEach((line, lineIndex) => line.classList.toggle("is-active", lineIndex === index));
+    if (syncDetail) renderStoryById(baseProduct.id);
   }
 
   function goTo(index, options = {}) {
@@ -535,6 +663,14 @@
     renderCart();
   }
 
+  function clearCart() {
+    if (state.cart.length === 0) return;
+    state.cart = [];
+    saveCart();
+    renderCart();
+    showToast(t("cart.cleared"));
+  }
+
   function renderCart({ animate = true, highlightId = null } = {}) {
     const count = cartCount();
     dom.cartCount.textContent = String(count);
@@ -545,6 +681,7 @@
     }, 0);
     dom.subtotal.textContent = `$${subtotal.toFixed(2)}`;
     dom.checkoutButton.disabled = count === 0;
+    dom.clearCart.hidden = count === 0;
     dom.cartEmpty.classList.toggle("is-visible", count === 0);
     dom.cartItems.hidden = count === 0;
     dom.shippingMessage.textContent = count === 0
@@ -729,10 +866,11 @@
     const footer = document.querySelector(".site-footer");
     const headerLine = y + 45;
     const overCatalog = headerLine >= catalog.offsetTop && headerLine < story.offsetTop;
+    const overStory = headerLine >= story.offsetTop && headerLine < ritual.offsetTop;
     const overPrepared = headerLine >= prepared.offsetTop && headerLine < footer.offsetTop;
     const overFooter = headerLine >= footer.offsetTop;
-    dom.header.classList.toggle("force-dark", overPrepared);
-    dom.header.classList.toggle("force-light", overCatalog || overFooter || (headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop));
+    dom.header.classList.toggle("force-dark", overPrepared || (overStory && !story.classList.contains("is-dark")));
+    dom.header.classList.toggle("force-light", overCatalog || overFooter || (overStory && story.classList.contains("is-dark")) || (headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop));
   }
 
   dom.carousel.addEventListener("pointerdown", onPointerDown);
@@ -779,6 +917,7 @@
 
   document.querySelectorAll("[data-open-cart]").forEach((button) => button.addEventListener("click", openCart));
   document.querySelector("[data-close-cart]").addEventListener("click", () => closeCart());
+  dom.clearCart.addEventListener("click", clearCart);
   dom.cartScrim.addEventListener("click", () => closeCart());
   document.querySelector("[data-cart-shop]").addEventListener("click", () => {
     closeCart({ restoreFocus: false });
@@ -818,7 +957,19 @@
     button.addEventListener("click", () => setCatalogFilter(button.dataset.catalogFilter));
   });
   dom.catalogAdds.forEach((button) => {
-    button.addEventListener("click", (event) => addToCart(button.dataset.catalogAdd, 1, event.currentTarget));
+    button.addEventListener("click", (event) => {
+      const id = button.dataset.catalogAdd;
+      addToCart(id, state.catalogQuantities.get(id) || 1, event.currentTarget);
+    });
+  });
+  dom.catalogQuantityMinuses.forEach((button) => {
+    button.addEventListener("click", () => changeCatalogQuantity(button.dataset.catalogQtyMinus, -1));
+  });
+  dom.catalogQuantityPluses.forEach((button) => {
+    button.addEventListener("click", () => changeCatalogQuantity(button.dataset.catalogQtyPlus, 1));
+  });
+  dom.catalogDetailButtons.forEach((button) => {
+    button.addEventListener("click", () => showProductDetail(button.dataset.catalogDetail));
   });
 
   dom.language.addEventListener("change", () => applyLanguage(dom.language.value));

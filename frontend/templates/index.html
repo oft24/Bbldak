@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=9">
-    <script defer src="/js/i18n.js?v=2"></script>
-    <script defer src="/js/app.js?v=12"></script>
+    <link rel="stylesheet" href="/css/style.css?v=10">
+    <script defer src="/js/i18n.js?v=3"></script>
+    <script defer src="/js/app.js?v=14"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -160,21 +160,31 @@
                 </div>
                 <div class="catalog-card__actions">
                   <span class="catalog-card__price">{{ item.price_label }}</span>
-                  <button type="button" data-catalog-add="{{ item.id }}"{% if not item.is_available %} disabled{% endif %}>
-                    {{ 'Agotado' if not item.is_available else 'Agregar' }}
-                  </button>
+                  <div class="catalog-card__buy">
+                    <div class="catalog-stepper" data-catalog-stepper="{{ item.id }}" aria-label="Cantidad de {{ item.name }}">
+                      <button type="button" data-catalog-qty-minus="{{ item.id }}" aria-label="Reducir cantidad de {{ item.name }}"{% if not item.is_available %} disabled{% endif %}>−</button>
+                      <output data-catalog-quantity="{{ item.id }}">1</output>
+                      <button type="button" data-catalog-qty-plus="{{ item.id }}" aria-label="Aumentar cantidad de {{ item.name }}"{% if not item.is_available %} disabled{% endif %}>+</button>
+                    </div>
+                    <button class="catalog-add" type="button" data-catalog-add="{{ item.id }}"{% if not item.is_available %} disabled{% endif %}>
+                      {{ 'Agotado' if not item.is_available else 'Agregar' }}
+                    </button>
+                  </div>
                 </div>
+                <button class="catalog-card__detail" type="button" data-catalog-detail="{{ item.id }}" aria-pressed="false">
+                  <span data-catalog-detail-label="{{ item.id }}">Ver descripción</span><span aria-hidden="true">↓</span>
+                </button>
               </div>
             </article>
           {% endfor %}
         </div>
       </section>
 
-      <section class="story section-pad" id="story" aria-labelledby="story-title">
+      <section class="story section-pad" id="story" aria-labelledby="story-title" data-story-section data-detail-id="811140">
         <div class="section-index reveal" data-i18n="story.index">03 — La bolsa seleccionada</div>
         <div class="story-grid">
           <div class="story-copy reveal">
-            <h2 id="story-title" data-story-title>Cremosa.<br>Picante.<br>Muy Carbonara.</h2>
+            <h2 id="story-title" data-story-title tabindex="-1">Cremosa.<br>Picante.<br>Muy Carbonara.</h2>
             <p data-story-copy>La bolsa rosa mezcla la salsa Buldak con un polvo de queso y crema. Primero llega la mozzarella y la mantequilla; después aparecen el chile, el ajo y la pimienta negra.</p>
             <div class="stat-row">
               <div><strong data-shu>2,600</strong><span>Scoville</span></div>
@@ -267,7 +277,10 @@
     <div class="cart-scrim" data-cart-scrim></div>
     <aside class="cart-drawer" data-cart-drawer aria-labelledby="cart-title" aria-hidden="true">
       <div class="cart-head">
-        <h2 id="cart-title"><span data-i18n="cart.title">Tu carrito</span> <span data-cart-title-count>0</span></h2>
+        <div class="cart-head__title">
+          <h2 id="cart-title"><span data-i18n="cart.title">Tu carrito</span> <span data-cart-title-count>0</span></h2>
+          <button class="clear-cart" type="button" data-clear-cart data-i18n="cart.clear" hidden>Vaciar todo</button>
+        </div>
         <button class="dialog-close" type="button" data-close-cart><span data-i18n="cart.close">Cerrar</span> <span aria-hidden="true">×</span></button>
       </div>
       <div class="cart-body" data-cart-items></div>
