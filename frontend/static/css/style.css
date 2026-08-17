@@ -472,6 +472,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   display: flex;
   align-items: center;
   gap: 6px;
+  max-width: calc(100vw - 32px);
   transform: translateX(-50%);
 }
 
@@ -486,7 +487,8 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 }
 
 .circle-button:hover { background: color-mix(in srgb, white 80%, transparent); transform: scale(1.07); }
-.flavor-tabs { display: flex; gap: 3px; padding: 0 6px; }
+.flavor-tabs { max-width: min(64vw, 880px); display: flex; gap: 3px; padding: 0 6px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; }
+.flavor-tabs::-webkit-scrollbar { display: none; }
 
 .flavor-tab {
   min-height: 38px;
@@ -496,11 +498,12 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   font-size: clamp(10px, .9vw, 12px);
   font-weight: 700;
   white-space: nowrap;
+  flex: 0 0 auto;
   background: transparent;
   cursor: pointer;
 }
 
-.flavor-tab.is-active { background: color-mix(in srgb, white 56%, transparent); }
+.flavor-tab.is-active { color: var(--bg-b); background: var(--ink); box-shadow: 0 7px 20px color-mix(in srgb, var(--ink) 18%, transparent); }
 .scroll-cue { position: absolute; bottom: 40px; left: clamp(20px, 3.2vw, 52px); margin: 0; color: var(--soft); font-size: 9px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
 
 .section-pad { position: relative; padding: clamp(84px, 11vw, 168px) clamp(22px, 5vw, 80px); }

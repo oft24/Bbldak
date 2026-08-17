@@ -7,12 +7,8 @@
   const i18n = window.BuldakI18n;
   if (!i18n?.locales) return;
   const payload = JSON.parse(productData.textContent);
-  const products = payload.featured;
+  const featuredProducts = payload.featured;
   const catalogProducts = payload.catalog;
-  const productById = new Map(catalogProducts.map((product) => [product.id, product]));
-  products.forEach((product) => {
-    productById.set(product.id, { ...productById.get(product.id), ...product });
-  });
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
   const catalogThemes = Object.freeze({
@@ -39,6 +35,18 @@
     "811910": { bgA: "#6e8f31", bgB: "#d3dc59", glow: "#b8d347", ink: "#17220e", accent: "#df481a" },
     "811920": { bgA: "#b51f25", bgB: "#ff7950", glow: "#ed3c2e", ink: "#fff8f2", accent: "#ffd15c" }
   });
+  const featuredById = new Map(featuredProducts.map((product) => [String(product.id), product]));
+  const products = catalogProducts.map((catalogProduct, index) => ({
+    number: String(index + 1).padStart(2, "0"),
+    description: "",
+    heat: 0,
+    heat_label: "—",
+    ...catalogProduct,
+    ...(featuredById.get(String(catalogProduct.id)) || {}),
+    id: String(catalogProduct.id),
+    sku: String(catalogProduct.sku)
+  }));
+  const productById = new Map(products.map((product) => [product.id, product]));
 
   const dom = {
     header: document.querySelector("[data-header]"),
@@ -46,6 +54,7 @@
     cards: [...document.querySelectorAll("[data-card]")],
     tabs: [...document.querySelectorAll("[data-select]")],
     lines: [...document.querySelectorAll("[data-flavor-line]")],
+    productType: document.querySelector("[data-product-type]"),
     number: document.querySelector("[data-number]"),
     sku: document.querySelector("[data-sku]"),
     name: document.querySelector("[data-name]"),
@@ -55,6 +64,7 @@
     heatFill: document.querySelector("[data-heat-fill]"),
     heatLabel: document.querySelector("[data-heat-label]"),
     quantity: document.querySelector("[data-quantity]"),
+    addSelected: document.querySelector("[data-add-selected]"),
     storyTitle: document.querySelector("[data-story-title]"),
     storySection: document.querySelector("[data-story-section]"),
     storyCopy: document.querySelector("[data-story-copy]"),
@@ -366,7 +376,11 @@
       const name = result.querySelector("strong");
       const detail = result.querySelector("small");
       if (name) name.textContent = product.name;
-      if (detail) detail.textContent = `${product.heat_label} · ${product.price_label}`;
+      if (detail) {
+        detail.textContent = product.heat_label && product.heat_label !== "—"
+          ? `${product.heat_label} · ${product.price_label}`
+          : `${t(`category.${product.category}`)} · ${product.price_label}`;
+      }
     });
     dom.cards.forEach((card, index) => {
       const product = localizedProduct(products[index]);
@@ -416,42 +430,53 @@
   function setTheme(index, { syncDetail = true } = {}) {
     const baseProduct = products[index];
     const product = localizedProduct(baseProduct);
+    const detail = productDetail(product);
+    const theme = storyThemeFor(product);
     state.selected = index;
-    root.style.setProperty("--bg-a", baseProduct.colors.bg_a);
-    root.style.setProperty("--bg-b", baseProduct.colors.bg_b);
-    root.style.setProperty("--glow", baseProduct.colors.glow);
-    root.style.setProperty("--ink", baseProduct.colors.ink);
-    root.style.setProperty("--accent", baseProduct.colors.accent);
+    root.style.setProperty("--bg-a", theme.bgA);
+    root.style.setProperty("--bg-b", theme.bgB);
+    root.style.setProperty("--glow", theme.glow);
+    root.style.setProperty("--ink", theme.ink);
+    root.style.setProperty("--accent", theme.accent);
 
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute("content", product.colors.bg_a);
+    if (themeMeta) themeMeta.setAttribute("content", theme.bgA);
 
+    dom.productType.textContent = product.category === "bags" ? t("hero.type") : t(`category.${product.category}`);
     dom.number.textContent = product.number;
     dom.sku.textContent = product.sku;
     dom.name.textContent = product.name;
-    dom.description.textContent = product.description;
+    dom.description.textContent = product.description || detail.description || "";
     dom.price.textContent = product.price_label;
-    dom.weight.textContent = product.weight;
-    dom.heatFill.style.width = `${product.heat}%`;
-    dom.heatLabel.textContent = product.heat_label;
-    dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
-    dom.directionsIntro.textContent = product.directions_intro;
-    dom.directionTitles.forEach((element, directionIndex) => {
-      element.textContent = product.directions[directionIndex].title;
-    });
-    dom.directionTexts.forEach((element, directionIndex) => {
-      element.textContent = product.directions[directionIndex].text;
-    });
+    dom.weight.textContent = translateWeight(product.weight);
+    dom.heatFill.style.width = `${product.heat || 0}%`;
+    dom.heatLabel.textContent = product.heat_label || "—";
+    dom.addSelected.disabled = product.is_available === false;
+    const addLabel = dom.addSelected.querySelector("[data-i18n]");
+    if (addLabel) addLabel.textContent = t(product.is_available === false ? "catalog.soldOut" : "hero.add");
 
-    dom.preparedName.textContent = product.name;
-    dom.preparedImage.src = product.prepared_image;
-    dom.preparedImage.alt = product.prepared_alt;
-    dom.pairingTitles.forEach((element, pairingIndex) => {
-      element.textContent = product.recommendations[pairingIndex].title;
-    });
-    dom.pairingTexts.forEach((element, pairingIndex) => {
-      element.textContent = product.recommendations[pairingIndex].text;
-    });
+    if (Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length) {
+      dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
+      dom.directionsIntro.textContent = product.directions_intro;
+      dom.directionTitles.forEach((element, directionIndex) => {
+        element.textContent = product.directions[directionIndex].title;
+      });
+      dom.directionTexts.forEach((element, directionIndex) => {
+        element.textContent = product.directions[directionIndex].text;
+      });
+    }
+
+    if (product.prepared_image && Array.isArray(product.recommendations)) {
+      dom.preparedName.textContent = product.name;
+      dom.preparedImage.src = product.prepared_image;
+      dom.preparedImage.alt = product.prepared_alt;
+      dom.pairingTitles.forEach((element, pairingIndex) => {
+        element.textContent = product.recommendations[pairingIndex].title;
+      });
+      dom.pairingTexts.forEach((element, pairingIndex) => {
+        element.textContent = product.recommendations[pairingIndex].text;
+      });
+    }
     document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
 
     dom.cards.forEach((card, cardIndex) => {
@@ -464,6 +489,12 @@
       tab.classList.toggle("is-active", active);
       tab.setAttribute("aria-pressed", String(active));
     });
+    const activeTab = dom.tabs[index];
+    if (activeTab) {
+      const tabRail = activeTab.parentElement;
+      const left = activeTab.offsetLeft - (tabRail.clientWidth - activeTab.offsetWidth) / 2;
+      tabRail.scrollTo({ left, behavior: reducedMotion ? "auto" : "smooth" });
+    }
     dom.lines.forEach((line, lineIndex) => line.classList.toggle("is-active", lineIndex === index));
     if (syncDetail) renderStoryById(baseProduct.id);
   }
@@ -500,19 +531,24 @@
     state.lookY += (state.lookTargetY - state.lookY) * 0.09;
     dom.cards.forEach((card, index) => {
       const distance = carouselDistance(index - state.angle);
-      const theta = distance * ((Math.PI * 2) / products.length);
+      const absoluteDistance = Math.abs(distance);
+      const theta = clamp(distance, -4, 4) * 0.52;
       const x = Math.sin(theta) * radius;
       const z = (Math.cos(theta) - 1) * depth;
       const proximity = clamp(1 + z / (depth * 2.8), 0, 1);
+      const visibility = clamp(1 - Math.max(0, absoluteDistance - 2) * 0.42, 0, 1);
       const scale = 0.68 + proximity * 0.32;
       const lookStrength = Math.pow(proximity, 8);
       const rotationY = distance * -24 + state.lookX * 14 * lookStrength;
       const rotationX = state.lookY * -8.5 * lookStrength;
       const float = reducedMotion ? 0 : Math.sin(performance.now() / 2100 + index * 2.1) * 5 * proximity;
       card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) rotateX(${rotationX.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
-      card.style.opacity = String(0.36 + proximity * 0.64);
-      card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 4).toFixed(2)}px)`;
+      card.style.opacity = String((0.22 + proximity * 0.78) * visibility);
+      card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 5).toFixed(2)}px)`;
       card.style.zIndex = String(1000 + Math.round(z));
+      card.style.pointerEvents = absoluteDistance <= 2.2 ? "auto" : "none";
+      card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
+      card.setAttribute("aria-hidden", String(absoluteDistance > 3.25));
     });
 
     requestAnimationFrame(drawCarousel);
@@ -760,7 +796,11 @@
     let visible = 0;
     dom.searchResults.forEach((result, index) => {
       const product = localizedProduct(products[index]);
-      const haystack = `${result.dataset.keywords} ${product.name} ${product.tagline} ${product.description} ${product.story}`.toLowerCase();
+      const detail = productDetail(product);
+      const haystack = [result.dataset.keywords, product.name, product.tagline, product.description, product.story, detail.description]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
       const matches = terms.length === 0 || terms.every((term) => haystack.includes(term));
       result.hidden = !matches;
       if (matches) visible += 1;

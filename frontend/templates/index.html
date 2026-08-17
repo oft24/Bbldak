@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=10">
+    <link rel="stylesheet" href="/css/style.css?v=11">
     <script defer src="/js/i18n.js?v=3"></script>
-    <script defer src="/js/app.js?v=14"></script>
+    <script defer src="/js/app.js?v=15"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -65,7 +65,7 @@
     <main id="main">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy reveal">
-          <p class="eyebrow"><span data-i18n="hero.type">Ramen salteado</span> · No. <span data-number>01</span> · SKU <span data-sku>811140</span></p>
+          <p class="eyebrow"><span data-i18n="hero.type" data-product-type>Ramen salteado</span> · No. <span data-number>01</span> · SKU <span data-sku>811140</span></p>
           <div class="hero-copy__content">
             <h1 id="hero-title" data-name>Carbonara</h1>
             <p data-description>Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.</p>
@@ -86,7 +86,7 @@
         <div class="carousel-shell" data-carousel aria-label="Selector de sabores Buldak" data-i18n-aria="hero.carousel">
           <div class="carousel-glow" aria-hidden="true"></div>
           <div class="carousel-stage">
-            {% for product in products %}
+            {% for product in catalog_products %}
               <button
                 class="product-pack{% if loop.first %} is-active{% endif %}"
                 type="button"
@@ -122,7 +122,7 @@
         <div class="flavor-controls" aria-label="Elegir un sabor" data-i18n-aria="hero.chooseFlavor">
           <button class="circle-button" type="button" data-previous aria-label="Sabor anterior" data-i18n-aria="hero.previous">←</button>
           <div class="flavor-tabs">
-            {% for product in products %}
+            {% for product in catalog_products %}
               <button class="flavor-tab{% if loop.first %} is-active{% endif %}" type="button" data-select="{{ loop.index0 }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ product.name }}</button>
             {% endfor %}
           </div>
@@ -262,10 +262,10 @@
         <input id="search-input" type="search" autocomplete="off" placeholder="Prueba “queso” o “picante”" data-search-input data-i18n-placeholder="search.placeholder">
         <div class="search-suggestions"><span data-i18n="search.try">Prueba</span><button type="button" data-suggestion="carbonara">carbonara</button><button type="button" data-suggestion="spicy">spicy</button><button type="button" data-suggestion="cheese">cheese</button></div>
         <div class="search-results" data-search-results>
-          {% for product in products %}
-            <button class="search-result" type="button" data-search-result="{{ loop.index0 }}" data-keywords="{{ product.keywords }}">
+          {% for product in catalog_products %}
+            <button class="search-result" type="button" data-search-result="{{ loop.index0 }}" data-search-product="{{ product.id }}" data-keywords="{{ product.name }} {{ product.category }} {{ product.category_label }}">
               <img src="{{ product.image }}" alt="">
-              <span><strong>{{ product.name }}</strong><small>{{ product.heat_label }} · {{ product.price_label }}</small></span>
+              <span><strong>{{ product.name }}</strong><small>{{ product.category_label }} · {{ product.price_label }}</small></span>
               <b aria-hidden="true">↗</b>
             </button>
           {% endfor %}
