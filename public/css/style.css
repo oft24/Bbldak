@@ -367,6 +367,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .price-row { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .price-row > div:first-child { display: flex; flex-direction: column; gap: 7px; }
 .price { font-size: clamp(30px, 2.7vw, 40px); line-height: 1; letter-spacing: -.055em; }
+.price--pending { max-width: 170px; font-size: clamp(15px, 1.5vw, 20px) !important; line-height: 1.08; letter-spacing: -.025em !important; }
 
 .stepper { display: flex; align-items: center; gap: 1px; padding: 4px; border-radius: 999px; background: color-mix(in srgb, white 48%, transparent); }
 .stepper button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: transparent; font-size: 18px; cursor: pointer; }
@@ -442,6 +443,36 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 
 .section-pad { position: relative; padding: clamp(84px, 11vw, 168px) clamp(22px, 5vw, 80px); }
 .section-pad h2 { margin: 0; font-size: clamp(42px, 6vw, 88px); line-height: .94; letter-spacing: -.065em; }
+
+.catalog { z-index: 2; color: #f7efed; background: #171314; }
+.catalog .section-index { color: #fb775d; }
+.catalog-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); gap: 44px; align-items: end; }
+.catalog-heading h2 { margin-top: 20px; font-size: clamp(48px, 7vw, 106px); }
+.catalog-heading h2 span { color: #fb775d; }
+.catalog-heading > p { margin: 0 0 8px; color: #aa9da0; font-size: 14px; line-height: 1.65; }
+.catalog-filters { margin-top: 54px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.catalog-filters::-webkit-scrollbar { display: none; }
+.catalog-filter { min-height: 42px; padding: 0 18px; flex: 0 0 auto; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; color: #d8ced0; background: transparent; font-size: 11px; font-weight: 750; cursor: pointer; transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease; }
+.catalog-filter:hover, .catalog-filter.is-active { border-color: #fb775d; color: #171314; background: #fb775d; }
+.catalog-grid { margin-top: 30px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.catalog-card { min-width: 0; overflow: hidden; border-radius: 22px; color: #20191b; background: #f9f5f2; box-shadow: 0 16px 40px rgba(0, 0, 0, .18); transition: transform 360ms var(--ease), box-shadow 360ms var(--ease); }
+.catalog-card[hidden] { display: none; }
+.catalog-card:hover { transform: translateY(-7px); box-shadow: 0 28px 70px rgba(0, 0, 0, .28); }
+.catalog-card__visual { position: relative; height: clamp(210px, 22vw, 320px); display: grid; place-items: center; overflow: hidden; background: linear-gradient(155deg, #fff, #efe8e6); }
+.catalog-card__visual::after { content: ""; position: absolute; inset: auto 14% 5%; height: 18%; border-radius: 50%; background: rgba(55, 34, 38, .16); filter: blur(18px); }
+.catalog-card__visual > span { position: absolute; top: 15px; left: 15px; z-index: 2; padding: 7px 10px; border-radius: 999px; color: #514649; background: rgba(255, 255, 255, .78); backdrop-filter: blur(8px); font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.catalog-card__visual img { position: relative; z-index: 1; width: 88%; height: 86%; object-fit: contain; filter: drop-shadow(0 20px 22px rgba(0, 0, 0, .2)); transition: transform 430ms var(--ease); }
+.catalog-card:hover .catalog-card__visual img { transform: scale(1.045) rotate(-1deg); }
+.catalog-card__body { padding: 20px 20px 18px; }
+.catalog-card__sku { color: #9d2441; font-size: 9px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+.catalog-card h3 { min-height: 2.25em; margin: 9px 0 0; font-size: clamp(18px, 1.6vw, 25px); line-height: 1.08; letter-spacing: -.04em; }
+.catalog-card__body > p { margin: 10px 0 0; color: #7d7174; font-size: 11px; }
+.catalog-card__footer { min-height: 44px; margin-top: 18px; padding-top: 14px; display: flex; align-items: start; justify-content: space-between; gap: 12px; border-top: 1px solid #e6dcde; }
+.catalog-card__footer strong, .catalog-card__footer a { font-size: 9px; line-height: 1.35; }
+.catalog-card__footer strong { color: #42724d; }
+.catalog-card__footer strong.is-sold-out { color: #b3123f; }
+.catalog-card__footer a { flex: 0 0 auto; color: #655a5d; text-underline-offset: 3px; }
+.catalog-card__price { margin-top: 12px; display: block; color: #20191b; font-size: 12px; font-weight: 800; }
 
 .story { min-height: 105vh; display: flex; flex-direction: column; justify-content: center; }
 .story > .section-index { margin-bottom: 38px; }
@@ -675,6 +706,7 @@ dialog::backdrop { background: rgba(20, 17, 18, .28); backdrop-filter: blur(8px)
   .story-visual { min-height: 500px; }
   .story-ring--one { width: 420px; height: 420px; }
   .story-ring--two { width: 330px; height: 330px; }
+  .catalog-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 820px) {
@@ -703,6 +735,10 @@ dialog::backdrop { background: rgba(20, 17, 18, .28); backdrop-filter: blur(8px)
   .purchase-card { right: 20px; bottom: 100px; left: 20px; width: auto; }
   .flavor-controls { bottom: 35px; }
   .scroll-cue { display: none; }
+  .catalog-heading { grid-template-columns: 1fr; }
+  .catalog-heading > p { max-width: 520px; }
+  .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-card__visual { height: min(44vw, 300px); }
   .story-grid { grid-template-columns: 1fr; }
   .story-visual { min-height: 460px; order: -1; }
   .story-visual img { max-height: 400px; }
@@ -745,6 +781,9 @@ dialog::backdrop { background: rgba(20, 17, 18, .28); backdrop-filter: blur(8px)
   .price-row { margin-bottom: 14px; }
   .add-button { min-height: 52px; }
   .section-pad { padding: 90px 20px; }
+  .catalog-grid { grid-template-columns: 1fr; }
+  .catalog-card__visual { height: min(88vw, 360px); }
+  .catalog-card h3 { min-height: 0; }
   .stat-row { justify-content: space-between; gap: 12px; }
   .stat-row { flex-wrap: wrap; }
   .stat-row > div { min-width: 42%; }

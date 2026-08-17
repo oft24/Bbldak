@@ -87,6 +87,8 @@
     toast: document.querySelector("[data-toast]"),
     nav: document.querySelector("[data-nav]"),
     navToggle: document.querySelector("[data-nav-toggle]"),
+    catalogFilters: [...document.querySelectorAll("[data-catalog-filter]")],
+    catalogCards: [...document.querySelectorAll("[data-catalog-card]")],
   };
 
   const state = {
@@ -143,7 +145,7 @@
     dom.sku.textContent = product.sku;
     dom.name.textContent = product.name;
     dom.description.textContent = product.description;
-    dom.price.textContent = `$${product.price.toFixed(2)}`;
+    dom.price.textContent = product.price_label;
     dom.weight.textContent = product.weight;
     dom.heatFill.style.width = `${product.heat}%`;
     dom.heatLabel.textContent = product.heat_label;
@@ -178,9 +180,9 @@
     dom.shopImage.alt = `Buldak ${product.name} ramen`;
     dom.shopDetailName.textContent = product.name;
     dom.shopDescription.textContent = product.description;
-    dom.shopPrice.textContent = `$${product.price.toFixed(2)}`;
+    dom.shopPrice.textContent = product.price_label;
     dom.shopWeight.textContent = product.weight.split(" · ")[0];
-    dom.addCurrent.querySelector("span").textContent = `Agregar ${product.name}`;
+    dom.addCurrent.querySelector("span").textContent = `Guardar ${product.name}`;
 
     dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
     dom.directionsIntro.textContent = product.directions_intro;
@@ -206,7 +208,7 @@
     dom.phoneImage.alt = `Buldak ${product.name} ramen pack`;
     dom.phoneName.textContent = product.name;
     dom.phoneTagline.textContent = product.tagline;
-    dom.phonePrice.textContent = `$${product.price.toFixed(2)}`;
+    dom.phonePrice.textContent = "Por confirmar";
     dom.phoneHeat.style.width = `${product.heat}%`;
     document.title = `BuldakShop — ${product.name}`;
 
@@ -340,10 +342,6 @@
     return state.cart.reduce((total, item) => total + item.quantity, 0);
   }
 
-  function cartSubtotal() {
-    return state.cart.reduce((total, item) => total + productById.get(item.id).price * item.quantity, 0);
-  }
-
   function addToCart(id, quantity = 1) {
     const product = productById.get(id);
     if (!product) return;
@@ -352,7 +350,7 @@
     else state.cart.push({ id, quantity: clamp(quantity, 1, 20) });
     saveCart();
     renderCart();
-    showToast(`${product.name} se agregó al carrito.`);
+    showToast(`${product.name} se guardó en tu lista.`);
   }
 
   function changeCartQuantity(id, amount) {
@@ -372,15 +370,16 @@
 
   function renderCart() {
     const count = cartCount();
-    const subtotal = cartSubtotal();
     dom.cartCount.textContent = String(count);
     dom.mobileCartCount.textContent = String(count);
     dom.cartTitleCount.textContent = String(count);
-    dom.subtotal.textContent = `$${subtotal.toFixed(2)}`;
-    dom.checkoutButton.disabled = count === 0;
+    dom.subtotal.textContent = "Por confirmar";
+    dom.checkoutButton.disabled = true;
     dom.cartEmpty.classList.toggle("is-visible", count === 0);
     dom.cartItems.hidden = count === 0;
-    dom.shippingMessage.textContent = subtotal >= 35 ? "Ya tienes envío gratis." : `Agrega $${Math.max(0, 35 - subtotal).toFixed(2)} para obtener envío gratis.`;
+    dom.shippingMessage.textContent = count === 0
+      ? "Agregaremos importes y envío con la lista final."
+      : "Tu selección está guardada; el precio se añadirá con la lista final.";
 
     dom.cartItems.innerHTML = state.cart.map((item) => {
       const product = productById.get(item.id);
@@ -388,10 +387,10 @@
         <article class="cart-item" data-cart-item="${product.id}">
           <div class="cart-item__image"><img src="${product.image}" alt=""></div>
           <div class="cart-item__details">
-            <div class="cart-item__top"><h3>${product.name}</h3><strong>$${(product.price * item.quantity).toFixed(2)}</strong></div>
+            <div class="cart-item__top"><h3>${product.name}</h3><strong>Por confirmar</strong></div>
             <p>${product.weight}</p>
             <div class="cart-item__actions">
-              <div class="mini-stepper" aria-label="${product.name} quantity">
+              <div class="mini-stepper" aria-label="Cantidad de ${product.name}">
                 <button type="button" data-cart-minus="${product.id}" aria-label="Reducir cantidad de ${product.name}">−</button>
                 <span>${item.quantity}</span>
                 <button type="button" data-cart-plus="${product.id}" aria-label="Aumentar cantidad de ${product.name}">+</button>
@@ -463,18 +462,19 @@
   }
 
   function openCheckout() {
-    if (!state.cart.length) {
-      showToast("Tu carrito está vacío.");
-      return;
-    }
-    closeCart({ restoreFocus: false });
-    dom.checkoutFormView.hidden = false;
-    dom.checkoutSuccess.hidden = true;
-    dom.checkoutError.textContent = "";
-    dom.checkoutForm.reset();
-    if (!dom.checkoutDialog.open) dom.checkoutDialog.showModal();
-    document.body.classList.add("is-locked");
-    window.setTimeout(() => dom.checkoutForm.elements.name.focus(), 80);
+    showToast("El pago se activará cuando tengamos los precios finales.");
+    return;
+  }
+
+  function setCatalogFilter(category) {
+    dom.catalogFilters.forEach((button) => {
+      const active = button.dataset.catalogFilter === category;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    dom.catalogCards.forEach((card) => {
+      card.hidden = category !== "all" && card.dataset.category !== category;
+    });
   }
 
   function closeCheckout() {
@@ -527,15 +527,18 @@
   function updateHeader() {
     const y = window.scrollY;
     dom.header.classList.toggle("is-scrolled", y > 20);
+    const catalog = document.querySelector("#catalog");
+    const story = document.querySelector("#story");
     const shop = document.querySelector("#shop");
     const ritual = document.querySelector("#ritual");
     const prepared = document.querySelector("#prepared");
     const mobile = document.querySelector(".mobile-showcase");
     const headerLine = y + 45;
+    const overCatalog = headerLine >= catalog.offsetTop && headerLine < story.offsetTop;
     const overShop = headerLine >= shop.offsetTop && headerLine < ritual.offsetTop;
     const overPrepared = headerLine >= prepared.offsetTop && headerLine < mobile.offsetTop;
     dom.header.classList.toggle("force-dark", overShop || overPrepared);
-    dom.header.classList.toggle("force-light", headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop);
+    dom.header.classList.toggle("force-light", overCatalog || (headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop));
   }
 
   dom.carousel.addEventListener("pointerdown", onPointerDown);
@@ -619,6 +622,10 @@
   }));
   dom.searchResults.forEach((result) => result.addEventListener("click", () => selectSearchResult(Number(result.dataset.searchResult))));
 
+  dom.catalogFilters.forEach((button) => {
+    button.addEventListener("click", () => setCatalogFilter(button.dataset.catalogFilter));
+  });
+
   dom.checkoutButton.addEventListener("click", openCheckout);
   document.querySelector("[data-close-checkout]").addEventListener("click", closeCheckout);
   document.querySelector("[data-finish-checkout]").addEventListener("click", closeCheckout);
@@ -652,6 +659,7 @@
   window.addEventListener("resize", updateHeader);
 
   setTheme(0);
+  setCatalogFilter("all");
   renderCart();
   updateHeader();
   requestAnimationFrame(drawCarousel);

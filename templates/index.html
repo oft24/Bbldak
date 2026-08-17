@@ -15,8 +15,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=4">
-    <script defer src="/js/app.js?v=7"></script>
+    <link rel="stylesheet" href="/css/style.css?v=5">
+    <script defer src="/js/app.js?v=8"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -37,6 +37,7 @@
         <span></span><span></span><span></span><span class="sr-only">Abrir menú</span>
       </button>
       <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal" data-nav>
+        <a href="#catalog">Catálogo</a>
         <a href="#shop">Comprar</a>
         <a href="#profile">Perfil</a>
         <a href="#story">Información</a>
@@ -47,8 +48,8 @@
           <span class="search-mark" aria-hidden="true"></span>
           <span>Cambiar sabor</span>
         </button>
-        <button class="pill pill--dark" type="button" data-open-cart aria-label="Abrir carrito">
-          Carrito <span class="cart-count" data-cart-count>0</span>
+        <button class="pill pill--dark" type="button" data-open-cart aria-label="Abrir lista">
+          Lista <span class="cart-count" data-cart-count>0</span>
         </button>
       </div>
     </header>
@@ -96,7 +97,7 @@
           <div class="price-row">
             <div>
               <span class="spec__label">Paquete individual</span>
-              <strong class="price" data-price>$2.49</strong>
+              <strong class="price price--pending" data-price>Precio por confirmar</strong>
             </div>
             <div class="stepper" aria-label="Cantidad">
               <button type="button" data-quantity-minus aria-label="Reducir cantidad">−</button>
@@ -105,9 +106,9 @@
             </div>
           </div>
           <button class="add-button" type="button" data-add-selected>
-            <span>Agregar al carrito</span><span aria-hidden="true">→</span>
+            <span>Guardar para cotizar</span><span aria-hidden="true">→</span>
           </button>
-          <p class="microcopy">Envío mañana · Gratis desde $35 · <a href="#story">Ver información</a></p>
+          <p class="microcopy">El precio se agregará cuando recibamos la lista final · <a href="#catalog">Ver catálogo</a></p>
         </aside>
 
         <div class="flavor-controls" aria-label="Elegir un sabor">
@@ -122,8 +123,43 @@
         <p class="scroll-cue">Arrastra la bolsa · baja para conocerla</p>
       </section>
 
+      <section class="catalog section-pad" id="catalog" aria-labelledby="catalog-title">
+        <div class="catalog-heading reveal">
+          <div>
+            <div class="section-index">02 — Catálogo de julio</div>
+            <h2 id="catalog-title">Todos los productos.<br><span>Sin precios inventados.</span></h2>
+          </div>
+          <p>{{ catalog_products|length }} referencias tomadas del catálogo. Los importes quedan pendientes hasta recibir la nueva lista.</p>
+        </div>
+        <div class="catalog-filters reveal" aria-label="Filtrar catálogo">
+          {% for category in catalog_categories %}
+            <button class="catalog-filter{% if loop.first %} is-active{% endif %}" type="button" data-catalog-filter="{{ category.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ category.label }}</button>
+          {% endfor %}
+        </div>
+        <div class="catalog-grid" data-catalog-grid>
+          {% for item in catalog_products %}
+            <article class="catalog-card reveal" data-catalog-card data-category="{{ item.category }}">
+              <div class="catalog-card__visual">
+                <span>{{ item.category_label }}</span>
+                <img src="{{ item.image }}" alt="{{ item.name }} Buldak, SKU {{ item.sku }}" loading="lazy" decoding="async">
+              </div>
+              <div class="catalog-card__body">
+                <div class="catalog-card__sku">SKU {{ item.sku }}</div>
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.weight }} · {{ item.case }}</p>
+                <div class="catalog-card__footer">
+                  <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}">{{ item.status }}</strong>
+                  <a href="{{ item.source_url }}" target="_blank" rel="noopener" aria-label="Ver referencia de {{ item.name }}">Referencia ↗</a>
+                </div>
+                <span class="catalog-card__price">Precio por confirmar</span>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+
       <section class="story section-pad" id="story" aria-labelledby="story-title">
-        <div class="section-index reveal">02 — La bolsa seleccionada</div>
+        <div class="section-index reveal">03 — La bolsa seleccionada</div>
         <div class="story-grid">
           <div class="story-copy reveal">
             <h2 id="story-title" data-story-title>Cremosa.<br>Picante.<br>Muy Carbonara.</h2>
@@ -147,7 +183,7 @@
 
       <section class="ingredients section-pad" aria-labelledby="ingredients-title">
         <div class="ingredients-heading reveal">
-          <div class="section-index">03 — Perfil de ingredientes</div>
+          <div class="section-index">04 — Perfil de ingredientes</div>
           <h2 id="ingredients-title">Lo que define<br><span data-ingredient-name>Carbonara</span>.</h2>
           <p data-ingredient-intro>Cuatro notas que explican el sabor de Carbonara.</p>
         </div>
@@ -162,7 +198,7 @@
       <section class="flavors section-pad" id="profile" aria-labelledby="flavors-title">
         <div class="flavors-heading reveal">
           <div>
-            <div class="section-index">04 — Notas del sabor</div>
+            <div class="section-index">05 — Notas del sabor</div>
             <h2 id="flavors-title">Solo <span data-profile-name>Carbonara</span>.</h2>
           </div>
           <p class="profile-lead">La ficha cambia completa cuando eliges otra bolsa arriba.</p>
@@ -192,15 +228,15 @@
             <span class="spec__label">Paquete individual seleccionado</span>
             <h3 data-shop-detail-name>Carbonara</h3>
             <p data-shop-description>Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.</p>
-            <div class="selected-product__price"><strong data-shop-price>$2.49</strong><span data-shop-weight>130 g</span></div>
-            <button class="add-button" type="button" data-add-current><span>Agregar Carbonara</span><span aria-hidden="true">→</span></button>
+            <div class="selected-product__price"><strong class="price--pending" data-shop-price>Precio por confirmar</strong><span data-shop-weight>130 g</span></div>
+            <button class="add-button" type="button" data-add-current><span>Guardar Carbonara</span><span aria-hidden="true">→</span></button>
           </div>
         </div>
       </section>
 
       <section class="ritual section-pad" id="ritual" aria-labelledby="ritual-title">
         <div class="ritual-copy reveal">
-          <div class="section-index">05 — Preparación exacta</div>
+          <div class="section-index">06 — Preparación exacta</div>
           <h2 id="ritual-title" data-directions-title>Cinco minutos.<br>Cremosidad exacta.</h2>
           <p data-directions-intro>Preparación para la bolsa Carbonara de 130 g.</p>
         </div>
@@ -214,7 +250,7 @@
 
       <section class="prepared section-pad" id="prepared" aria-labelledby="prepared-title">
         <div class="prepared-heading reveal">
-          <div class="section-index">06 — Servida y acompañada</div>
+          <div class="section-index">07 — Servida y acompañada</div>
           <h2 id="prepared-title">Así queda<br><span data-prepared-name>Carbonara</span>.</h2>
         </div>
         <div class="prepared-grid">
@@ -237,7 +273,7 @@
         <div class="mobile-copy reveal">
           <div class="section-index">Tu selección siempre visible</div>
           <h2 id="mobile-title">Una bolsa.<br>Toda su ficha.</h2>
-          <p>El nombre, el picor, el precio y cada detalle pertenecen al sabor que está seleccionado.</p>
+          <p>El nombre, el picor y cada detalle pertenecen al sabor seleccionado. El precio se añadirá con la próxima lista.</p>
           <button class="text-link" type="button" data-open-search>Cambiar sabor <span>→</span></button>
         </div>
         <div class="phone reveal" aria-label="Mobile Buldak shop preview">
@@ -249,8 +285,8 @@
               <span class="phone__eyebrow">Sabor seleccionado</span>
               <h3 data-phone-name>Carbonara</h3>
               <p data-phone-tagline>Cremosa, picante y con final de queso.</p>
-              <div><strong data-phone-price>$2.49</strong><span class="mini-heat"><span data-phone-heat></span></span></div>
-              <button type="button" data-phone-add>Agregar al carrito <span>→</span></button>
+              <div><strong class="price--pending" data-phone-price>Por confirmar</strong><span class="mini-heat"><span data-phone-heat></span></span></div>
+              <button type="button" data-phone-add>Guardar para cotizar <span>→</span></button>
             </div>
           </div>
         </div>
@@ -260,11 +296,11 @@
     <footer class="site-footer">
       <div>
         <a class="brand brand--footer" href="#top">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
-        <p>Una tienda construida alrededor de la bolsa que tienes seleccionada.</p>
+        <p>Una tienda con la colección del catálogo y una ficha precisa para el sabor seleccionado.</p>
       </div>
       <div class="footer-links">
-        <div><span>Explorar</span><a href="#profile">Perfil</a><a href="#story">Información</a><a href="#ritual">Preparación</a></div>
-        <div><span>Comprar</span><a href="#shop">Selección actual</a><a href="#prepared">Cómo queda</a><button type="button" data-open-cart>Tu carrito</button></div>
+        <div><span>Explorar</span><a href="#catalog">Catálogo</a><a href="#profile">Perfil</a><a href="#story">Información</a><a href="#ritual">Preparación</a></div>
+        <div><span>Comprar</span><a href="#shop">Selección actual</a><a href="#prepared">Cómo queda</a><button type="button" data-open-cart>Tu lista</button></div>
       </div>
       <p class="disclaimer">BuldakShop · Concepto independiente, no afiliado con Samyang Foods · Verifica siempre el empaque.</p>
     </footer>
@@ -283,59 +319,59 @@
           {% for product in products %}
             <button class="search-result" type="button" data-search-result="{{ loop.index0 }}" data-keywords="{{ product.keywords }}">
               <img src="{{ product.image }}" alt="">
-              <span><strong>{{ product.name }}</strong><small>{{ product.heat_label }} · ${{ '%.2f'|format(product.price) }}</small></span>
+              <span><strong>{{ product.name }}</strong><small>{{ product.heat_label }} · Precio por confirmar</small></span>
               <b aria-hidden="true">↗</b>
             </button>
           {% endfor %}
         </div>
-        <p class="no-results" data-no-results hidden>No flavor matches that search. Try “creamy,” “hot,” or “cheese.”</p>
+        <p class="no-results" data-no-results hidden>Ningún sabor coincide. Prueba “carbonara”, “picante” o “queso”.</p>
       </div>
     </dialog>
 
     <div class="cart-scrim" data-cart-scrim></div>
     <aside class="cart-drawer" data-cart-drawer aria-labelledby="cart-title" aria-hidden="true">
       <div class="cart-head">
-        <h2 id="cart-title">Tu carrito <span data-cart-title-count>0</span></h2>
+        <h2 id="cart-title">Tu lista <span data-cart-title-count>0</span></h2>
         <button class="dialog-close" type="button" data-close-cart>Cerrar <span aria-hidden="true">×</span></button>
       </div>
       <div class="cart-body" data-cart-items></div>
       <div class="cart-empty" data-cart-empty>
         <span class="cart-empty__ring"></span>
-        <strong>Tu carrito está vacío.</strong>
-        <p>Elige una bolsa y agrégala.</p>
+        <strong>Tu lista está vacía.</strong>
+        <p>Elige una bolsa y guárdala para cotizar después.</p>
         <button type="button" data-cart-shop>Ver selección</button>
       </div>
       <div class="cart-footer">
-        <div><span>Subtotal</span><strong data-subtotal>$0.00</strong></div>
-        <p data-shipping-message>El envío se calcula al continuar.</p>
-        <button class="checkout-button" type="button" data-open-checkout disabled>Continuar <span>→</span></button>
+        <div><span>Precios</span><strong data-subtotal>Por confirmar</strong></div>
+        <p data-shipping-message>Agregaremos importes y envío con la lista final.</p>
+        <button class="checkout-button" type="button" data-open-checkout disabled>Precios pendientes</button>
       </div>
     </aside>
 
     <dialog class="checkout-dialog" data-checkout-dialog aria-labelledby="checkout-title">
       <button class="checkout-close" type="button" data-close-checkout aria-label="Cerrar pago">×</button>
       <div data-checkout-form-view>
-        <span class="section-index">Demo checkout</span>
-        <h2 id="checkout-title">Almost yours.</h2>
-        <p>This checkout confirms the complete shop flow without collecting a payment.</p>
+        <span class="section-index">Cotización pendiente</span>
+        <h2 id="checkout-title">Faltan los precios.</h2>
+        <p>El pago quedará disponible cuando se cargue la lista final.</p>
         <form data-checkout-form>
-          <label>Full name<input name="name" autocomplete="name" required maxlength="80"></label>
-          <label>Email<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
-          <button class="checkout-button" type="submit">Confirmar pedido demo <span>→</span></button>
+          <label>Nombre completo<input name="name" autocomplete="name" required maxlength="80"></label>
+          <label>Correo<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
+          <button class="checkout-button" type="submit">Solicitar cotización <span>→</span></button>
           <p class="form-error" data-checkout-error role="alert"></p>
         </form>
       </div>
       <div class="checkout-success" data-checkout-success hidden>
         <span class="success-mark">✓</span>
-        <span class="section-index">Order confirmed</span>
-        <h2>Tu Buldak está reservada.</h2>
-        <p>El pedido demo <strong data-order-id></strong> suma <strong data-order-total></strong>.</p>
-        <button class="checkout-button" type="button" data-finish-checkout>Keep exploring <span>→</span></button>
+        <span class="section-index">Solicitud recibida</span>
+        <h2>Tu selección está guardada.</h2>
+        <p>La solicitud <strong data-order-id></strong> se actualizará cuando tengamos precios.</p>
+        <button class="checkout-button" type="button" data-finish-checkout>Seguir explorando <span>→</span></button>
       </div>
     </dialog>
 
     <div class="toast" role="status" aria-live="polite" data-toast></div>
     <script id="product-data" type="application/json">{{ products | tojson }}</script>
-    <noscript><div class="noscript">This interactive showroom needs JavaScript enabled.</div></noscript>
+    <noscript><div class="noscript">Esta tienda interactiva necesita JavaScript activado.</div></noscript>
   </body>
 </html>

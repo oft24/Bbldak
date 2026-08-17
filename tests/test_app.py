@@ -12,7 +12,15 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"BuldakShop", response.data)
         self.assertIn(b"811140", response.data)
+        self.assertIn(b"811920", response.data)
+        self.assertIn(b"Todos los productos", response.data)
+        self.assertNotIn(b"$2.49", response.data)
         self.assertIn(b"prepared-carbonara.webp", response.data)
+        favicon = self.client.get("/assets/favicon.svg")
+        try:
+            self.assertEqual(favicon.status_code, 200)
+        finally:
+            favicon.close()
 
     def test_health_endpoint(self):
         response = self.client.get("/api/health")
@@ -27,8 +35,25 @@ class ShowroomTests(unittest.TestCase):
             self.assertEqual(len(product["directions"]), 4)
             self.assertEqual(len(product["recommendations"]), 3)
             self.assertTrue(product["prepared_image"].startswith("/assets/prepared-"))
+            self.assertIsNone(product["price"])
+            self.assertEqual(product["price_label"], "Precio por confirmar")
 
-    def test_checkout_validates_and_confirms(self):
+    def test_catalog_has_all_references_and_images(self):
+        response = self.client.get("/api/catalog")
+        self.assertEqual(response.status_code, 200)
+        catalog = response.get_json()["products"]
+        self.assertEqual(len(catalog), 22)
+        self.assertEqual({item["sku"] for item in catalog}.__len__(), 22)
+        self.assertIn("Agotado", next(item["status"] for item in catalog if item["sku"] == "811720"))
+        for item in catalog:
+            image_response = self.client.get(item["image"].split("?")[0])
+            try:
+                self.assertEqual(image_response.status_code, 200, item["sku"])
+                self.assertGreater(len(image_response.get_data()), 1000, item["sku"])
+            finally:
+                image_response.close()
+
+    def test_checkout_waits_for_final_prices(self):
         invalid = self.client.post("/api/checkout", json={"cart": []})
         self.assertEqual(invalid.status_code, 400)
 
@@ -40,9 +65,8 @@ class ShowroomTests(unittest.TestCase):
             },
         )
         payload = valid.get_json()
-        self.assertEqual(valid.status_code, 200)
-        self.assertEqual(payload["status"], "confirmed")
-        self.assertEqual(payload["subtotal"], "4.98")
+        self.assertEqual(valid.status_code, 409)
+        self.assertIn("precios", payload["error"])
 
 
 if __name__ == "__main__":

@@ -23,7 +23,8 @@ PRODUCTS = [
         "sku": "811140",
         "tagline": "Cremosa, picante y con final de queso.",
         "description": "Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.",
-        "price": 2.49,
+        "price": None,
+        "price_label": "Precio por confirmar",
         "weight": "130 g · paquete individual",
         "heat": 40,
         "heat_label": "Picor cremoso · 2/5",
@@ -80,7 +81,8 @@ PRODUCTS = [
         "sku": "811120",
         "tagline": "El clásico: chile directo y final tostado.",
         "description": "Salsa de pollo picante, chile rojo, sésamo y alga tostada sin una capa láctea.",
-        "price": 2.29,
+        "price": None,
+        "price_label": "Precio por confirmar",
         "weight": "140 g · paquete individual",
         "heat": 82,
         "heat_label": "Muy picante · 5/5",
@@ -137,7 +139,8 @@ PRODUCTS = [
         "sku": "811150",
         "tagline": "Cuatro quesos, salsa espesa y picor tardío.",
         "description": "Mozzarella, cheddar, gouda y camembert sobre la salsa Buldak picante.",
-        "price": 2.79,
+        "price": None,
+        "price_label": "Precio por confirmar",
         "weight": "145 g · paquete individual",
         "heat": 60,
         "heat_label": "Picante con queso · 3/5",
@@ -189,13 +192,141 @@ PRODUCTS = [
     },
 ]
 
+CATALOG_CATEGORIES = [
+    {"id": "all", "label": "Todos"},
+    {"id": "bags", "label": "Bolsas"},
+    {"id": "bowls", "label": "Bowls"},
+    {"id": "tteokbokki", "label": "Tteokbokki"},
+    {"id": "snacks", "label": "Snacks"},
+]
+
+
+CATALOG_PRODUCTS = [
+    {
+        "sku": "811140", "name": "Carbonara", "category": "bags", "category_label": "Bolsa",
+        "weight": "130 g", "case": "40 paquetes", "image": "/assets/carbonara.png?v=1",
+        "source_url": "https://samyangamerica.com/buldak/carbonara", "status": "Disponible",
+    },
+    {
+        "sku": "811130", "name": "Cream Carbonara", "category": "bags", "category_label": "Bolsa",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/cream-carbonara.jpg?v=1",
+        "source_url": "https://getzh.de/samyang-buldak-cream-carbonara-140g", "status": "Disponible",
+    },
+    {
+        "sku": "811200", "name": "Cheese", "category": "bags", "category_label": "Bolsa",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/cheese.jpg?v=1",
+        "source_url": "https://jasminemarket.fi/vi/products/sam-yang-hot-chicken-ramen-cheese-140g", "status": "Disponible",
+    },
+    {
+        "sku": "811150", "name": "Quattro Cheese", "category": "bags", "category_label": "Bolsa",
+        "weight": "145 g", "case": "40 paquetes", "image": "/assets/quattro.png?v=1",
+        "source_url": "https://samyangamerica.com/buldak/quattro-cheese", "status": "Disponible",
+    },
+    {
+        "sku": "811270", "name": "Rosé", "category": "bags", "category_label": "Bolsa",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/rose.webp?v=1",
+        "source_url": "https://megaswalayan.com/web/products/1aea53af-2b9b-43de-ad5d-3526135062a1", "status": "Disponible",
+    },
+    {
+        "sku": "811320", "name": "Sweet & Spicy", "category": "bags", "category_label": "Bolsa",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/sweet-spicy.webp?v=1",
+        "source_url": "https://midiminuit-epinal.com/products/samyang-buldak-sweet-spicy-140g", "status": "Disponible",
+    },
+    {
+        "sku": "811000", "name": "Taco", "category": "bags", "category_label": "Bolsa",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/taco.png?v=1",
+        "source_url": "https://www.walmart.com.mx/ip/sopa-instantanea-samyang-buldak-pollo-taco-135g/00880107311714", "status": "Disponible",
+    },
+    {
+        "sku": "811340", "name": "Yakisoba", "category": "bags", "category_label": "Bolsa",
+        "weight": "150 g", "case": "40 paquetes", "image": "/assets/catalog/yakisoba.webp?v=1",
+        "source_url": "https://dongsong.com.mx/productos/ramen-samyang-hot-sabor-yakisoba/", "status": "Disponible",
+    },
+    {
+        "sku": "811220", "name": "Habanero Lime", "category": "bags", "category_label": "Bolsa",
+        "weight": "135 g", "case": "40 paquetes", "image": "/assets/catalog/habanero-lime.jpg?v=1",
+        "source_url": "https://lsplace.com.vn/products/samyang-mi-buldak-vi-ga-kho-chua-cay", "status": "Disponible",
+    },
+    {
+        "sku": "811120", "name": "Original", "category": "bags", "category_label": "Bolsa",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/original.png?v=1",
+        "source_url": "https://samyangamerica.com/buldak/original", "status": "Disponible",
+    },
+    {
+        "sku": "811210", "name": "2X Spicy", "category": "bags", "category_label": "Bolsa",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/2x-spicy.png?v=1",
+        "source_url": "https://buldak.com/au/product/buldak-ramen-2x/", "status": "Disponible",
+    },
+    {
+        "sku": "811616", "name": "Sweet & Spicy Korean Chicken", "category": "bowls", "category_label": "Big Bowl",
+        "weight": "115 g", "case": "6 bowls", "image": "/assets/catalog/sweet-spicy-bowl.webp?v=1",
+        "source_url": "https://mam-shop.de/products/samyang-buldak-sweet-spicy-chicken-bowl-115g", "status": "Disponible",
+    },
+    {
+        "sku": "811618", "name": "Quattro Cheese Big Bowl", "category": "bowls", "category_label": "Big Bowl",
+        "weight": "110 g", "case": "6 bowls", "image": "/assets/catalog/quattro-bowl.png?v=1",
+        "source_url": "https://www.talabat.com/kuwait/talabat-mart/product/samyang-buldak-quattro-cheese-hot-chicken-flavor-ramen-stir-fried-noodles-big-bowl-110g/s/934873", "status": "Disponible",
+    },
+    {
+        "sku": "811622", "name": "Carbonara Big Bowl", "category": "bowls", "category_label": "Big Bowl",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/carbonara-bowl.png?v=1",
+        "source_url": "https://www.hmart.com/carbo-hot-chicken-ramen-big-bowl-3-7-oz--105g-/p", "status": "Disponible",
+    },
+    {
+        "sku": "811624", "name": "Original Big Bowl", "category": "bowls", "category_label": "Big Bowl",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/original-bowl.webp?v=1",
+        "source_url": "https://m.yami.com/en/p/samyang-hot-chicken-flavor-ramen-big-bowl-105g/1021027581", "status": "Disponible",
+    },
+    {
+        "sku": "811640", "name": "Rosé Big Bowl", "category": "bowls", "category_label": "Big Bowl",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/rose-bowl.jpeg?v=1",
+        "source_url": "https://www.walmart.ca/en/ip/Samyang-Buldak-Ros-Bowl-105/1KX4LU0M5PWW", "status": "Disponible",
+    },
+    {
+        "sku": "811650", "name": "Rosé Wide Glass Noodle", "category": "bowls", "category_label": "Wide Glass Noodle",
+        "weight": "169.4 g", "case": "16 bowls", "image": "/assets/catalog/wide-glass-noodle.webp?v=1",
+        "source_url": "https://www.yami.com/en/p/buldak-wild-glass-noodle-rose-hot-chicken-flavor-bowl-5-98-oz/1021110221", "status": "Disponible",
+    },
+    {
+        "sku": "811612", "name": "Original Big Bowl", "category": "bowls", "category_label": "Big Bowl · SKU alterno",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/original-bowl.webp?v=1",
+        "source_url": "https://m.yami.com/en/p/samyang-hot-chicken-flavor-ramen-big-bowl-105g/1021027581", "status": "Disponible",
+    },
+    {
+        "sku": "811710", "name": "Carbonara Tteokbokki", "category": "tteokbokki", "category_label": "Tteokbokki",
+        "weight": "179 g", "case": "16 bowls", "image": "/assets/catalog/carbonara-tteokbokki.jpg?v=1",
+        "source_url": "https://online.citysuper.com.hk/products/samyang-carbonara-stir-fried-hot-spicy-chicken-sauce-with-rice-cake-bowl-301431327", "status": "Disponible",
+    },
+    {
+        "sku": "811720", "name": "Original Tteokbokki", "category": "tteokbokki", "category_label": "Tteokbokki",
+        "weight": "179 g", "case": "16 bowls", "image": "/assets/catalog/original-tteokbokki.jpg?v=1",
+        "source_url": "https://bekndy.com/tienda/samyang-buldak-toppoki-bowl-original-16p179g/", "status": "Agotado · 14 jul 2026",
+    },
+    {
+        "sku": "811910", "name": "Potato Chips Habanero Lime", "category": "snacks", "category_label": "Snack",
+        "weight": "120 g", "case": "12 bolsas", "image": "/assets/catalog/chips-habanero.png?v=1",
+        "source_url": "https://buldak.com/us/blog/buldak-potato-chip-guide/", "status": "Disponible",
+    },
+    {
+        "sku": "811920", "name": "Potato Chips Original", "category": "snacks", "category_label": "Snack",
+        "weight": "120 g", "case": "12 bolsas", "image": "/assets/catalog/chips-original.png?v=1",
+        "source_url": "https://popshoplife.com/products/samyang-buldak-potato-chips-original-spicy-chicken-120g-south-korea", "status": "Disponible",
+    },
+]
+
+
 PRODUCT_BY_ID = {product["id"]: product for product in PRODUCTS}
 PRODUCT_ASSET_DIR = Path(__file__).resolve().parent / "assets"
 
 
 @app.get("/")
 def index():
-    return render_template("index.html", products=PRODUCTS)
+    return render_template(
+        "index.html",
+        products=PRODUCTS,
+        catalog_products=CATALOG_PRODUCTS,
+        catalog_categories=CATALOG_CATEGORIES,
+    )
 
 
 @app.get("/api/health")
@@ -206,6 +337,11 @@ def health():
 @app.get("/api/products")
 def products():
     return jsonify(products=PRODUCTS)
+
+
+@app.get("/api/catalog")
+def catalog():
+    return jsonify(products=CATALOG_PRODUCTS)
 
 
 @app.get("/assets/<path:filename>")
@@ -226,6 +362,8 @@ def checkout():
         return jsonify(error="Ingresa un nombre y un correo válidos."), 400
     if not isinstance(cart, list) or not cart:
         return jsonify(error="Tu carrito está vacío."), 400
+    if any(product["price"] is None for product in PRODUCTS):
+        return jsonify(error="Los precios todavía están por confirmar."), 409
 
     total = Decimal("0")
     normalized_cart = []
