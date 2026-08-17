@@ -18,7 +18,7 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Ll\xc3\xa9vate Original", response.data)
         self.assertNotIn(b"Solo Original", response.data)
         self.assertNotIn(b"Lo que define", response.data)
-        self.assertIn(b"prepared-carbonara.webp", response.data)
+        self.assertIn(b"prepared-carbonara.jpg?v=3", response.data)
         favicon = self.client.get("/assets/favicon.svg")
         try:
             self.assertEqual(favicon.status_code, 200)
@@ -51,6 +51,8 @@ class ShowroomTests(unittest.TestCase):
         for item in catalog:
             self.assertEqual(item["price"], 0.01)
             self.assertEqual(item["price_label"], "$0.01")
+            self.assertTrue(item["image"].endswith("?v=3"), item["sku"])
+            self.assertTrue(item["source_url"].startswith("https://buldak.com/"), item["sku"])
             image_response = self.client.get(item["image"].split("?")[0])
             try:
                 self.assertEqual(image_response.status_code, 200, item["sku"])
