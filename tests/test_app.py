@@ -20,6 +20,12 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Lo que define", response.data)
         self.assertNotIn(b"Una bolsa", response.data)
         self.assertNotIn(b"Toda su ficha", response.data)
+        self.assertNotIn(b"Referencia visual", response.data)
+        self.assertNotIn(b"Referencia ", response.data)
+        self.assertIn(b'data-language', response.data)
+        self.assertIn(b'js/i18n.js?v=1', response.data)
+        self.assertIn(b'Tu carrito', response.data)
+        self.assertIn(b"T\xc3\xa9rminos y condiciones", response.data)
         self.assertIn(b"prepared-carbonara.jpg?v=3", response.data)
         favicon = self.client.get("/assets/favicon.svg")
         try:
@@ -70,14 +76,18 @@ class ShowroomTests(unittest.TestCase):
             "/api/checkout",
             json={
                 "customer": {"name": "Test Customer", "email": "test@example.com"},
-                "cart": [{"id": "811140", "quantity": 2}],
+                "cart": [
+                    {"id": "811140", "quantity": 2},
+                    {"id": "811120", "quantity": 3},
+                ],
             },
         )
         payload = valid.get_json()
         self.assertEqual(valid.status_code, 200)
-        self.assertEqual(payload["subtotal"], "0.02")
+        self.assertEqual(len(payload["items"]), 2)
+        self.assertEqual(payload["subtotal"], "0.05")
         self.assertEqual(payload["shipping"], "0.00")
-        self.assertEqual(payload["total"], "0.02")
+        self.assertEqual(payload["total"], "0.05")
 
     def test_checkout_rejects_sold_out_product(self):
         response = self.client.post(

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f5d9e1">
-    <meta name="description" content="BuldakShop: sabor, preparación y recomendaciones para cada Buldak.">
+    <meta name="description" content="BuldakShop: sabor, preparación y recomendaciones para cada Buldak." data-i18n-meta="meta.description">
     <meta property="og:title" content="BuldakShop — Elige tu sabor">
     <meta property="og:description" content="Información específica de la Buldak que tienes seleccionada.">
     <meta property="og:image" content="{{ request.url_root.rstrip('/') }}/og.webp?v=3">
@@ -15,11 +15,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=8">
-    <script defer src="/js/app.js?v=10"></script>
+    <link rel="stylesheet" href="/css/style.css?v=9">
+    <script defer src="/js/i18n.js?v=1"></script>
+    <script defer src="/js/app.js?v=11"></script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
 
     <div class="ambient" aria-hidden="true">
       <div class="ambient__gradient"></div>
@@ -37,18 +38,26 @@
         <span></span><span></span><span></span><span class="sr-only">Abrir menú</span>
       </button>
       <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal" data-nav>
-        <a href="#catalog">Catálogo</a>
-        <a href="#catalog">Comprar</a>
-        <a href="#story">Información</a>
-        <a href="#ritual">Preparación</a>
+        <a href="#catalog" data-i18n="nav.catalog">Catálogo</a>
+        <a href="#catalog" data-i18n="nav.buy">Comprar</a>
+        <a href="#story" data-i18n="nav.info">Información</a>
+        <a href="#ritual" data-i18n="nav.preparation">Preparación</a>
       </nav>
       <div class="header-actions">
         <button class="pill pill--soft header-search" type="button" data-open-search>
           <span class="search-mark" aria-hidden="true"></span>
-          <span>Cambiar sabor</span>
+          <span data-i18n="header.changeFlavor">Cambiar sabor</span>
         </button>
-        <button class="pill pill--dark" type="button" data-open-cart aria-label="Abrir lista">
-          Lista <span class="cart-count" data-cart-count>0</span>
+        <label class="language-picker">
+          <span class="sr-only" data-i18n="header.language">Idioma</span>
+          <select data-language aria-label="Idioma" data-i18n-aria="header.language">
+            <option value="es">ES</option>
+            <option value="en">EN</option>
+            <option value="zh">中文</option>
+          </select>
+        </label>
+        <button class="pill pill--dark cart-button" type="button" data-open-cart data-cart-trigger aria-label="Abrir carrito" data-i18n-aria="header.openCart">
+          <span data-i18n="header.cart">Carrito</span> <span class="cart-count" data-cart-count>0</span>
         </button>
       </div>
     </header>
@@ -56,25 +65,25 @@
     <main id="main">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy reveal">
-          <p class="eyebrow">Ramen salteado · No. <span data-number>01</span> · SKU <span data-sku>811140</span></p>
+          <p class="eyebrow"><span data-i18n="hero.type">Ramen salteado</span> · No. <span data-number>01</span> · SKU <span data-sku>811140</span></p>
           <div class="hero-copy__content">
             <h1 id="hero-title" data-name>Carbonara</h1>
             <p data-description>Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.</p>
           </div>
           <div class="specs">
             <div class="spec spec--heat">
-              <span class="spec__label">Picor</span>
+              <span class="spec__label" data-i18n="hero.heat">Picor</span>
               <span class="heat-track"><span class="heat-fill" data-heat-fill></span></span>
               <strong data-heat-label>Picor cremoso · 2/5</strong>
             </div>
             <div class="spec">
-              <span class="spec__label">Presentación</span>
+              <span class="spec__label" data-i18n="hero.presentation">Presentación</span>
               <strong data-weight>130 g · paquete individual</strong>
             </div>
           </div>
         </div>
 
-        <div class="carousel-shell" data-carousel aria-label="Selector de sabores Buldak">
+        <div class="carousel-shell" data-carousel aria-label="Selector de sabores Buldak" data-i18n-aria="hero.carousel">
           <div class="carousel-glow" aria-hidden="true"></div>
           <div class="carousel-stage">
             {% for product in products %}
@@ -89,66 +98,65 @@
               </button>
             {% endfor %}
           </div>
-          <p class="drag-hint"><span aria-hidden="true">↔</span> Arrastra para girar</p>
+          <p class="drag-hint"><span aria-hidden="true">↔</span> <span data-i18n="hero.drag">Arrastra para girar</span></p>
         </div>
 
         <aside class="purchase-card reveal" aria-label="Comprar el sabor seleccionado">
           <div class="price-row">
             <div>
-              <span class="spec__label">Paquete individual</span>
+              <span class="spec__label" data-i18n="hero.individualPack">Paquete individual</span>
               <strong class="price" data-price>$0.01</strong>
             </div>
-            <div class="stepper" aria-label="Cantidad">
-              <button type="button" data-quantity-minus aria-label="Reducir cantidad">−</button>
+            <div class="stepper" aria-label="Cantidad" data-i18n-aria="hero.quantity">
+              <button type="button" data-quantity-minus aria-label="Reducir cantidad" data-i18n-aria="hero.reduceQuantity">−</button>
               <output data-quantity aria-live="polite">1</output>
-              <button type="button" data-quantity-plus aria-label="Aumentar cantidad">+</button>
+              <button type="button" data-quantity-plus aria-label="Aumentar cantidad" data-i18n-aria="hero.increaseQuantity">+</button>
             </div>
           </div>
           <button class="add-button" type="button" data-add-selected>
-            <span>Agregar al carrito</span><span aria-hidden="true">→</span>
+            <span data-i18n="hero.add">Agregar al carrito</span><span aria-hidden="true">→</span>
           </button>
-          <p class="microcopy">Precio provisional por artículo · <a href="#catalog">Ver catálogo completo</a></p>
+          <p class="microcopy"><span data-i18n="hero.provisional">Precio provisional por artículo</span> · <a href="#catalog" data-i18n="hero.viewCatalog">Ver catálogo completo</a></p>
         </aside>
 
-        <div class="flavor-controls" aria-label="Elegir un sabor">
-          <button class="circle-button" type="button" data-previous aria-label="Sabor anterior">←</button>
+        <div class="flavor-controls" aria-label="Elegir un sabor" data-i18n-aria="hero.chooseFlavor">
+          <button class="circle-button" type="button" data-previous aria-label="Sabor anterior" data-i18n-aria="hero.previous">←</button>
           <div class="flavor-tabs">
             {% for product in products %}
               <button class="flavor-tab{% if loop.first %} is-active{% endif %}" type="button" data-select="{{ loop.index0 }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ product.name }}</button>
             {% endfor %}
           </div>
-          <button class="circle-button" type="button" data-next aria-label="Siguiente sabor">→</button>
+          <button class="circle-button" type="button" data-next aria-label="Siguiente sabor" data-i18n-aria="hero.next">→</button>
         </div>
-        <p class="scroll-cue">Arrastra la bolsa · baja para conocerla</p>
+        <p class="scroll-cue" data-i18n="hero.scroll">Arrastra la bolsa · baja para conocerla</p>
       </section>
 
       <section class="catalog section-pad" id="catalog" aria-labelledby="catalog-title">
         <div class="catalog-heading reveal">
           <div>
-            <div class="section-index">02 — Catálogo de julio</div>
-            <h2 id="catalog-title">Todos los productos.<br><span>Listos para tu carrito.</span></h2>
+            <div class="section-index" data-i18n="catalog.index">02 — Catálogo de julio</div>
+            <h2 id="catalog-title" data-i18n-html="catalog.title">Todos los productos.<br><span>Listos para tu carrito.</span></h2>
           </div>
-          <p>{{ catalog_products|length }} referencias tomadas del catálogo. Cada artículo usa el precio provisional de $0.01 hasta recibir la lista final.</p>
+          <p data-i18n="catalog.copy">{{ catalog_products|length }} productos disponibles. Cada artículo usa el precio provisional de $0.01 hasta recibir la lista final.</p>
         </div>
-        <div class="catalog-filters reveal" aria-label="Filtrar catálogo">
+        <div class="catalog-filters reveal" aria-label="Filtrar catálogo" data-i18n-aria="catalog.filter">
           {% for category in catalog_categories %}
-            <button class="catalog-filter{% if loop.first %} is-active{% endif %}" type="button" data-catalog-filter="{{ category.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ category.label }}</button>
+            <button class="catalog-filter{% if loop.first %} is-active{% endif %}" type="button" data-catalog-filter="{{ category.id }}" data-i18n="filter.{{ category.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ category.label }}</button>
           {% endfor %}
         </div>
         <div class="catalog-grid" data-catalog-grid>
           {% for item in catalog_products %}
             <article class="catalog-card reveal" data-catalog-card data-category="{{ item.category }}">
               <div class="catalog-card__visual">
-                <span>{{ item.category_label }}</span>
+                <span data-catalog-category="{{ item.category }}">{{ item.category_label }}</span>
                 <img src="{{ item.image }}" alt="{{ item.name }} Buldak, SKU {{ item.sku }}" loading="lazy" decoding="async">
               </div>
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
                 <h3>{{ item.name }}</h3>
-                <p>{{ item.weight }} · {{ item.case }}</p>
+                <p data-catalog-meta="{{ item.id }}">{{ item.weight }} · {{ item.case }}</p>
                 <div class="catalog-card__footer">
-                  <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}">{{ item.status }}</strong>
-                  <a href="{{ item.source_url }}" target="_blank" rel="noopener" aria-label="Ver referencia de {{ item.name }}">Referencia ↗</a>
+                  <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}" data-catalog-status="{{ item.id }}">{{ item.status }}</strong>
                 </div>
                 <div class="catalog-card__actions">
                   <span class="catalog-card__price">{{ item.price_label }}</span>
@@ -163,18 +171,18 @@
       </section>
 
       <section class="story section-pad" id="story" aria-labelledby="story-title">
-        <div class="section-index reveal">03 — La bolsa seleccionada</div>
+        <div class="section-index reveal" data-i18n="story.index">03 — La bolsa seleccionada</div>
         <div class="story-grid">
           <div class="story-copy reveal">
             <h2 id="story-title" data-story-title>Cremosa.<br>Picante.<br>Muy Carbonara.</h2>
             <p data-story-copy>La bolsa rosa mezcla la salsa Buldak con un polvo de queso y crema. Primero llega la mozzarella y la mantequilla; después aparecen el chile, el ajo y la pimienta negra.</p>
             <div class="stat-row">
               <div><strong data-shu>2,600</strong><span>Scoville</span></div>
-              <div><strong data-cook-time>5 min</strong><span>Cocción</span></div>
+              <div><strong data-cook-time>5 min</strong><span data-i18n="story.cook">Cocción</span></div>
               <div><strong data-kcal>550</strong><span>kcal</span></div>
-              <div><strong data-story-weight>130 g</strong><span>Porción</span></div>
+              <div><strong data-story-weight>130 g</strong><span data-i18n="story.portion">Porción</span></div>
             </div>
-            <p class="nutrition-note">Valores por paquete. La información puede cambiar por mercado; confirma siempre la etiqueta de tu bolsa. <a data-nutrition-source href="https://www.samyangfoods.com/eng/brand/view.do?seq=399" target="_blank" rel="noopener">Fuente del producto</a>.</p>
+            <p class="nutrition-note"><span data-i18n="story.nutrition">Valores por paquete. La información puede cambiar por mercado; confirma siempre la etiqueta de tu bolsa.</span> <a data-nutrition-source href="https://www.samyangfoods.com/eng/brand/view.do?seq=399" target="_blank" rel="noopener" data-i18n="story.source">Fuente del producto</a>.</p>
           </div>
           <div class="story-visual reveal" aria-hidden="true">
             <span class="story-ring story-ring--one"></span>
@@ -187,7 +195,7 @@
 
       <section class="ritual section-pad" id="ritual" aria-labelledby="ritual-title">
         <div class="ritual-copy reveal">
-          <div class="section-index">04 — Preparación exacta</div>
+          <div class="section-index" data-i18n="ritual.index">04 — Preparación exacta</div>
           <h2 id="ritual-title" data-directions-title>Cinco minutos.<br>Cremosidad exacta.</h2>
           <p data-directions-intro>Preparación para la bolsa Carbonara de 130 g.</p>
         </div>
@@ -201,16 +209,15 @@
 
       <section class="prepared section-pad" id="prepared" aria-labelledby="prepared-title">
         <div class="prepared-heading reveal">
-          <div class="section-index">05 — Servida y acompañada</div>
-          <h2 id="prepared-title">Así queda<br><span data-prepared-name>Carbonara</span>.</h2>
+          <div class="section-index" data-i18n="prepared.index">05 — Servida y acompañada</div>
+          <h2 id="prepared-title"><span data-i18n="prepared.title">Así queda</span><br><span data-prepared-name>Carbonara</span>.</h2>
         </div>
         <div class="prepared-grid">
           <figure class="prepared-photo reveal">
             <img data-prepared-image src="/assets/prepared-carbonara.jpg?v=3" alt="Buldak Carbonara preparada en un tazón junto a su paquete rosa">
-            <figcaption>Referencia visual: <a data-prepared-source href="https://buldak.com/us/product/buldak-ramen-carbonara/" target="_blank" rel="noopener">Buldak.com</a></figcaption>
           </figure>
           <div class="pairings reveal">
-            <span class="section-index">Va bien con</span>
+            <span class="section-index" data-i18n="prepared.pairings">Va bien con</span>
             <div class="pairing-list">
               <article><span>01</span><div><h3 data-pairing-title="0">Huevo suave</h3><p data-pairing-text="0">La yema refuerza la textura cremosa sin ocultar el chile.</p></div></article>
               <article><span>02</span><div><h3 data-pairing-title="1">Cebollín y hongos</h3><p data-pairing-text="1">Aportan frescura y umami a la salsa de queso.</p></div></article>
@@ -225,25 +232,25 @@
     <footer class="site-footer">
       <div>
         <a class="brand brand--footer" href="#top">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
-        <p>Una tienda con la colección del catálogo y una ficha precisa para el sabor seleccionado.</p>
+        <p data-i18n="footer.description">Una tienda con la colección del catálogo y una ficha precisa para el sabor seleccionado.</p>
       </div>
       <div class="footer-links">
-        <div><span>Explorar</span><a href="#catalog">Catálogo</a><a href="#story">Información</a><a href="#ritual">Preparación</a></div>
-        <div><span>Comprar</span><a href="#catalog">Todos los productos</a><a href="#prepared">Cómo queda</a><button type="button" data-open-cart>Tu carrito</button></div>
+        <div><span data-i18n="footer.explore">Explorar</span><a href="#catalog" data-i18n="nav.catalog">Catálogo</a><a href="#story" data-i18n="nav.info">Información</a><a href="#ritual" data-i18n="nav.preparation">Preparación</a></div>
+        <div><span data-i18n="footer.buy">Comprar</span><a href="#catalog" data-i18n="footer.products">Todos los productos</a><a href="#prepared" data-i18n="footer.looks">Cómo queda</a><button type="button" data-open-cart data-i18n="footer.cart">Tu carrito</button><button type="button" data-open-legal data-i18n="footer.terms">Términos y condiciones</button></div>
       </div>
-      <p class="disclaimer">BuldakShop · Concepto independiente, no afiliado con Samyang Foods · Verifica siempre el empaque.</p>
+      <p class="disclaimer" data-i18n="footer.disclaimer">BuldakShop es un concepto independiente y no está afiliado, patrocinado ni respaldado por Samyang Foods o la marca Buldak.</p>
     </footer>
 
     <dialog class="search-dialog" data-search-dialog aria-labelledby="search-title">
       <div class="dialog-head">
-        <span class="section-index">Cambiar sabor</span>
-        <button class="dialog-close" type="button" data-close-search>Cerrar <span aria-hidden="true">×</span></button>
+        <span class="section-index" data-i18n="search.index">Cambiar sabor</span>
+        <button class="dialog-close" type="button" data-close-search><span data-i18n="search.close">Cerrar</span> <span aria-hidden="true">×</span></button>
       </div>
       <div class="search-content">
-        <h2 id="search-title">¿Qué bolsa quieres ver?</h2>
-        <label class="sr-only" for="search-input">Buscar sabores</label>
-        <input id="search-input" type="search" autocomplete="off" placeholder="Prueba “queso” o “picante”" data-search-input>
-        <div class="search-suggestions"><span>Prueba</span><button type="button" data-suggestion="carb">carbonara</button><button type="button" data-suggestion="picante">picante</button><button type="button" data-suggestion="queso">queso</button></div>
+        <h2 id="search-title" data-i18n="search.title">¿Qué bolsa quieres ver?</h2>
+        <label class="sr-only" for="search-input" data-i18n="search.label">Buscar sabores</label>
+        <input id="search-input" type="search" autocomplete="off" placeholder="Prueba “queso” o “picante”" data-search-input data-i18n-placeholder="search.placeholder">
+        <div class="search-suggestions"><span data-i18n="search.try">Prueba</span><button type="button" data-suggestion="carbonara">carbonara</button><button type="button" data-suggestion="spicy">spicy</button><button type="button" data-suggestion="cheese">cheese</button></div>
         <div class="search-results" data-search-results>
           {% for product in products %}
             <button class="search-result" type="button" data-search-result="{{ loop.index0 }}" data-keywords="{{ product.keywords }}">
@@ -253,54 +260,69 @@
             </button>
           {% endfor %}
         </div>
-        <p class="no-results" data-no-results hidden>Ningún sabor coincide. Prueba “carbonara”, “picante” o “queso”.</p>
+        <p class="no-results" data-no-results data-i18n="search.noResults" hidden>Ningún sabor coincide. Prueba “carbonara”, “picante” o “queso”.</p>
       </div>
     </dialog>
 
     <div class="cart-scrim" data-cart-scrim></div>
     <aside class="cart-drawer" data-cart-drawer aria-labelledby="cart-title" aria-hidden="true">
       <div class="cart-head">
-        <h2 id="cart-title">Tu lista <span data-cart-title-count>0</span></h2>
-        <button class="dialog-close" type="button" data-close-cart>Cerrar <span aria-hidden="true">×</span></button>
+        <h2 id="cart-title"><span data-i18n="cart.title">Tu carrito</span> <span data-cart-title-count>0</span></h2>
+        <button class="dialog-close" type="button" data-close-cart><span data-i18n="cart.close">Cerrar</span> <span aria-hidden="true">×</span></button>
       </div>
       <div class="cart-body" data-cart-items></div>
       <div class="cart-empty" data-cart-empty>
         <span class="cart-empty__ring"></span>
-        <strong>Tu lista está vacía.</strong>
-        <p>Elige cualquier producto del catálogo para agregarlo.</p>
-        <button type="button" data-cart-shop>Ver catálogo</button>
+        <strong data-i18n="cart.emptyTitle">Tu carrito está vacío.</strong>
+        <p data-i18n="cart.emptyCopy">Elige cualquier producto del catálogo para agregarlo.</p>
+        <button type="button" data-cart-shop data-i18n="cart.shop">Ver catálogo</button>
       </div>
       <div class="cart-footer">
-        <div><span>Subtotal</span><strong data-subtotal>$0.00</strong></div>
+        <div><span data-i18n="cart.subtotal">Subtotal</span><strong data-subtotal>$0.00</strong></div>
         <p data-shipping-message>Envío provisional: $0.00.</p>
-        <button class="checkout-button" type="button" data-open-checkout disabled>Confirmar pedido demo</button>
+        <button class="checkout-button" type="button" data-open-checkout data-i18n="cart.checkout" disabled>Confirmar pedido demo</button>
       </div>
     </aside>
 
     <dialog class="checkout-dialog" data-checkout-dialog aria-labelledby="checkout-title">
-      <button class="checkout-close" type="button" data-close-checkout aria-label="Cerrar pago">×</button>
+      <button class="checkout-close" type="button" data-close-checkout aria-label="Cerrar pedido" data-i18n-aria="checkout.close">×</button>
       <div data-checkout-form-view>
-        <span class="section-index">Pedido de prueba</span>
-        <h2 id="checkout-title">Confirma tu carrito.</h2>
-        <p>Los artículos usan el precio provisional de $0.01 y no se realizará ningún cobro.</p>
+        <span class="section-index" data-i18n="checkout.index">Pedido de prueba</span>
+        <h2 id="checkout-title" data-i18n="checkout.title">Confirma tu carrito.</h2>
+        <p data-i18n="checkout.copy">Los artículos usan el precio provisional de $0.01 y no se realizará ningún cobro.</p>
         <form data-checkout-form>
-          <label>Nombre completo<input name="name" autocomplete="name" required maxlength="80"></label>
-          <label>Correo<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
-          <button class="checkout-button" type="submit">Confirmar pedido demo <span>→</span></button>
+          <label><span data-i18n="checkout.name">Nombre completo</span><input name="name" autocomplete="name" required maxlength="80"></label>
+          <label><span data-i18n="checkout.email">Correo</span><input name="email" type="email" autocomplete="email" required maxlength="120"></label>
+          <button class="checkout-button" type="submit"><span data-checkout-submit-label data-i18n="checkout.submit">Confirmar pedido demo</span> <span>→</span></button>
           <p class="form-error" data-checkout-error role="alert"></p>
         </form>
       </div>
       <div class="checkout-success" data-checkout-success hidden>
         <span class="success-mark">✓</span>
-        <span class="section-index">Pedido confirmado</span>
-        <h2>Tu carrito quedó registrado.</h2>
-        <p>Pedido <strong data-order-id></strong> · total <strong data-order-total></strong>.</p>
-        <button class="checkout-button" type="button" data-finish-checkout>Seguir explorando <span>→</span></button>
+        <span class="section-index" data-i18n="checkout.successIndex">Pedido confirmado</span>
+        <h2 data-i18n="checkout.successTitle">Tu pedido demo quedó registrado.</h2>
+        <p data-checkout-success-copy>Pedido confirmado.</p>
+        <button class="checkout-button" type="button" data-finish-checkout><span data-i18n="checkout.continue">Seguir explorando</span> <span>→</span></button>
       </div>
+    </dialog>
+
+    <dialog class="legal-dialog" data-legal-dialog aria-labelledby="legal-title">
+      <button class="checkout-close" type="button" data-close-legal aria-label="Cerrar términos" data-i18n-aria="legal.close">×</button>
+      <span class="section-index" data-i18n="legal.index">Información legal</span>
+      <h2 id="legal-title" data-i18n="legal.title">Términos y condiciones.</h2>
+      <p class="legal-updated" data-i18n="legal.updated">Última actualización: 17 de agosto de 2026</p>
+      <div class="legal-sections">
+        <section><h3 data-i18n="legal.independentTitle">Sitio independiente</h3><p data-i18n="legal.independentCopy">BuldakShop es un proyecto independiente. No está afiliado, asociado, patrocinado, autorizado ni respaldado por Samyang Foods Co., Ltd. ni por la marca Buldak.</p></section>
+        <section><h3 data-i18n="legal.catalogTitle">Catálogo y precios</h3><p data-i18n="legal.catalogCopy">El contenido es informativo y demostrativo. Los precios de $0.01 son provisionales, no constituyen una oferta comercial y pueden cambiar antes de habilitar ventas reales.</p></section>
+        <section><h3 data-i18n="legal.orderTitle">Pedidos de demostración</h3><p data-i18n="legal.orderCopy">El checkout actual registra pedidos de prueba y no procesa pagos. Una confirmación no crea una obligación de venta, envío o entrega.</p></section>
+        <section><h3 data-i18n="legal.productTitle">Marcas e información de producto</h3><p data-i18n="legal.productCopy">Las marcas, nombres de producto e imágenes pertenecen a sus respectivos titulares. Ingredientes, alérgenos, valores nutricionales, disponibilidad y preparación pueden variar por mercado; siempre prevalece el empaque oficial.</p></section>
+        <section><h3 data-i18n="legal.dataTitle">Datos y responsabilidad</h3><p data-i18n="legal.dataCopy">Los datos ingresados se usan únicamente para procesar la demostración solicitada. BuldakShop no garantiza que el contenido esté libre de errores y no asume responsabilidad por decisiones tomadas sin verificar el empaque o la información oficial del fabricante.</p></section>
+      </div>
+      <p class="legal-acceptance" data-i18n="legal.acceptance">Al utilizar este sitio aceptas estos términos y entiendes que se trata de una experiencia de demostración.</p>
     </dialog>
 
     <div class="toast" role="status" aria-live="polite" data-toast></div>
     <script id="product-data" type="application/json">{{ {'featured': products, 'catalog': catalog_products} | tojson }}</script>
-    <noscript><div class="noscript">Esta tienda interactiva necesita JavaScript activado.</div></noscript>
+    <noscript><div class="noscript" data-i18n="noscript">Esta tienda interactiva necesita JavaScript activado.</div></noscript>
   </body>
 </html>

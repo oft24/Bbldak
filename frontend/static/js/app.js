@@ -4,6 +4,8 @@
   const productData = document.querySelector("#product-data");
   if (!productData) return;
 
+  const i18n = window.BuldakI18n;
+  if (!i18n?.locales) return;
   const payload = JSON.parse(productData.textContent);
   const products = payload.featured;
   const catalogProducts = payload.catalog;
@@ -44,9 +46,10 @@
     directionTexts: [...document.querySelectorAll("[data-direction-text]")],
     preparedName: document.querySelector("[data-prepared-name]"),
     preparedImage: document.querySelector("[data-prepared-image]"),
-    preparedSource: document.querySelector("[data-prepared-source]"),
     pairingTitles: [...document.querySelectorAll("[data-pairing-title]")],
     pairingTexts: [...document.querySelectorAll("[data-pairing-text]")],
+    language: document.querySelector("[data-language]"),
+    cartTrigger: document.querySelector("[data-cart-trigger]"),
     cartCount: document.querySelector("[data-cart-count]"),
     cartTitleCount: document.querySelector("[data-cart-title-count]"),
     cartDrawer: document.querySelector("[data-cart-drawer]"),
@@ -65,14 +68,18 @@
     checkoutFormView: document.querySelector("[data-checkout-form-view]"),
     checkoutSuccess: document.querySelector("[data-checkout-success]"),
     checkoutError: document.querySelector("[data-checkout-error]"),
-    orderId: document.querySelector("[data-order-id]"),
-    orderTotal: document.querySelector("[data-order-total]"),
+    checkoutSubmitLabel: document.querySelector("[data-checkout-submit-label]"),
+    checkoutSuccessCopy: document.querySelector("[data-checkout-success-copy]"),
+    legalDialog: document.querySelector("[data-legal-dialog]"),
     toast: document.querySelector("[data-toast]"),
     nav: document.querySelector("[data-nav]"),
     navToggle: document.querySelector("[data-nav-toggle]"),
     catalogFilters: [...document.querySelectorAll("[data-catalog-filter]")],
     catalogCards: [...document.querySelectorAll("[data-catalog-card]")],
     catalogAdds: [...document.querySelectorAll("[data-catalog-add]")],
+    catalogCategories: [...document.querySelectorAll("[data-catalog-category]")],
+    catalogStatuses: [...document.querySelectorAll("[data-catalog-status]")],
+    catalogMetas: [...document.querySelectorAll("[data-catalog-meta]")],
   };
 
   const state = {
@@ -90,9 +97,12 @@
     lookY: 0,
     lookTargetX: 0,
     lookTargetY: 0,
+    language: loadLanguage(),
     cart: loadCart(),
     toastTimer: null,
+    cartAnimationTimer: null,
     lastCartFocus: null,
+    lastOrder: null,
   };
 
   function clamp(value, min, max) {
@@ -101,6 +111,126 @@
 
   function modulo(value, size) {
     return ((value % size) + size) % size;
+  }
+
+  function loadLanguage() {
+    try {
+      const saved = localStorage.getItem("buldak-language");
+      if (["es", "en", "zh"].includes(saved)) return saved;
+    } catch {
+      // Language preference remains available for this visit.
+    }
+    const browserLanguage = navigator.language?.toLowerCase() || "es";
+    if (browserLanguage.startsWith("zh")) return "zh";
+    if (browserLanguage.startsWith("en")) return "en";
+    return "es";
+  }
+
+  function t(key, values = {}) {
+    const table = i18n.locales[state.language] || i18n.locales.es;
+    const fallback = i18n.locales.es[key] || key;
+    return String(table[key] || fallback).replace(/\{(\w+)\}/g, (_, name) => values[name] ?? `{${name}}`);
+  }
+
+  function localizedProduct(product) {
+    const translated = i18n.productContent?.[state.language]?.[product.id];
+    return translated ? { ...product, ...translated } : product;
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function translateWeight(weight) {
+    return state.language === "zh" ? String(weight).replace(/\s*g\b/gi, " 克") : weight;
+  }
+
+  function translateCase(caseSize) {
+    if (state.language === "es") return caseSize;
+    const value = String(caseSize);
+    if (state.language === "en") {
+      return value
+        .replace(/paquetes/gi, "packs")
+        .replace(/bolsas/gi, "bags")
+        .replace(/SKU alterno/gi, "alternate SKU");
+    }
+    return value
+      .replace(/paquetes/gi, "袋")
+      .replace(/bolsas/gi, "袋")
+      .replace(/bowls?/gi, "碗")
+      .replace(/SKU alterno/gi, "备用 SKU");
+  }
+
+  function applyLanguage(language, { persist = true } = {}) {
+    state.language = ["es", "en", "zh"].includes(language) ? language : "es";
+    root.lang = state.language === "zh" ? "zh-CN" : state.language;
+    dom.language.value = state.language;
+    if (persist) {
+      try {
+        localStorage.setItem("buldak-language", state.language);
+      } catch {
+        // A blocked storage API should not prevent translation.
+      }
+    }
+
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      element.textContent = t(element.dataset.i18n, { count: catalogProducts.length });
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach((element) => {
+      element.innerHTML = t(element.dataset.i18nHtml, { count: catalogProducts.length });
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+      element.setAttribute("aria-label", t(element.dataset.i18nAria));
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+      element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
+    });
+    document.querySelector('[data-i18n-meta="meta.description"]')?.setAttribute("content", t("meta.description"));
+
+    dom.catalogCategories.forEach((element) => {
+      element.textContent = t(`category.${element.dataset.catalogCategory}`);
+    });
+    dom.catalogMetas.forEach((element) => {
+      const product = productById.get(element.dataset.catalogMeta);
+      element.textContent = `${translateWeight(product.weight)} · ${translateCase(product.case)}`;
+    });
+    dom.catalogStatuses.forEach((element) => {
+      const product = productById.get(element.dataset.catalogStatus);
+      element.textContent = t(product.is_available === false ? "catalog.soldOut" : "catalog.available");
+    });
+    dom.catalogAdds.forEach((button) => {
+      const product = productById.get(button.dataset.catalogAdd);
+      button.textContent = t(product.is_available === false ? "catalog.soldOut" : "catalog.add");
+    });
+    dom.searchResults.forEach((result, index) => {
+      const product = localizedProduct(products[index]);
+      const detail = result.querySelector("small");
+      if (detail) detail.textContent = `${product.heat_label} · ${product.price_label}`;
+    });
+    const suggestions = {
+      es: [["carbonara", "carbonara"], ["picante", "picante"], ["queso", "queso"]],
+      en: [["carbonara", "carbonara"], ["spicy", "spicy"], ["cheese", "cheese"]],
+      zh: [["carbonara", "carbonara"], ["辣", "辣"], ["芝士", "芝士"]]
+    }[state.language];
+    document.querySelectorAll("[data-suggestion]").forEach((button, index) => {
+      button.dataset.suggestion = suggestions[index][0];
+      button.textContent = suggestions[index][1];
+    });
+
+    setTheme(state.selected);
+    renderCart({ animate: false });
+    filterSearch(dom.searchInput.value);
+    if (state.lastOrder) {
+      dom.checkoutSuccessCopy.textContent = t("checkout.successCopy", {
+        id: state.lastOrder.id,
+        total: state.lastOrder.total
+      });
+    }
   }
 
   function carouselDistance(value) {
@@ -114,13 +244,14 @@
   }
 
   function setTheme(index) {
-    const product = products[index];
+    const baseProduct = products[index];
+    const product = localizedProduct(baseProduct);
     state.selected = index;
-    root.style.setProperty("--bg-a", product.colors.bg_a);
-    root.style.setProperty("--bg-b", product.colors.bg_b);
-    root.style.setProperty("--glow", product.colors.glow);
-    root.style.setProperty("--ink", product.colors.ink);
-    root.style.setProperty("--accent", product.colors.accent);
+    root.style.setProperty("--bg-a", baseProduct.colors.bg_a);
+    root.style.setProperty("--bg-b", baseProduct.colors.bg_b);
+    root.style.setProperty("--glow", baseProduct.colors.glow);
+    root.style.setProperty("--ink", baseProduct.colors.ink);
+    root.style.setProperty("--accent", baseProduct.colors.accent);
 
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     if (themeMeta) themeMeta.setAttribute("content", product.colors.bg_a);
@@ -136,7 +267,11 @@
     dom.storyTitle.innerHTML = product.story_title.join("<br>");
     dom.storyCopy.textContent = product.story;
     dom.storyImage.src = product.image;
-    dom.storyImage.alt = `Paquete Buldak ${product.name}`;
+    dom.storyImage.alt = state.language === "zh"
+      ? `Buldak ${product.name} 包装`
+      : state.language === "en"
+        ? `Buldak ${product.name} pack`
+        : `Paquete Buldak ${product.name}`;
     dom.shu.textContent = product.shu;
     dom.kcal.textContent = product.kcal;
     dom.cookTime.textContent = product.cook_time;
@@ -155,15 +290,13 @@
     dom.preparedName.textContent = product.name;
     dom.preparedImage.src = product.prepared_image;
     dom.preparedImage.alt = product.prepared_alt;
-    dom.preparedSource.textContent = product.prepared_source;
-    dom.preparedSource.href = product.prepared_source_url;
     dom.pairingTitles.forEach((element, pairingIndex) => {
       element.textContent = product.recommendations[pairingIndex].title;
     });
     dom.pairingTexts.forEach((element, pairingIndex) => {
       element.textContent = product.recommendations[pairingIndex].text;
     });
-    document.title = `BuldakShop — ${product.name}`;
+    document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
 
     dom.cards.forEach((card, cardIndex) => {
       const active = cardIndex === index;
@@ -278,7 +411,7 @@
       const legacyIds = { carbonara: "811140", original: "811120", quattro: "811150" };
       return stored
         .map((item) => ({ id: legacyIds[item.id] || String(item.id), quantity: Number(item.quantity) }))
-        .filter((item) => productById.has(item.id) && Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 20);
+        .filter((item) => productById.has(item.id) && productById.get(item.id).is_available !== false && Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 20);
     } catch {
       return [];
     }
@@ -296,24 +429,75 @@
     return state.cart.reduce((total, item) => total + item.quantity, 0);
   }
 
-  function addToCart(id, quantity = 1) {
-    const product = productById.get(id);
-    if (!product || product.is_available === false) return;
-    const existing = state.cart.find((item) => item.id === id);
-    if (existing) existing.quantity = Math.min(20, existing.quantity + quantity);
-    else state.cart.push({ id, quantity: clamp(quantity, 1, 20) });
-    saveCart();
-    renderCart();
-    showToast(`${product.name} se agregó al carrito.`);
+  function celebrateCart() {
+    dom.cartTrigger.classList.remove("is-celebrating");
+    requestAnimationFrame(() => dom.cartTrigger.classList.add("is-celebrating"));
+    window.clearTimeout(state.cartAnimationTimer);
+    state.cartAnimationTimer = window.setTimeout(() => dom.cartTrigger.classList.remove("is-celebrating"), 650);
   }
 
-  function changeCartQuantity(id, amount) {
+  function animateAddToCart(source, product) {
+    celebrateCart();
+    if (!source || reducedMotion) return;
+    source.classList.remove("is-added");
+    requestAnimationFrame(() => source.classList.add("is-added"));
+    window.setTimeout(() => source.classList.remove("is-added"), 650);
+
+    const sourceRect = source.getBoundingClientRect();
+    const targetRect = dom.cartTrigger.getBoundingClientRect();
+    const flyer = document.createElement("img");
+    flyer.className = "cart-flyer";
+    flyer.src = product.image;
+    flyer.alt = "";
+    flyer.style.left = `${sourceRect.left + sourceRect.width / 2 - 31}px`;
+    flyer.style.top = `${sourceRect.top + sourceRect.height / 2 - 31}px`;
+    document.body.append(flyer);
+
+    const deltaX = targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
+    const deltaY = targetRect.top + targetRect.height / 2 - (sourceRect.top + sourceRect.height / 2);
+    const animation = flyer.animate([
+      { transform: "translate3d(0, 0, 0) scale(.72) rotate(-5deg)", opacity: 0 },
+      { transform: "translate3d(0, -22px, 0) scale(1) rotate(3deg)", opacity: 1, offset: .18 },
+      { transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(.18) rotate(14deg)`, opacity: .2 }
+    ], { duration: 720, easing: "cubic-bezier(.2,.75,.2,1)", fill: "forwards" });
+    animation.finished.finally(() => flyer.remove());
+  }
+
+  function addToCart(id, quantity = 1, source = null) {
+    id = String(id);
+    const product = productById.get(id);
+    if (!product || product.is_available === false) return;
+    const amount = clamp(Number(quantity) || 1, 1, 20);
+    const existing = state.cart.find((item) => item.id === id);
+    if (existing?.quantity === 20) {
+      showToast(t("cart.limit"));
+      celebrateCart();
+      return;
+    }
+    if (existing) existing.quantity = Math.min(20, existing.quantity + amount);
+    else state.cart.push({ id, quantity: amount });
+    saveCart();
+    renderCart({ highlightId: id });
+    animateAddToCart(source, product);
+    showToast(t("cart.added", { name: product.name }));
+  }
+
+  function changeCartQuantity(id, amount, source = null) {
     const item = state.cart.find((entry) => entry.id === id);
     if (!item) return;
+    if (amount > 0 && item.quantity === 20) {
+      showToast(t("cart.limit"));
+      celebrateCart();
+      return;
+    }
     item.quantity = clamp(item.quantity + amount, 0, 20);
     if (item.quantity === 0) state.cart = state.cart.filter((entry) => entry.id !== id);
     saveCart();
-    renderCart();
+    renderCart({ highlightId: id });
+    if (amount > 0) {
+      celebrateCart();
+      source?.closest(".cart-item")?.classList.add("is-updated");
+    }
   }
 
   function removeCartItem(id) {
@@ -322,7 +506,7 @@
     renderCart();
   }
 
-  function renderCart() {
+  function renderCart({ animate = true, highlightId = null } = {}) {
     const count = cartCount();
     dom.cartCount.textContent = String(count);
     dom.cartTitleCount.textContent = String(count);
@@ -335,32 +519,36 @@
     dom.cartEmpty.classList.toggle("is-visible", count === 0);
     dom.cartItems.hidden = count === 0;
     dom.shippingMessage.textContent = count === 0
-      ? "Envío provisional: $0.00."
-      : `${count} ${count === 1 ? "artículo" : "artículos"} · envío provisional $0.00.`;
+      ? t("cart.shippingEmpty")
+      : t(count === 1 ? "cart.shippingOne" : "cart.shippingMany", { count });
 
     dom.cartItems.innerHTML = state.cart.map((item) => {
-      const product = productById.get(item.id);
+      const product = localizedProduct(productById.get(item.id));
+      const safeId = escapeHtml(product.id);
+      const safeName = escapeHtml(product.name);
       return `
-        <article class="cart-item" data-cart-item="${product.id}">
-          <div class="cart-item__image"><img src="${product.image}" alt=""></div>
+        <article class="cart-item${highlightId === product.id ? " is-updated" : ""}" data-cart-item="${safeId}">
+          <div class="cart-item__image"><img src="${escapeHtml(product.image)}" alt=""></div>
           <div class="cart-item__details">
-            <div class="cart-item__top"><h3>${product.name}</h3><strong>$${(Number(product.price) * item.quantity).toFixed(2)}</strong></div>
-            <p>${product.weight} · ${product.price_label} c/u</p>
+            <div class="cart-item__top"><h3>${safeName}</h3><strong>$${(Number(product.price) * item.quantity).toFixed(2)}</strong></div>
+            <p>${escapeHtml(translateWeight(product.weight))} · ${escapeHtml(product.price_label)} ${escapeHtml(t("cart.each"))}</p>
             <div class="cart-item__actions">
-              <div class="mini-stepper" aria-label="Cantidad de ${product.name}">
-                <button type="button" data-cart-minus="${product.id}" aria-label="Reducir cantidad de ${product.name}">−</button>
+              <div class="mini-stepper" aria-label="${escapeHtml(t("cart.quantity", { name: product.name }))}">
+                <button type="button" data-cart-minus="${safeId}" aria-label="${escapeHtml(t("cart.reduce", { name: product.name }))}">−</button>
                 <span>${item.quantity}</span>
-                <button type="button" data-cart-plus="${product.id}" aria-label="Aumentar cantidad de ${product.name}">+</button>
+                <button type="button" data-cart-plus="${safeId}" aria-label="${escapeHtml(t("cart.increase", { name: product.name }))}">+</button>
               </div>
-              <button class="remove-item" type="button" data-cart-remove="${product.id}">Eliminar</button>
+              <button class="remove-item" type="button" data-cart-remove="${safeId}">${escapeHtml(t("cart.remove"))}</button>
             </div>
           </div>
         </article>`;
     }).join("");
 
-    dom.cartCount.classList.remove("is-bumping");
-    requestAnimationFrame(() => dom.cartCount.classList.add("is-bumping"));
-    window.setTimeout(() => dom.cartCount.classList.remove("is-bumping"), 300);
+    if (animate) {
+      dom.cartCount.classList.remove("is-bumping");
+      requestAnimationFrame(() => dom.cartCount.classList.add("is-bumping"));
+      window.setTimeout(() => dom.cartCount.classList.remove("is-bumping"), 420);
+    }
   }
 
   function openCart() {
@@ -377,7 +565,7 @@
     dom.cartDrawer.classList.remove("is-open");
     dom.cartScrim.classList.remove("is-open");
     dom.cartDrawer.setAttribute("aria-hidden", "true");
-    if (!dom.searchDialog.open && !dom.checkoutDialog.open) document.body.classList.remove("is-locked");
+    if (!dom.searchDialog.open && !dom.checkoutDialog.open && !dom.legalDialog.open) document.body.classList.remove("is-locked");
     if (restoreFocus) state.lastCartFocus?.focus?.();
   }
 
@@ -398,14 +586,15 @@
 
   function closeSearch() {
     if (dom.searchDialog.open) dom.searchDialog.close();
-    if (!dom.checkoutDialog.open) document.body.classList.remove("is-locked");
+    if (!dom.checkoutDialog.open && !dom.legalDialog.open) document.body.classList.remove("is-locked");
   }
 
   function filterSearch(query) {
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
     let visible = 0;
     dom.searchResults.forEach((result, index) => {
-      const haystack = `${result.dataset.keywords} ${products[index].name} ${products[index].tagline}`.toLowerCase();
+      const product = localizedProduct(products[index]);
+      const haystack = `${result.dataset.keywords} ${product.name} ${product.tagline} ${product.description} ${product.story}`.toLowerCase();
       const matches = terms.length === 0 || terms.every((term) => haystack.includes(term));
       result.hidden = !matches;
       if (matches) visible += 1;
@@ -428,6 +617,18 @@
     document.body.classList.add("is-locked");
   }
 
+  function openLegal() {
+    closeCart({ restoreFocus: false });
+    if (dom.searchDialog.open) dom.searchDialog.close();
+    if (!dom.legalDialog.open) dom.legalDialog.showModal();
+    document.body.classList.add("is-locked");
+  }
+
+  function closeLegal() {
+    if (dom.legalDialog.open) dom.legalDialog.close();
+    if (!dom.checkoutDialog.open && !dom.searchDialog.open) document.body.classList.remove("is-locked");
+  }
+
   function setCatalogFilter(category) {
     dom.catalogFilters.forEach((button) => {
       const active = button.dataset.catalogFilter === category;
@@ -441,7 +642,7 @@
 
   function closeCheckout() {
     if (dom.checkoutDialog.open) dom.checkoutDialog.close();
-    document.body.classList.remove("is-locked");
+    if (!dom.legalDialog.open && !dom.searchDialog.open) document.body.classList.remove("is-locked");
   }
 
   async function submitCheckout(event) {
@@ -450,7 +651,7 @@
     const formData = new FormData(dom.checkoutForm);
     dom.checkoutError.textContent = "";
     submitButton.disabled = true;
-    submitButton.firstChild.textContent = "Confirmando… ";
+    dom.checkoutSubmitLabel.textContent = t("checkout.submitting");
 
     try {
       const response = await fetch("/api/checkout", {
@@ -462,10 +663,13 @@
         }),
       });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "No pudimos confirmar este pedido.");
+      if (!response.ok) throw new Error(payload.error || t("checkout.error"));
 
-      dom.orderId.textContent = payload.order_id;
-      dom.orderTotal.textContent = `$${payload.total}`;
+      state.lastOrder = { id: payload.order_id, total: `$${payload.total}` };
+      dom.checkoutSuccessCopy.textContent = t("checkout.successCopy", {
+        id: state.lastOrder.id,
+        total: state.lastOrder.total
+      });
       dom.checkoutFormView.hidden = true;
       dom.checkoutSuccess.hidden = false;
       state.cart = [];
@@ -475,7 +679,7 @@
       dom.checkoutError.textContent = error.message;
     } finally {
       submitButton.disabled = false;
-      submitButton.firstChild.textContent = "Confirmar pedido demo ";
+      dom.checkoutSubmitLabel.textContent = t("checkout.submit");
     }
   }
 
@@ -534,15 +738,15 @@
   });
 
   document.querySelector("[data-quantity-minus]").addEventListener("click", () => {
-    state.quantity = clamp(state.quantity - 1, 1, 9);
+    state.quantity = clamp(state.quantity - 1, 1, 20);
     dom.quantity.textContent = String(state.quantity);
   });
   document.querySelector("[data-quantity-plus]").addEventListener("click", () => {
-    state.quantity = clamp(state.quantity + 1, 1, 9);
+    state.quantity = clamp(state.quantity + 1, 1, 20);
     dom.quantity.textContent = String(state.quantity);
   });
-  document.querySelector("[data-add-selected]").addEventListener("click", () => addToCart(products[state.selected].id, state.quantity));
-  document.querySelectorAll("[data-quick-add]").forEach((button) => button.addEventListener("click", () => addToCart(button.dataset.quickAdd)));
+  document.querySelector("[data-add-selected]").addEventListener("click", (event) => addToCart(products[state.selected].id, state.quantity, event.currentTarget));
+  document.querySelectorAll("[data-quick-add]").forEach((button) => button.addEventListener("click", (event) => addToCart(button.dataset.quickAdd, 1, event.currentTarget)));
 
   document.querySelectorAll("[data-open-cart]").forEach((button) => button.addEventListener("click", openCart));
   document.querySelector("[data-close-cart]").addEventListener("click", () => closeCart());
@@ -555,8 +759,8 @@
     const minus = event.target.closest("[data-cart-minus]");
     const plus = event.target.closest("[data-cart-plus]");
     const remove = event.target.closest("[data-cart-remove]");
-    if (minus) changeCartQuantity(minus.dataset.cartMinus, -1);
-    if (plus) changeCartQuantity(plus.dataset.cartPlus, 1);
+    if (minus) changeCartQuantity(minus.dataset.cartMinus, -1, minus);
+    if (plus) changeCartQuantity(plus.dataset.cartPlus, 1, plus);
     if (remove) removeCartItem(remove.dataset.cartRemove);
   });
 
@@ -585,7 +789,18 @@
     button.addEventListener("click", () => setCatalogFilter(button.dataset.catalogFilter));
   });
   dom.catalogAdds.forEach((button) => {
-    button.addEventListener("click", () => addToCart(button.dataset.catalogAdd));
+    button.addEventListener("click", (event) => addToCart(button.dataset.catalogAdd, 1, event.currentTarget));
+  });
+
+  dom.language.addEventListener("change", () => applyLanguage(dom.language.value));
+
+  document.querySelectorAll("[data-open-legal]").forEach((button) => button.addEventListener("click", openLegal));
+  document.querySelector("[data-close-legal]").addEventListener("click", closeLegal);
+  dom.legalDialog.addEventListener("click", (event) => {
+    if (event.target === dom.legalDialog) closeLegal();
+  });
+  dom.legalDialog.addEventListener("close", () => {
+    if (!dom.checkoutDialog.open && !dom.searchDialog.open) document.body.classList.remove("is-locked");
   });
 
   dom.checkoutButton.addEventListener("click", openCheckout);
@@ -601,7 +816,7 @@
   dom.nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => toggleNavigation(false)));
 
   window.addEventListener("keydown", (event) => {
-    const dialogOpen = dom.searchDialog.open || dom.checkoutDialog.open;
+    const dialogOpen = dom.searchDialog.open || dom.checkoutDialog.open || dom.legalDialog.open;
     if (event.key === "Escape" && dom.cartDrawer.classList.contains("is-open")) closeCart();
     if (dialogOpen || ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
     if (event.key === "ArrowRight") step(1);
@@ -620,9 +835,8 @@
   window.addEventListener("scroll", updateHeader, { passive: true });
   window.addEventListener("resize", updateHeader);
 
-  setTheme(0);
+  applyLanguage(state.language, { persist: false });
   setCatalogFilter("all");
-  renderCart();
   updateHeader();
   requestAnimationFrame(drawCarousel);
 })();
