@@ -2,6 +2,12 @@
 
 Tienda Flask conectada a Supabase y desplegada en Vercel.
 
+## Vista en vivo
+
+[![Abrir BuldakShop en Vercel](https://img.shields.io/badge/VER%20SITIO%20EN%20VIVO-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://buldakshop.vercel.app/)
+
+[![Vista previa de BuldakShop](docs/buldakshop-vercel.png)](https://buldakshop.vercel.app/)
+
 ## Estructura
 
 - `backend/`: API Flask, checkout demo y acceso a Supabase.
