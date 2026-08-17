@@ -47,13 +47,7 @@
     preparedSource: document.querySelector("[data-prepared-source]"),
     pairingTitles: [...document.querySelectorAll("[data-pairing-title]")],
     pairingTexts: [...document.querySelectorAll("[data-pairing-text]")],
-    phoneImage: document.querySelector("[data-phone-image]"),
-    phoneName: document.querySelector("[data-phone-name]"),
-    phoneTagline: document.querySelector("[data-phone-tagline]"),
-    phonePrice: document.querySelector("[data-phone-price]"),
-    phoneHeat: document.querySelector("[data-phone-heat]"),
     cartCount: document.querySelector("[data-cart-count]"),
-    mobileCartCount: document.querySelector("[data-mobile-cart-count]"),
     cartTitleCount: document.querySelector("[data-cart-title-count]"),
     cartDrawer: document.querySelector("[data-cart-drawer]"),
     cartScrim: document.querySelector("[data-cart-scrim]"),
@@ -169,12 +163,6 @@
     dom.pairingTexts.forEach((element, pairingIndex) => {
       element.textContent = product.recommendations[pairingIndex].text;
     });
-    dom.phoneImage.src = product.image;
-    dom.phoneImage.alt = `Buldak ${product.name} ramen pack`;
-    dom.phoneName.textContent = product.name;
-    dom.phoneTagline.textContent = product.tagline;
-    dom.phonePrice.textContent = product.price_label;
-    dom.phoneHeat.style.width = `${product.heat}%`;
     document.title = `BuldakShop — ${product.name}`;
 
     dom.cards.forEach((card, cardIndex) => {
@@ -337,7 +325,6 @@
   function renderCart() {
     const count = cartCount();
     dom.cartCount.textContent = String(count);
-    dom.mobileCartCount.textContent = String(count);
     dom.cartTitleCount.textContent = String(count);
     const subtotal = state.cart.reduce((total, item) => {
       const product = productById.get(item.id);
@@ -506,12 +493,13 @@
     const story = document.querySelector("#story");
     const ritual = document.querySelector("#ritual");
     const prepared = document.querySelector("#prepared");
-    const mobile = document.querySelector(".mobile-showcase");
+    const footer = document.querySelector(".site-footer");
     const headerLine = y + 45;
     const overCatalog = headerLine >= catalog.offsetTop && headerLine < story.offsetTop;
-    const overPrepared = headerLine >= prepared.offsetTop && headerLine < mobile.offsetTop;
+    const overPrepared = headerLine >= prepared.offsetTop && headerLine < footer.offsetTop;
+    const overFooter = headerLine >= footer.offsetTop;
     dom.header.classList.toggle("force-dark", overPrepared);
-    dom.header.classList.toggle("force-light", overCatalog || (headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop));
+    dom.header.classList.toggle("force-light", overCatalog || overFooter || (headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop));
   }
 
   dom.carousel.addEventListener("pointerdown", onPointerDown);
@@ -554,7 +542,6 @@
     dom.quantity.textContent = String(state.quantity);
   });
   document.querySelector("[data-add-selected]").addEventListener("click", () => addToCart(products[state.selected].id, state.quantity));
-  document.querySelector("[data-phone-add]").addEventListener("click", () => addToCart(products[state.selected].id));
   document.querySelectorAll("[data-quick-add]").forEach((button) => button.addEventListener("click", () => addToCart(button.dataset.quickAdd)));
 
   document.querySelectorAll("[data-open-cart]").forEach((button) => button.addEventListener("click", openCart));

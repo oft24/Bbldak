@@ -18,6 +18,8 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Ll\xc3\xa9vate Original", response.data)
         self.assertNotIn(b"Solo Original", response.data)
         self.assertNotIn(b"Lo que define", response.data)
+        self.assertNotIn(b"Una bolsa", response.data)
+        self.assertNotIn(b"Toda su ficha", response.data)
         self.assertIn(b"prepared-carbonara.jpg?v=3", response.data)
         favicon = self.client.get("/assets/favicon.svg")
         try:
