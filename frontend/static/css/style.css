@@ -473,6 +473,11 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .catalog-card__footer strong.is-sold-out { color: #b3123f; }
 .catalog-card__footer a { flex: 0 0 auto; color: #655a5d; text-underline-offset: 3px; }
 .catalog-card__price { margin-top: 12px; display: block; color: #20191b; font-size: 12px; font-weight: 800; }
+.catalog-card__actions { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.catalog-card__actions .catalog-card__price { margin-top: 0; font-size: 18px; letter-spacing: -.035em; }
+.catalog-card__actions button { min-width: 94px; height: 38px; padding: 0 16px; border: 0; border-radius: 999px; color: #fff; background: #20191b; font-size: 10px; font-weight: 800; cursor: pointer; transition: transform 220ms var(--ease), opacity 220ms ease; }
+.catalog-card__actions button:hover:not(:disabled) { transform: translateY(-2px); }
+.catalog-card__actions button:disabled { opacity: .36; cursor: not-allowed; }
 
 .story { min-height: 105vh; display: flex; flex-direction: column; justify-content: center; }
 .story > .section-index { margin-bottom: 38px; }

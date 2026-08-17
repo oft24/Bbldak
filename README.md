@@ -1,8 +1,16 @@
 # BuldakShop
 
-Interactive Flask shop with product-specific Buldak details, cooking directions, serving photography and pairing recommendations.
+Tienda Flask conectada a Supabase y desplegada en Vercel.
 
-## Local development
+## Estructura
+
+- `backend/`: API Flask, checkout demo y acceso a Supabase.
+- `frontend/`: plantillas, estilos, JavaScript e imágenes.
+- `supabase/migrations/`: esquema y datos iniciales del catálogo.
+
+La raíz `app.py` es únicamente el punto de entrada WSGI de Vercel.
+
+## Desarrollo local
 
 ```powershell
 python -m venv .venv
@@ -10,9 +18,4 @@ python -m venv .venv
 .\.venv\Scripts\python app.py
 ```
 
-Open `http://127.0.0.1:5000`.
-
-## Vercel
-
-The root `app.py` exports the Flask WSGI application Vercel detects automatically.
-Static files live in `public/` so Vercel can serve them from its CDN.
+Copia `.env.example` a un archivo local ignorado por Git y agrega las variables públicas de Supabase para usar la base remota durante el desarrollo. Sin esas variables, la aplicación usa el mismo catálogo incluido como respaldo local.

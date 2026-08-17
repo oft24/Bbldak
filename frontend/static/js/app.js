@@ -4,8 +4,13 @@
   const productData = document.querySelector("#product-data");
   if (!productData) return;
 
-  const products = JSON.parse(productData.textContent);
-  const productById = new Map(products.map((product) => [product.id, product]));
+  const payload = JSON.parse(productData.textContent);
+  const products = payload.featured;
+  const catalogProducts = payload.catalog;
+  const productById = new Map(catalogProducts.map((product) => [product.id, product]));
+  products.forEach((product) => {
+    productById.set(product.id, { ...productById.get(product.id), ...product });
+  });
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
 
@@ -33,22 +38,6 @@
     storyWeight: document.querySelector("[data-story-weight]"),
     storyNote: document.querySelector("[data-story-note]"),
     nutritionSource: document.querySelector("[data-nutrition-source]"),
-    ingredients: [...document.querySelectorAll("[data-ingredient]")],
-    ingredientName: document.querySelector("[data-ingredient-name]"),
-    ingredientIntro: document.querySelector("[data-ingredient-intro]"),
-    profileName: document.querySelector("[data-profile-name]"),
-    profileLabels: [...document.querySelectorAll("[data-profile-label]")],
-    profileValues: [...document.querySelectorAll("[data-profile-value]")],
-    allergens: document.querySelector("[data-allergens]"),
-    shopName: document.querySelector("[data-shop-name]"),
-    shopMeta: document.querySelector("[data-shop-meta]"),
-    shopNumber: document.querySelector("[data-shop-number]"),
-    shopImage: document.querySelector("[data-shop-image]"),
-    shopDetailName: document.querySelector("[data-shop-detail-name]"),
-    shopDescription: document.querySelector("[data-shop-description]"),
-    shopPrice: document.querySelector("[data-shop-price]"),
-    shopWeight: document.querySelector("[data-shop-weight]"),
-    addCurrent: document.querySelector("[data-add-current]"),
     directionsTitle: document.querySelector("[data-directions-title]"),
     directionsIntro: document.querySelector("[data-directions-intro]"),
     directionTitles: [...document.querySelectorAll("[data-direction-title]")],
@@ -89,6 +78,7 @@
     navToggle: document.querySelector("[data-nav-toggle]"),
     catalogFilters: [...document.querySelectorAll("[data-catalog-filter]")],
     catalogCards: [...document.querySelectorAll("[data-catalog-card]")],
+    catalogAdds: [...document.querySelectorAll("[data-catalog-add]")],
   };
 
   const state = {
@@ -159,31 +149,6 @@
     dom.storyWeight.textContent = product.weight.split(" · ")[0];
     dom.storyNote.innerHTML = product.story_note.replace("\n", "<br>");
     dom.nutritionSource.href = product.nutrition_source_url;
-    dom.ingredients.forEach((element, ingredientIndex) => {
-      element.textContent = product.ingredients[ingredientIndex];
-    });
-    dom.ingredientName.textContent = product.name;
-    dom.ingredientIntro.textContent = product.ingredient_intro;
-    dom.profileName.textContent = product.name;
-    dom.profileLabels.forEach((element, profileIndex) => {
-      element.textContent = product.profile[profileIndex].label;
-    });
-    dom.profileValues.forEach((element, profileIndex) => {
-      element.textContent = product.profile[profileIndex].value;
-    });
-    dom.allergens.textContent = product.allergens;
-
-    dom.shopName.textContent = product.name;
-    dom.shopMeta.textContent = `SKU ${product.sku} · ${product.weight.split(" · ")[0]} · ${product.kcal} kcal`;
-    dom.shopNumber.textContent = product.number;
-    dom.shopImage.src = product.image;
-    dom.shopImage.alt = `Buldak ${product.name} ramen`;
-    dom.shopDetailName.textContent = product.name;
-    dom.shopDescription.textContent = product.description;
-    dom.shopPrice.textContent = product.price_label;
-    dom.shopWeight.textContent = product.weight.split(" · ")[0];
-    dom.addCurrent.querySelector("span").textContent = `Guardar ${product.name}`;
-
     dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
     dom.directionsIntro.textContent = product.directions_intro;
     dom.directionTitles.forEach((element, directionIndex) => {
@@ -208,7 +173,7 @@
     dom.phoneImage.alt = `Buldak ${product.name} ramen pack`;
     dom.phoneName.textContent = product.name;
     dom.phoneTagline.textContent = product.tagline;
-    dom.phonePrice.textContent = "Por confirmar";
+    dom.phonePrice.textContent = product.price_label;
     dom.phoneHeat.style.width = `${product.heat}%`;
     document.title = `BuldakShop — ${product.name}`;
 
@@ -322,8 +287,9 @@
     try {
       const stored = JSON.parse(localStorage.getItem("buldak-cart") || "[]");
       if (!Array.isArray(stored)) return [];
+      const legacyIds = { carbonara: "811140", original: "811120", quattro: "811150" };
       return stored
-        .map((item) => ({ id: String(item.id), quantity: Number(item.quantity) }))
+        .map((item) => ({ id: legacyIds[item.id] || String(item.id), quantity: Number(item.quantity) }))
         .filter((item) => productById.has(item.id) && Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 20);
     } catch {
       return [];
@@ -344,13 +310,13 @@
 
   function addToCart(id, quantity = 1) {
     const product = productById.get(id);
-    if (!product) return;
+    if (!product || product.is_available === false) return;
     const existing = state.cart.find((item) => item.id === id);
     if (existing) existing.quantity = Math.min(20, existing.quantity + quantity);
     else state.cart.push({ id, quantity: clamp(quantity, 1, 20) });
     saveCart();
     renderCart();
-    showToast(`${product.name} se guardó en tu lista.`);
+    showToast(`${product.name} se agregó al carrito.`);
   }
 
   function changeCartQuantity(id, amount) {
@@ -373,13 +339,17 @@
     dom.cartCount.textContent = String(count);
     dom.mobileCartCount.textContent = String(count);
     dom.cartTitleCount.textContent = String(count);
-    dom.subtotal.textContent = "Por confirmar";
-    dom.checkoutButton.disabled = true;
+    const subtotal = state.cart.reduce((total, item) => {
+      const product = productById.get(item.id);
+      return total + Number(product.price) * item.quantity;
+    }, 0);
+    dom.subtotal.textContent = `$${subtotal.toFixed(2)}`;
+    dom.checkoutButton.disabled = count === 0;
     dom.cartEmpty.classList.toggle("is-visible", count === 0);
     dom.cartItems.hidden = count === 0;
     dom.shippingMessage.textContent = count === 0
-      ? "Agregaremos importes y envío con la lista final."
-      : "Tu selección está guardada; el precio se añadirá con la lista final.";
+      ? "Envío provisional: $0.00."
+      : `${count} ${count === 1 ? "artículo" : "artículos"} · envío provisional $0.00.`;
 
     dom.cartItems.innerHTML = state.cart.map((item) => {
       const product = productById.get(item.id);
@@ -387,8 +357,8 @@
         <article class="cart-item" data-cart-item="${product.id}">
           <div class="cart-item__image"><img src="${product.image}" alt=""></div>
           <div class="cart-item__details">
-            <div class="cart-item__top"><h3>${product.name}</h3><strong>Por confirmar</strong></div>
-            <p>${product.weight}</p>
+            <div class="cart-item__top"><h3>${product.name}</h3><strong>$${(Number(product.price) * item.quantity).toFixed(2)}</strong></div>
+            <p>${product.weight} · ${product.price_label} c/u</p>
             <div class="cart-item__actions">
               <div class="mini-stepper" aria-label="Cantidad de ${product.name}">
                 <button type="button" data-cart-minus="${product.id}" aria-label="Reducir cantidad de ${product.name}">−</button>
@@ -462,8 +432,13 @@
   }
 
   function openCheckout() {
-    showToast("El pago se activará cuando tengamos los precios finales.");
-    return;
+    if (cartCount() === 0) return;
+    closeCart({ restoreFocus: false });
+    dom.checkoutFormView.hidden = false;
+    dom.checkoutSuccess.hidden = true;
+    dom.checkoutError.textContent = "";
+    if (!dom.checkoutDialog.open) dom.checkoutDialog.showModal();
+    document.body.classList.add("is-locked");
   }
 
   function setCatalogFilter(category) {
@@ -529,15 +504,13 @@
     dom.header.classList.toggle("is-scrolled", y > 20);
     const catalog = document.querySelector("#catalog");
     const story = document.querySelector("#story");
-    const shop = document.querySelector("#shop");
     const ritual = document.querySelector("#ritual");
     const prepared = document.querySelector("#prepared");
     const mobile = document.querySelector(".mobile-showcase");
     const headerLine = y + 45;
     const overCatalog = headerLine >= catalog.offsetTop && headerLine < story.offsetTop;
-    const overShop = headerLine >= shop.offsetTop && headerLine < ritual.offsetTop;
     const overPrepared = headerLine >= prepared.offsetTop && headerLine < mobile.offsetTop;
-    dom.header.classList.toggle("force-dark", overShop || overPrepared);
+    dom.header.classList.toggle("force-dark", overPrepared);
     dom.header.classList.toggle("force-light", overCatalog || (headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop));
   }
 
@@ -581,7 +554,6 @@
     dom.quantity.textContent = String(state.quantity);
   });
   document.querySelector("[data-add-selected]").addEventListener("click", () => addToCart(products[state.selected].id, state.quantity));
-  dom.addCurrent.addEventListener("click", () => addToCart(products[state.selected].id));
   document.querySelector("[data-phone-add]").addEventListener("click", () => addToCart(products[state.selected].id));
   document.querySelectorAll("[data-quick-add]").forEach((button) => button.addEventListener("click", () => addToCart(button.dataset.quickAdd)));
 
@@ -590,7 +562,7 @@
   dom.cartScrim.addEventListener("click", () => closeCart());
   document.querySelector("[data-cart-shop]").addEventListener("click", () => {
     closeCart({ restoreFocus: false });
-    document.querySelector("#shop").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+    document.querySelector("#catalog").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
   });
   dom.cartItems.addEventListener("click", (event) => {
     const minus = event.target.closest("[data-cart-minus]");
@@ -624,6 +596,9 @@
 
   dom.catalogFilters.forEach((button) => {
     button.addEventListener("click", () => setCatalogFilter(button.dataset.catalogFilter));
+  });
+  dom.catalogAdds.forEach((button) => {
+    button.addEventListener("click", () => addToCart(button.dataset.catalogAdd));
   });
 
   dom.checkoutButton.addEventListener("click", openCheckout);

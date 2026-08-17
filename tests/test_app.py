@@ -14,7 +14,10 @@ class ShowroomTests(unittest.TestCase):
         self.assertIn(b"811140", response.data)
         self.assertIn(b"811920", response.data)
         self.assertIn(b"Todos los productos", response.data)
-        self.assertNotIn(b"$2.49", response.data)
+        self.assertIn(b"$0.01", response.data)
+        self.assertNotIn(b"Ll\xc3\xa9vate Original", response.data)
+        self.assertNotIn(b"Solo Original", response.data)
+        self.assertNotIn(b"Lo que define", response.data)
         self.assertIn(b"prepared-carbonara.webp", response.data)
         favicon = self.client.get("/assets/favicon.svg")
         try:
@@ -35,8 +38,8 @@ class ShowroomTests(unittest.TestCase):
             self.assertEqual(len(product["directions"]), 4)
             self.assertEqual(len(product["recommendations"]), 3)
             self.assertTrue(product["prepared_image"].startswith("/assets/prepared-"))
-            self.assertIsNone(product["price"])
-            self.assertEqual(product["price_label"], "Precio por confirmar")
+            self.assertEqual(product["price"], 0.01)
+            self.assertEqual(product["price_label"], "$0.01")
 
     def test_catalog_has_all_references_and_images(self):
         response = self.client.get("/api/catalog")
@@ -46,6 +49,8 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual({item["sku"] for item in catalog}.__len__(), 22)
         self.assertIn("Agotado", next(item["status"] for item in catalog if item["sku"] == "811720"))
         for item in catalog:
+            self.assertEqual(item["price"], 0.01)
+            self.assertEqual(item["price_label"], "$0.01")
             image_response = self.client.get(item["image"].split("?")[0])
             try:
                 self.assertEqual(image_response.status_code, 200, item["sku"])
@@ -53,7 +58,7 @@ class ShowroomTests(unittest.TestCase):
             finally:
                 image_response.close()
 
-    def test_checkout_waits_for_final_prices(self):
+    def test_checkout_accepts_catalog_products_at_provisional_price(self):
         invalid = self.client.post("/api/checkout", json={"cart": []})
         self.assertEqual(invalid.status_code, 400)
 
@@ -61,12 +66,24 @@ class ShowroomTests(unittest.TestCase):
             "/api/checkout",
             json={
                 "customer": {"name": "Test Customer", "email": "test@example.com"},
-                "cart": [{"id": "carbonara", "quantity": 2}],
+                "cart": [{"id": "811140", "quantity": 2}],
             },
         )
         payload = valid.get_json()
-        self.assertEqual(valid.status_code, 409)
-        self.assertIn("precios", payload["error"])
+        self.assertEqual(valid.status_code, 200)
+        self.assertEqual(payload["subtotal"], "0.02")
+        self.assertEqual(payload["shipping"], "0.00")
+        self.assertEqual(payload["total"], "0.02")
+
+    def test_checkout_rejects_sold_out_product(self):
+        response = self.client.post(
+            "/api/checkout",
+            json={
+                "customer": {"name": "Test Customer", "email": "test@example.com"},
+                "cart": [{"id": "811720", "quantity": 1}],
+            },
+        )
+        self.assertEqual(response.status_code, 400)
 
 
 if __name__ == "__main__":
