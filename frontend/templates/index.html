@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=14">
-    <script defer src="/js/i18n.js?v=4"></script>
-    <script defer src="/js/app.js?v=18"></script>
+    <link rel="stylesheet" href="/css/style.css?v=15">
+    <script defer src="/js/i18n.js?v=5"></script>
+    <script defer src="/js/app.js?v=19"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -277,7 +277,7 @@
             <button class="add-button" type="button" data-refresco-add-selected>
               <span data-i18n="hero.add">Agregar al carrito</span><span aria-hidden="true">→</span>
             </button>
-            <p class="microcopy" data-i18n="hero.provisional">Precio provisional por artículo</p>
+            <p class="microcopy"><span data-i18n="hero.provisional">Precio provisional por artículo</span> · <a href="#refrescos-catalog" data-i18n="refrescos.viewCatalog">Ver catálogo completo de refrescos</a></p>
           </aside>
 
           <div class="refrescos-carousel-shell" data-refresco-carousel aria-label="Selector de refrescos" data-i18n-aria="refrescos.carousel">
@@ -308,6 +308,52 @@
             {% endfor %}
           </div>
           <button class="circle-button" type="button" data-refresco-next aria-label="Siguiente refresco">→</button>
+        </div>
+      </section>
+
+      <section class="refrescos-catalog section-pad" id="refrescos-catalog" aria-labelledby="refrescos-catalog-title">
+        <div class="refrescos-catalog-heading reveal">
+          <div>
+            <div class="section-index" data-i18n="refrescos.catalogIndex">07 — Catálogo de refrescos</div>
+            <h2 id="refrescos-catalog-title" data-i18n-html="refrescos.catalogTitle">Todos los refrescos.<br><span>Del mismo distribuidor.</span></h2>
+          </div>
+          <p data-i18n="refrescos.catalogCopy">{{ refrescos_products|length }} refrescos disponibles, con el mismo precio provisional de $0.01.</p>
+        </div>
+        <div class="refrescos-filters reveal" aria-label="Filtrar refrescos" data-i18n-aria="refrescos.filter">
+          {% for category in refrescos_categories %}
+            <button class="refrescos-filter{% if loop.first %} is-active{% endif %}" type="button" data-refresco-catalog-filter="{{ category.id }}" data-i18n="refrescos.filter.{{ category.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ category.label }}</button>
+          {% endfor %}
+        </div>
+        <div class="catalog-grid" data-refresco-catalog-grid>
+          {% for item in refrescos_products %}
+            <article class="catalog-card reveal" data-refresco-catalog-card data-category="{{ item.category }}">
+              <div class="catalog-card__visual">
+                <span>{{ item.category_label }}</span>
+                <img src="{{ item.image }}" alt="{{ item.name }}, SKU {{ item.sku }}" loading="lazy" decoding="async">
+              </div>
+              <div class="catalog-card__body">
+                <div class="catalog-card__sku">SKU {{ item.sku }}</div>
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.weight }} · {{ item.case }}</p>
+                <div class="catalog-card__footer">
+                  <strong>{{ item.description }}</strong>
+                </div>
+                <div class="catalog-card__actions">
+                  <span class="catalog-card__price">{{ item.price_label }}</span>
+                  <div class="catalog-card__buy">
+                    <div class="catalog-stepper" data-refresco-catalog-stepper="{{ item.id }}" aria-label="Cantidad de {{ item.name }}">
+                      <button type="button" data-refresco-catalog-qty-minus="{{ item.id }}" aria-label="Reducir cantidad de {{ item.name }}">−</button>
+                      <output data-refresco-catalog-quantity="{{ item.id }}">1</output>
+                      <button type="button" data-refresco-catalog-qty-plus="{{ item.id }}" aria-label="Aumentar cantidad de {{ item.name }}">+</button>
+                    </div>
+                    <button class="catalog-add" type="button" data-refresco-catalog-add="{{ item.id }}" data-i18n="catalog.add">
+                      Agregar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
         </div>
       </section>
 

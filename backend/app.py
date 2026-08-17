@@ -328,25 +328,107 @@ for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
     )
 
 
+REFRESCOS_CATEGORIES = [
+    {"id": "all", "label": "Todos"},
+    {"id": "te", "label": "Té"},
+    {"id": "agua_gas", "label": "Agua con gas"},
+    {"id": "jugos_lacteos", "label": "Jugos y lácteos"},
+    {"id": "electrolitos", "label": "Electrolitos"},
+    {"id": "boba", "label": "Boba"},
+    {"id": "otros", "label": "Otros"},
+]
+
+_REFRESCOS_CATEGORY_LABELS = {c["id"]: c["label"] for c in REFRESCOS_CATEGORIES}
+
+
+def _refresco(sku, name, category, weight, case, image, description):
+    return {
+        "sku": sku, "name": name, "category": category,
+        "category_label": _REFRESCOS_CATEGORY_LABELS[category],
+        "weight": weight, "case": case, "image": f"/assets/refrescos/{image}.svg",
+        "description": description, "status": "Disponible",
+    }
+
+
 REFRESCOS_PRODUCTS = [
-    {
-        "sku": "833130", "name": "Coco Palm Jugo de Coco", "category": "refrescos", "category_label": "Refresco",
-        "weight": "245 ml · lata", "case": "24 latas x 245 ml", "image": "/assets/refrescos/coco-palm.svg",
-        "description": "Jugo de coco 100% natural en lata, ligero, dulce y sin pulpa.",
-        "status": "Disponible",
-    },
-    {
-        "sku": "833210", "name": "Wang Lo Kat Té de Hierbas", "category": "refrescos", "category_label": "Refresco",
-        "weight": "310 ml · lata", "case": "24 latas x 310 ml", "image": "/assets/refrescos/wanglaoji.svg",
-        "description": "Bebida herbal china clásica (凉茶), dulce y refrescante, ideal para acompañar comidas picantes.",
-        "status": "Disponible",
-    },
-    {
-        "sku": "831190", "name": "Genki Forest Soda Durazno Blanco", "category": "refrescos", "category_label": "Refresco",
-        "weight": "480 ml · botella", "case": "15 botellas x 480 ml", "image": "/assets/refrescos/genki-forest-white-peach.svg",
-        "description": "Agua con gas sabor durazno blanco, cero azúcar, ligera y burbujeante.",
-        "status": "Disponible",
-    },
+    _refresco("833130", "Coco Palm Jugo de Coco", "jugos_lacteos", "245 ml · lata", "24 latas x 245 ml",
+        "coco-palm", "Jugo de coco 100% natural en lata, ligero, dulce y sin pulpa."),
+    _refresco("833210", "Wang Lo Kat Té de Hierbas", "otros", "310 ml · lata", "24 latas x 310 ml",
+        "wanglaoji", "Bebida herbal china clásica (凉茶), dulce y refrescante, ideal para acompañar comidas picantes."),
+    _refresco("831190", "Genki Forest Soda Durazno Blanco", "agua_gas", "480 ml · botella", "15 botellas x 480 ml",
+        "genki-forest-white-peach", "Agua con gas sabor durazno blanco, cero azúcar, ligera y burbujeante."),
+    _refresco("194280", "Vita Té de Durazno", "te", "250 ml · botella", "48 botellas x 250 ml",
+        "weitasoy-peach-tea", "Té de durazno clásico, dulce y ligero, listo para tomar frío."),
+    _refresco("880350", "Binggrae Leche Sabor Melón", "jugos_lacteos", "200 ml · botella", "24 botellas x 200 ml",
+        "binggrae-melon-milk", "Bebida láctea coreana con sabor a melón, cremosa y dulce."),
+    _refresco("831214", "Genki Forest Cola Limón Gasificada", "agua_gas", "480 ml · botella", "15 botellas x 480 ml",
+        "genki-forest-cola", "Agua con gas sabor cola y limón, cero azúcar."),
+    _refresco("834510", "Shui Lian Wan Yogurt Original", "jugos_lacteos", "280 ml · botella", "20 botellas x 280 ml",
+        "shuiliangwan-yogurt", "Bebida con sabor a yogurt, cremosa y ligeramente dulce."),
+    _refresco("832110", "Kang Shi Fu Té de Jazmín", "te", "500 ml · botella", "15 botellas x 500 ml",
+        "kangshifu-jasmine", "Té verde con jazmín en botella verde, refrescante y floral."),
+    _refresco("832160", "Kang Shi Fu Pera con Azúcar de Roca", "te", "500 ml · botella", "15 botellas x 500 ml",
+        "kangshifu-pear", "Té de pera con azúcar de roca, suave y ligeramente dulce."),
+    _refresco("832140", "Kang Shi Fu Té de Toronja con Miel", "te", "500 ml · botella", "15 botellas x 500 ml",
+        "kangshifu-honey-pomelo", "Té de toronja (pomelo) con miel, cítrico y dulce."),
+    _refresco("831831", "Shan Zha Shu Xia Bebida de Espino", "otros", "350 ml · botella", "15 botellas x 350 ml · compra 5 y llévate 2 gratis",
+        "shanzhashuxia", "Bebida de espino (shanzha) agridulce, un clásico chino digestivo."),
+    _refresco("837410", "MASAN Té Verde Limón y Limoncillo", "te", "500 ml · botella", "24 botellas x 500 ml",
+        "masan-lemongrass", "Té verde con limón y limoncillo, fresco y aromático."),
+    _refresco("837412", "MASAN Té Verde con Miel", "te", "500 ml · botella", "24 botellas x 500 ml",
+        "masan-honey-tea", "Té verde suave endulzado con miel."),
+    _refresco("831160", "Genki Forest Soda Lichi", "agua_gas", "480 ml · botella", "15 botellas x 480 ml",
+        "genki-forest-lychee", "Agua con gas sabor lichi, cero azúcar, ligera y afrutada."),
+    _refresco("831220", "Genki Forest Soda Durazno Blanco Lata", "agua_gas", "330 ml · lata", "4 packs x 6 latas x 330 ml",
+        "genki-forest-peach-can", "Versión en lata del agua con gas sabor durazno blanco, cero azúcar."),
+    _refresco("831170", "Genki Forest Soda Uva Negra de Verano", "agua_gas", "480 ml · botella", "15 botellas x 480 ml",
+        "genki-forest-grape", "Agua con gas sabor uva negra, cero azúcar, dulce y burbujeante."),
+    _refresco("831140", "Genki Forest Soda Naranja con Vitamina C", "agua_gas", "480 ml · botella", "15 botellas x 480 ml",
+        "genki-forest-orange-vc", "Agua con gas sabor naranja con vitamina C, cero azúcar."),
+    _refresco("831240", "Genki Forest Soda Lichi Lata", "agua_gas", "330 ml · lata", "4 packs x 6 latas x 330 ml",
+        "genki-forest-lychee-can", "Versión en lata del agua con gas sabor lichi, cero azúcar."),
+    _refresco("833320", "Tai Shan Gelatina de Hierba Original", "otros", "330 g · lata", "4 packs x 6 latas x 330 g",
+        "taisun-grass-jelly", "Bebida de gelatina de hierba (仙草蜜), refrescante y ligeramente dulce."),
+    _refresco("833330", "Tai Shan Gelatina de Hierba Lichi", "otros", "330 g · lata", "4 packs x 6 latas x 330 g",
+        "taisun-grass-jelly-lychee", "Gelatina de hierba con sabor a lichi."),
+    _refresco("833340", "Tai Shan Gelatina de Hierba Coco", "otros", "330 g · lata", "4 packs x 6 latas x 330 g",
+        "taisun-grass-jelly-coconut", "Gelatina de hierba con sabor a coco."),
+    _refresco("837520", "J WAY Boba de Jugo de Fruta", "boba", "125 g · vaso", "8 vasos (料包不含杯)",
+        "jway-boba-fruit", "Kit de boba con jugo de fruta, 8 vasos individuales listos para preparar."),
+    _refresco("837510", "J WAY Boba de Té con Leche", "boba", "78 g · vaso", "8 vasos (料包不含杯)",
+        "jway-boba-milk-tea", "Kit de boba de té con leche, 8 vasos individuales listos para preparar."),
+    _refresco("838210", "Dongpeng Electrolitos Limón", "electrolitos", "1000 ml · botella", "12 botellas x 1000 ml",
+        "dongpeng-electrolyte-lemon", "Bebida electrolítica sabor limón para hidratación rápida."),
+    _refresco("838212", "Dongpeng Electrolitos Toronja", "electrolitos", "1000 ml · botella", "12 botellas x 1000 ml",
+        "dongpeng-electrolyte-grapefruit", "Bebida electrolítica sabor toronja para hidratación rápida."),
+    _refresco("838214", "Dongpeng Electrolitos Lichi", "electrolitos", "1000 ml · botella", "12 botellas x 1000 ml",
+        "dongpeng-electrolyte-lychee-btl", "Bebida electrolítica sabor lichi para hidratación rápida."),
+    _refresco("838312", "Dongpeng Electrolitos Limón Grande", "electrolitos", "555 ml · botella", "24 botellas x 555 ml",
+        "dongpeng-electrolyte-lemon-lg", "Presentación grande de la bebida electrolítica sabor limón."),
+    _refresco("838314", "Dongpeng Electrolitos Lichi Grande", "electrolitos", "555 ml · botella", "24 botellas x 555 ml",
+        "dongpeng-electrolyte-lychee-lg", "Presentación grande de la bebida electrolítica sabor lichi."),
+    _refresco("838310", "Dongpeng Electrolitos Toronja Grande", "electrolitos", "555 ml · botella", "24 botellas x 555 ml",
+        "dongpeng-electrolyte-grapefruit-lg", "Presentación grande de la bebida electrolítica sabor toronja."),
+    _refresco("880910", "Haitai Jugo de Uva en Lata", "jugos_lacteos", "238 ml · lata", "72 latas x 238 ml (6x12)",
+        "haitai-grape-juice", "Jugo de uva coreano en lata, dulce y con trocitos de fruta (봉봉)."),
+    _refresco("880010", "Yogo Bebida de Mango con Aloe", "jugos_lacteos", "500 ml · botella", "20 botellas x 500 ml",
+        "yogo-mango-aloe-sm", "Bebida de mango con trocitos de aloe vera."),
+    _refresco("880020", "Yogo Bebida de Mango con Aloe Grande", "jugos_lacteos", "1.5 L · botella", "12 botellas x 1.5 L",
+        "yogo-mango-aloe-lg", "Presentación grande de la bebida de mango con aloe vera."),
+    _refresco("880030", "Yogo Bebida de Fresa con Aloe", "jugos_lacteos", "500 ml · botella", "20 botellas x 500 ml",
+        "yogo-strawberry-aloe-sm", "Bebida de fresa con trocitos de aloe vera."),
+    _refresco("880040", "Yogo Bebida de Durazno con Aloe Grande", "jugos_lacteos", "1.5 L · botella", "12 botellas x 1.5 L",
+        "yogo-peach-aloe-lg", "Presentación grande de la bebida de durazno con aloe vera."),
+    _refresco("831390", "Ramune Fresa", "agua_gas", "200 ml · botella", "30 botellas x 200 ml",
+        "ramune-strawberry", "Soda japonesa Ramune sabor fresa, con su clásica botella de canica."),
+    _refresco("831410", "Ramune Original", "agua_gas", "200 ml · botella", "30 botellas x 200 ml",
+        "ramune-original", "Soda japonesa Ramune sabor original, con su clásica botella de canica."),
+    _refresco("880600", "Tomomasu Soda Sabor Sandía", "agua_gas", "300 ml · botella", "24 botellas x 300 ml",
+        "tomomasu-soda-watermelon", "Soda artesanal japonesa sabor sandía."),
+    _refresco("880604", "Tomomasu Soda Sabor Durazno Blanco", "agua_gas", "300 ml · botella", "24 botellas x 300 ml",
+        "tomomasu-soda-white-peach", "Soda artesanal japonesa sabor durazno blanco."),
+    _refresco("880602", "Tomomasu Soda Sabor Mango", "agua_gas", "300 ml · botella", "24 botellas x 300 ml",
+        "tomomasu-soda-mango", "Soda artesanal japonesa sabor mango."),
 ]
 
 for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
@@ -394,6 +476,7 @@ def index():
         carousel_products=carousel_catalog(catalog_products),
         catalog_categories=CATALOG_CATEGORIES,
         refrescos_products=REFRESCOS_PRODUCTS,
+        refrescos_categories=REFRESCOS_CATEGORIES,
     )
 
 

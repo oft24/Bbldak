@@ -758,6 +758,20 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .refrescos-controls .flavor-tab { color: #746c6f; }
 .refrescos-controls .flavor-tab.is-active { color: #fff; background: #20191b; box-shadow: 0 7px 20px rgba(32, 25, 27, .18); }
 
+.refrescos-catalog { color: #201b1c; background: #f3ece6; }
+.refrescos-catalog .section-index { color: #b3123f; }
+.refrescos-catalog-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); gap: 44px; align-items: end; }
+.refrescos-catalog-heading h2 { margin-top: 20px; font-size: clamp(48px, 7vw, 90px); }
+.refrescos-catalog-heading h2 span { color: #b3123f; }
+.refrescos-catalog-heading > p { margin: 0 0 8px; color: #766c6f; font-size: 14px; line-height: 1.65; }
+.refrescos-filters { margin-top: 54px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.refrescos-filters::-webkit-scrollbar { display: none; }
+.refrescos-filter { min-height: 42px; padding: 0 18px; flex: 0 0 auto; border: 1px solid rgba(32, 25, 27, .16); border-radius: 999px; color: #514649; background: transparent; font-size: 11px; font-weight: 750; cursor: pointer; transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease; }
+.refrescos-filter:hover, .refrescos-filter.is-active { border-color: #20191b; color: #fff; background: #20191b; }
+.refrescos-catalog .catalog-grid { margin-top: 30px; }
+.refrescos-catalog .catalog-card__visual { background: linear-gradient(155deg, #fff, #f0e9e6); }
+.refrescos-catalog .catalog-card__footer strong { color: #766c6f; font-weight: 600; }
+
 .site-footer { position: relative; z-index: 3; min-height: 380px; padding: clamp(58px, 7vw, 100px) clamp(22px, 5vw, 80px) 34px; display: grid; grid-template-columns: 1fr auto; gap: 80px; color: #f7efed; background: #141112; }
 .brand--footer { color: #fff; font-size: 28px; }
 .site-footer > div:first-child > p { max-width: 300px; color: #8d8184; font-size: 13px; line-height: 1.6; }
@@ -944,6 +958,8 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
   .refrescos-carousel-shell { order: -1; height: min(70vw, 360px); }
   .refrescos-info { text-align: left; }
   .refrescos-info p[data-refresco-description] { max-width: 520px; }
+  .refrescos-catalog-heading { grid-template-columns: 1fr; }
+  .refrescos-catalog-heading > p { max-width: 520px; }
   .site-footer { grid-template-columns: 1fr; gap: 55px; }
   .disclaimer { grid-column: 1; }
   .legal-sections { grid-template-columns: 1fr; }

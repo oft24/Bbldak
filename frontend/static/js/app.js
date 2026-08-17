@@ -1241,6 +1241,52 @@
 
     setRefrescoTheme(0);
     requestAnimationFrame(drawRefrescoCarousel);
+
+    const refrescoCatalogDom = {
+      filters: [...document.querySelectorAll("[data-refresco-catalog-filter]")],
+      cards: [...document.querySelectorAll("[data-refresco-catalog-card]")],
+      adds: [...document.querySelectorAll("[data-refresco-catalog-add]")],
+      quantityOutputs: [...document.querySelectorAll("[data-refresco-catalog-quantity]")],
+      quantityMinuses: [...document.querySelectorAll("[data-refresco-catalog-qty-minus]")],
+      quantityPluses: [...document.querySelectorAll("[data-refresco-catalog-qty-plus]")],
+    };
+    const refrescoCatalogQuantities = new Map(drinkProducts.map((product) => [product.id, 1]));
+
+    function setRefrescoCatalogFilter(category) {
+      refrescoCatalogDom.filters.forEach((button) => {
+        const active = button.dataset.refrescoCatalogFilter === category;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+      refrescoCatalogDom.cards.forEach((card) => {
+        card.hidden = category !== "all" && card.dataset.category !== category;
+      });
+    }
+
+    function changeRefrescoCatalogQuantity(id, delta) {
+      const next = clamp((refrescoCatalogQuantities.get(id) || 1) + delta, 1, 20);
+      refrescoCatalogQuantities.set(id, next);
+      const output = refrescoCatalogDom.quantityOutputs.find((element) => element.dataset.refrescoCatalogQuantity === id);
+      if (output) output.textContent = String(next);
+    }
+
+    refrescoCatalogDom.filters.forEach((button) => {
+      button.addEventListener("click", () => setRefrescoCatalogFilter(button.dataset.refrescoCatalogFilter));
+    });
+    refrescoCatalogDom.adds.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const id = button.dataset.refrescoCatalogAdd;
+        addToCart(id, refrescoCatalogQuantities.get(id) || 1, event.currentTarget);
+      });
+    });
+    refrescoCatalogDom.quantityMinuses.forEach((button) => {
+      button.addEventListener("click", () => changeRefrescoCatalogQuantity(button.dataset.refrescoCatalogQtyMinus, -1));
+    });
+    refrescoCatalogDom.quantityPluses.forEach((button) => {
+      button.addEventListener("click", () => changeRefrescoCatalogQuantity(button.dataset.refrescoCatalogQtyPlus, 1));
+    });
+
+    setRefrescoCatalogFilter("all");
   }
 
   const revealObserver = new IntersectionObserver((entries, observer) => {
