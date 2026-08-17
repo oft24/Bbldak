@@ -382,6 +382,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   translate: -50% -50%;
   will-change: transform, opacity, filter;
   transform-origin: 50% 50%;
+  transition: opacity 220ms ease, filter 220ms ease;
 }
 
 .product-pack img {

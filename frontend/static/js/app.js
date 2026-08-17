@@ -532,23 +532,24 @@
     dom.cards.forEach((card, index) => {
       const distance = carouselDistance(index - state.angle);
       const absoluteDistance = Math.abs(distance);
+      const selectedDistance = Math.abs(carouselDistance(index - state.selected));
+      const isVisible = selectedDistance <= 1;
       const theta = clamp(distance, -4, 4) * 0.52;
       const x = Math.sin(theta) * radius;
       const z = (Math.cos(theta) - 1) * depth;
       const proximity = clamp(1 + z / (depth * 2.8), 0, 1);
-      const visibility = clamp(1 - Math.max(0, absoluteDistance - 2) * 0.42, 0, 1);
       const scale = 0.68 + proximity * 0.32;
       const lookStrength = Math.pow(proximity, 8);
       const rotationY = distance * -24 + state.lookX * 14 * lookStrength;
       const rotationX = state.lookY * -8.5 * lookStrength;
       const float = reducedMotion ? 0 : Math.sin(performance.now() / 2100 + index * 2.1) * 5 * proximity;
       card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) rotateX(${rotationX.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
-      card.style.opacity = String((0.22 + proximity * 0.78) * visibility);
+      card.style.opacity = isVisible ? String(0.22 + proximity * 0.78) : "0";
       card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 5).toFixed(2)}px)`;
       card.style.zIndex = String(1000 + Math.round(z));
-      card.style.pointerEvents = absoluteDistance <= 2.2 ? "auto" : "none";
+      card.style.pointerEvents = isVisible ? "auto" : "none";
       card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
-      card.setAttribute("aria-hidden", String(absoluteDistance > 3.25));
+      card.setAttribute("aria-hidden", String(!isVisible));
     });
 
     requestAnimationFrame(drawCarousel);
