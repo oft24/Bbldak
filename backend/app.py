@@ -336,6 +336,23 @@ def current_catalog() -> list[dict]:
     return repository.list_products(CATALOG_PRODUCTS)
 
 
+def carousel_catalog(catalog_products: list[dict]) -> list[dict]:
+    """Keep ramen first, bowls in the middle, and snacks at the end."""
+    lead_ids = ("811120", "811140", "811150")
+    product_by_id = {str(product["id"]): product for product in catalog_products}
+    lead = [product_by_id[product_id] for product_id in lead_ids if product_id in product_by_id]
+    lead_set = set(lead_ids)
+    remainder = [product for product in catalog_products if str(product["id"]) not in lead_set]
+    category_order = {"bags": 0, "bowls": 1, "tteokbokki": 2, "snacks": 3}
+    remainder.sort(
+        key=lambda product: (
+            category_order.get(product.get("category", ""), 4),
+            product.get("sort_order", 999),
+        )
+    )
+    return [*lead, *remainder]
+
+
 @app.get("/")
 def index():
     catalog_products = current_catalog()
@@ -343,6 +360,7 @@ def index():
         "index.html",
         products=PRODUCTS,
         catalog_products=catalog_products,
+        carousel_products=carousel_catalog(catalog_products),
         catalog_categories=CATALOG_CATEGORIES,
     )
 

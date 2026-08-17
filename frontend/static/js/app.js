@@ -9,6 +9,7 @@
   const payload = JSON.parse(productData.textContent);
   const featuredProducts = payload.featured;
   const catalogProducts = payload.catalog;
+  const carouselProducts = payload.carousel || catalogProducts;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
   const catalogThemes = Object.freeze({
@@ -36,7 +37,7 @@
     "811920": { bgA: "#b51f25", bgB: "#ff7950", glow: "#ed3c2e", ink: "#fff8f2", accent: "#ffd15c" }
   });
   const featuredById = new Map(featuredProducts.map((product) => [String(product.id), product]));
-  const products = catalogProducts.map((catalogProduct, index) => ({
+  const products = carouselProducts.map((catalogProduct, index) => ({
     number: String(index + 1).padStart(2, "0"),
     description: "",
     heat: 0,
@@ -47,6 +48,7 @@
     sku: String(catalogProduct.sku)
   }));
   const productById = new Map(products.map((product) => [product.id, product]));
+  const initialProductIndex = Math.max(0, products.findIndex((product) => product.id === "811140"));
 
   const dom = {
     header: document.querySelector("[data-header]"),
@@ -127,10 +129,10 @@
   };
 
   const state = {
-    selected: 0,
+    selected: initialProductIndex,
     quantity: 1,
-    angle: 0,
-    target: 0,
+    angle: initialProductIndex,
+    target: initialProductIndex,
     velocity: 0,
     dragging: false,
     dragStartX: 0,
@@ -144,7 +146,7 @@
     language: loadLanguage(),
     cart: loadCart(),
     catalogQuantities: new Map(catalogProducts.map((product) => [String(product.id), 1])),
-    detailProductId: String(products[0].id),
+    detailProductId: String(products[initialProductIndex].id),
     toastTimer: null,
     cartAnimationTimer: null,
     lastCartFocus: null,
