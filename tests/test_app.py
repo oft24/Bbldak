@@ -10,12 +10,23 @@ class ShowroomTests(unittest.TestCase):
     def test_homepage_renders(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Pick your burn", response.data)
+        self.assertIn(b"BuldakShop", response.data)
+        self.assertIn(b"811140", response.data)
+        self.assertIn(b"prepared-carbonara.webp", response.data)
 
     def test_health_endpoint(self):
         response = self.client.get("/api/health")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["status"], "ok")
+        self.assertEqual(response.get_json()["service"], "buldakshop")
+
+    def test_products_have_complete_selected_flavor_content(self):
+        response = self.client.get("/api/products")
+        self.assertEqual(response.status_code, 200)
+        for product in response.get_json()["products"]:
+            self.assertEqual(len(product["directions"]), 4)
+            self.assertEqual(len(product["recommendations"]), 3)
+            self.assertTrue(product["prepared_image"].startswith("/assets/prepared-"))
 
     def test_checkout_validates_and_confirms(self):
         invalid = self.client.post("/api/checkout", json={"cart": []})

@@ -1,6 +1,6 @@
-# Buldak Showroom
+# BuldakShop
 
-Interactive Flask product showroom inspired by the supplied Buldak design study.
+Interactive Flask shop with product-specific Buldak details, cooking directions, serving photography and pairing recommendations.
 
 ## Local development
 

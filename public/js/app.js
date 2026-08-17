@@ -16,6 +16,7 @@
     tabs: [...document.querySelectorAll("[data-select]")],
     lines: [...document.querySelectorAll("[data-flavor-line]")],
     number: document.querySelector("[data-number]"),
+    sku: document.querySelector("[data-sku]"),
     name: document.querySelector("[data-name]"),
     description: document.querySelector("[data-description]"),
     price: document.querySelector("[data-price]"),
@@ -28,7 +29,35 @@
     storyImage: document.querySelector("[data-story-image]"),
     shu: document.querySelector("[data-shu]"),
     kcal: document.querySelector("[data-kcal]"),
+    cookTime: document.querySelector("[data-cook-time]"),
+    storyWeight: document.querySelector("[data-story-weight]"),
+    storyNote: document.querySelector("[data-story-note]"),
+    nutritionSource: document.querySelector("[data-nutrition-source]"),
     ingredients: [...document.querySelectorAll("[data-ingredient]")],
+    ingredientName: document.querySelector("[data-ingredient-name]"),
+    ingredientIntro: document.querySelector("[data-ingredient-intro]"),
+    profileName: document.querySelector("[data-profile-name]"),
+    profileLabels: [...document.querySelectorAll("[data-profile-label]")],
+    profileValues: [...document.querySelectorAll("[data-profile-value]")],
+    allergens: document.querySelector("[data-allergens]"),
+    shopName: document.querySelector("[data-shop-name]"),
+    shopMeta: document.querySelector("[data-shop-meta]"),
+    shopNumber: document.querySelector("[data-shop-number]"),
+    shopImage: document.querySelector("[data-shop-image]"),
+    shopDetailName: document.querySelector("[data-shop-detail-name]"),
+    shopDescription: document.querySelector("[data-shop-description]"),
+    shopPrice: document.querySelector("[data-shop-price]"),
+    shopWeight: document.querySelector("[data-shop-weight]"),
+    addCurrent: document.querySelector("[data-add-current]"),
+    directionsTitle: document.querySelector("[data-directions-title]"),
+    directionsIntro: document.querySelector("[data-directions-intro]"),
+    directionTitles: [...document.querySelectorAll("[data-direction-title]")],
+    directionTexts: [...document.querySelectorAll("[data-direction-text]")],
+    preparedName: document.querySelector("[data-prepared-name]"),
+    preparedImage: document.querySelector("[data-prepared-image]"),
+    preparedSource: document.querySelector("[data-prepared-source]"),
+    pairingTitles: [...document.querySelectorAll("[data-pairing-title]")],
+    pairingTexts: [...document.querySelectorAll("[data-pairing-text]")],
     phoneImage: document.querySelector("[data-phone-image]"),
     phoneName: document.querySelector("[data-phone-name]"),
     phoneTagline: document.querySelector("[data-phone-tagline]"),
@@ -111,6 +140,7 @@
     if (themeMeta) themeMeta.setAttribute("content", product.colors.bg_a);
 
     dom.number.textContent = product.number;
+    dom.sku.textContent = product.sku;
     dom.name.textContent = product.name;
     dom.description.textContent = product.description;
     dom.price.textContent = `$${product.price.toFixed(2)}`;
@@ -120,10 +150,57 @@
     dom.storyTitle.innerHTML = product.story_title.join("<br>");
     dom.storyCopy.textContent = product.story;
     dom.storyImage.src = product.image;
+    dom.storyImage.alt = `Paquete Buldak ${product.name}`;
     dom.shu.textContent = product.shu;
     dom.kcal.textContent = product.kcal;
+    dom.cookTime.textContent = product.cook_time;
+    dom.storyWeight.textContent = product.weight.split(" · ")[0];
+    dom.storyNote.innerHTML = product.story_note.replace("\n", "<br>");
+    dom.nutritionSource.href = product.nutrition_source_url;
     dom.ingredients.forEach((element, ingredientIndex) => {
       element.textContent = product.ingredients[ingredientIndex];
+    });
+    dom.ingredientName.textContent = product.name;
+    dom.ingredientIntro.textContent = product.ingredient_intro;
+    dom.profileName.textContent = product.name;
+    dom.profileLabels.forEach((element, profileIndex) => {
+      element.textContent = product.profile[profileIndex].label;
+    });
+    dom.profileValues.forEach((element, profileIndex) => {
+      element.textContent = product.profile[profileIndex].value;
+    });
+    dom.allergens.textContent = product.allergens;
+
+    dom.shopName.textContent = product.name;
+    dom.shopMeta.textContent = `SKU ${product.sku} · ${product.weight.split(" · ")[0]} · ${product.kcal} kcal`;
+    dom.shopNumber.textContent = product.number;
+    dom.shopImage.src = product.image;
+    dom.shopImage.alt = `Buldak ${product.name} ramen`;
+    dom.shopDetailName.textContent = product.name;
+    dom.shopDescription.textContent = product.description;
+    dom.shopPrice.textContent = `$${product.price.toFixed(2)}`;
+    dom.shopWeight.textContent = product.weight.split(" · ")[0];
+    dom.addCurrent.querySelector("span").textContent = `Agregar ${product.name}`;
+
+    dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
+    dom.directionsIntro.textContent = product.directions_intro;
+    dom.directionTitles.forEach((element, directionIndex) => {
+      element.textContent = product.directions[directionIndex].title;
+    });
+    dom.directionTexts.forEach((element, directionIndex) => {
+      element.textContent = product.directions[directionIndex].text;
+    });
+
+    dom.preparedName.textContent = product.name;
+    dom.preparedImage.src = product.prepared_image;
+    dom.preparedImage.alt = product.prepared_alt;
+    dom.preparedSource.textContent = product.prepared_source;
+    dom.preparedSource.href = product.prepared_source_url;
+    dom.pairingTitles.forEach((element, pairingIndex) => {
+      element.textContent = product.recommendations[pairingIndex].title;
+    });
+    dom.pairingTexts.forEach((element, pairingIndex) => {
+      element.textContent = product.recommendations[pairingIndex].text;
     });
     dom.phoneImage.src = product.image;
     dom.phoneImage.alt = `Buldak ${product.name} ramen pack`;
@@ -131,6 +208,7 @@
     dom.phoneTagline.textContent = product.tagline;
     dom.phonePrice.textContent = `$${product.price.toFixed(2)}`;
     dom.phoneHeat.style.width = `${product.heat}%`;
+    document.title = `BuldakShop — ${product.name}`;
 
     dom.cards.forEach((card, cardIndex) => {
       const active = cardIndex === index;
@@ -274,7 +352,7 @@
     else state.cart.push({ id, quantity: clamp(quantity, 1, 20) });
     saveCart();
     renderCart();
-    showToast(`${product.name} added to your cart.`);
+    showToast(`${product.name} se agregó al carrito.`);
   }
 
   function changeCartQuantity(id, amount) {
@@ -302,7 +380,7 @@
     dom.checkoutButton.disabled = count === 0;
     dom.cartEmpty.classList.toggle("is-visible", count === 0);
     dom.cartItems.hidden = count === 0;
-    dom.shippingMessage.textContent = subtotal >= 35 ? "You unlocked free shipping." : `Add $${Math.max(0, 35 - subtotal).toFixed(2)} for free shipping.`;
+    dom.shippingMessage.textContent = subtotal >= 35 ? "Ya tienes envío gratis." : `Agrega $${Math.max(0, 35 - subtotal).toFixed(2)} para obtener envío gratis.`;
 
     dom.cartItems.innerHTML = state.cart.map((item) => {
       const product = productById.get(item.id);
@@ -314,11 +392,11 @@
             <p>${product.weight}</p>
             <div class="cart-item__actions">
               <div class="mini-stepper" aria-label="${product.name} quantity">
-                <button type="button" data-cart-minus="${product.id}" aria-label="Decrease ${product.name} quantity">−</button>
+                <button type="button" data-cart-minus="${product.id}" aria-label="Reducir cantidad de ${product.name}">−</button>
                 <span>${item.quantity}</span>
-                <button type="button" data-cart-plus="${product.id}" aria-label="Increase ${product.name} quantity">+</button>
+                <button type="button" data-cart-plus="${product.id}" aria-label="Aumentar cantidad de ${product.name}">+</button>
               </div>
-              <button class="remove-item" type="button" data-cart-remove="${product.id}">Remove</button>
+              <button class="remove-item" type="button" data-cart-remove="${product.id}">Eliminar</button>
             </div>
           </div>
         </article>`;
@@ -386,7 +464,7 @@
 
   function openCheckout() {
     if (!state.cart.length) {
-      showToast("Your cart is empty.");
+      showToast("Tu carrito está vacío.");
       return;
     }
     closeCart({ restoreFocus: false });
@@ -410,7 +488,7 @@
     const formData = new FormData(dom.checkoutForm);
     dom.checkoutError.textContent = "";
     submitButton.disabled = true;
-    submitButton.firstChild.textContent = "Confirming… ";
+    submitButton.firstChild.textContent = "Confirmando… ";
 
     try {
       const response = await fetch("/api/checkout", {
@@ -422,7 +500,7 @@
         }),
       });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "We could not confirm this order.");
+      if (!response.ok) throw new Error(payload.error || "No pudimos confirmar este pedido.");
 
       dom.orderId.textContent = payload.order_id;
       dom.orderTotal.textContent = `$${payload.total}`;
@@ -435,7 +513,7 @@
       dom.checkoutError.textContent = error.message;
     } finally {
       submitButton.disabled = false;
-      submitButton.firstChild.textContent = "Confirm demo order ";
+      submitButton.firstChild.textContent = "Confirmar pedido demo ";
     }
   }
 
@@ -451,10 +529,13 @@
     dom.header.classList.toggle("is-scrolled", y > 20);
     const shop = document.querySelector("#shop");
     const ritual = document.querySelector("#ritual");
+    const prepared = document.querySelector("#prepared");
     const mobile = document.querySelector(".mobile-showcase");
     const headerLine = y + 45;
-    dom.header.classList.toggle("force-dark", headerLine >= shop.offsetTop && headerLine < ritual.offsetTop);
-    dom.header.classList.toggle("force-light", headerLine >= ritual.offsetTop && headerLine < mobile.offsetTop);
+    const overShop = headerLine >= shop.offsetTop && headerLine < ritual.offsetTop;
+    const overPrepared = headerLine >= prepared.offsetTop && headerLine < mobile.offsetTop;
+    dom.header.classList.toggle("force-dark", overShop || overPrepared);
+    dom.header.classList.toggle("force-light", headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop);
   }
 
   dom.carousel.addEventListener("pointerdown", onPointerDown);
@@ -497,6 +578,7 @@
     dom.quantity.textContent = String(state.quantity);
   });
   document.querySelector("[data-add-selected]").addEventListener("click", () => addToCart(products[state.selected].id, state.quantity));
+  dom.addCurrent.addEventListener("click", () => addToCart(products[state.selected].id));
   document.querySelector("[data-phone-add]").addEventListener("click", () => addToCart(products[state.selected].id));
   document.querySelectorAll("[data-quick-add]").forEach((button) => button.addEventListener("click", () => addToCart(button.dataset.quickAdd)));
 

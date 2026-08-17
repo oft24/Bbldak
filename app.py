@@ -20,21 +20,49 @@ PRODUCTS = [
         "id": "carbonara",
         "number": "01",
         "name": "Carbonara",
-        "tagline": "Creamy heat. Still dangerous.",
-        "description": "Milk and cheese soften the burn without ever putting it out.",
+        "sku": "811140",
+        "tagline": "Cremosa, picante y con final de queso.",
+        "description": "Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.",
         "price": 2.49,
-        "weight": "130 g · single",
+        "weight": "130 g · paquete individual",
         "heat": 40,
-        "heat_label": "Creamy heat",
-        "shu": "1,200",
-        "kcal": "530",
-        "story_title": ["Creamy.", "Spicy.", "Dangerously easy."],
+        "heat_label": "Picor cremoso · 2/5",
+        "shu": "2,600",
+        "kcal": "550",
+        "cook_time": "5 min",
+        "story_title": ["Cremosa.", "Picante.", "Muy Carbonara."],
         "story": (
-            "Four minutes in boiling water, drained, then folded through the sauce "
-            "off the heat. The cream carries the capsaicin instead of cutting it, "
-            "which is why the second bite is always hotter than the first."
+            "La bolsa rosa mezcla la salsa Buldak con un polvo de queso y crema. "
+            "Primero llega la mozzarella y la mantequilla; después aparecen el chile, "
+            "el ajo y la pimienta negra. Es una porción de 130 g con 550 kcal."
         ),
-        "ingredients": ["Cream", "Cheese", "Chili", "Noodles"],
+        "story_note": "Queso primero.\nPicor después.",
+        "ingredients": ["Mozzarella", "Leche", "Chile", "Pimienta"],
+        "ingredient_intro": "Cuatro notas que explican el sabor de Carbonara.",
+        "profile": [
+            {"label": "Entrada", "value": "Leche y mantequilla"},
+            {"label": "Centro", "value": "Mozzarella y salsa Buldak"},
+            {"label": "Final", "value": "Chile, ajo y pimienta negra"},
+        ],
+        "allergens": "Contiene trigo, soya y leche.",
+        "directions_title": ["Cinco minutos.", "Cremosidad exacta."],
+        "directions_intro": "Preparación para la bolsa Carbonara de 130 g.",
+        "directions": [
+            {"title": "Hierve", "text": "Lleva 600 ml de agua a ebullición."},
+            {"title": "Cocina", "text": "Añade los fideos y cocina durante 5 minutos."},
+            {"title": "Reserva", "text": "Escurre, dejando 8 cucharadas (aprox. 120 ml) de agua."},
+            {"title": "Mezcla", "text": "Agrega la salsa y el polvo de queso; mezcla bien y sirve."},
+        ],
+        "prepared_image": "/assets/prepared-carbonara.webp?v=1",
+        "prepared_alt": "Buldak Carbonara preparada en un tazón junto a su paquete rosa",
+        "prepared_source": "Modern Asia Market",
+        "prepared_source_url": "https://mam-shop.at/products/samyang-buldak-carbonara-hot-chicken-ramen-130g",
+        "recommendations": [
+            {"title": "Huevo suave", "text": "La yema refuerza la textura cremosa sin ocultar el chile."},
+            {"title": "Cebollín y hongos", "text": "Aportan frescura y umami a la salsa de queso."},
+            {"title": "Pepino frío", "text": "Un acompañamiento crujiente y ácido limpia el paladar."},
+        ],
+        "nutrition_source_url": "https://www.samyangfoods.com/eng/brand/view.do?seq=399",
         "image": "/assets/carbonara.png?v=1",
         "colors": {
             "bg_a": "#f5d9e1",
@@ -43,26 +71,55 @@ PRODUCTS = [
             "ink": "#2b171e",
             "accent": "#b3123f",
         },
-        "keywords": "carbonara carb creamy cream mild cheese pink",
+        "keywords": "carbonara carbo cremosa crema suave queso rosa mozzarella",
     },
     {
         "id": "original",
         "number": "02",
         "name": "Original",
-        "tagline": "The one that started the dare.",
-        "description": "Clean, direct fire with nothing to hide behind.",
+        "sku": "811120",
+        "tagline": "El clásico: chile directo y final tostado.",
+        "description": "Salsa de pollo picante, chile rojo, sésamo y alga tostada sin una capa láctea.",
         "price": 2.29,
-        "weight": "140 g · single",
+        "weight": "140 g · paquete individual",
         "heat": 82,
-        "heat_label": "Hot",
+        "heat_label": "Muy picante · 5/5",
         "shu": "4,404",
-        "kcal": "540",
-        "story_title": ["Direct.", "Dry.", "Unforgiving."],
+        "kcal": "530",
+        "cook_time": "5 min",
+        "story_title": ["Directa.", "Tostada.", "La original."],
         "story": (
-            "No broth to dilute it and no dairy to soften it. The sauce goes on last "
-            "and stays where it lands — the reason this one built the reputation."
+            "La bolsa negra es la receta que inició el reto Buldak. La salsa se adhiere "
+            "al fideo sin caldo: primero se siente el pollo especiado y el curry; luego "
+            "sube el chile, con sésamo y alga tostada al final."
         ),
-        "ingredients": ["Chili", "Sesame", "Seaweed", "Noodles"],
+        "story_note": "Sin caldo.\nPicor frontal.",
+        "ingredients": ["Chile rojo", "Sésamo", "Alga tostada", "Ajo"],
+        "ingredient_intro": "Los elementos que forman el perfil seco y tostado de Original.",
+        "profile": [
+            {"label": "Entrada", "value": "Pollo especiado y curry"},
+            {"label": "Centro", "value": "Chile rojo y ajo"},
+            {"label": "Final", "value": "Sésamo y alga tostada"},
+        ],
+        "allergens": "Contiene trigo, soya y sésamo.",
+        "directions_title": ["Cinco minutos.", "Treinta segundos al fuego."],
+        "directions_intro": "Preparación para la bolsa Original de 140 g.",
+        "directions": [
+            {"title": "Hierve", "text": "Lleva 600 ml de agua a ebullición."},
+            {"title": "Cocina", "text": "Añade los fideos y cocina durante 5 minutos."},
+            {"title": "Reserva", "text": "Escurre, dejando 1/2 taza (aprox. 120 ml) de agua."},
+            {"title": "Saltea", "text": "Añade la salsa, saltea 30 segundos y termina con las hojuelas."},
+        ],
+        "prepared_image": "/assets/prepared-original.jpg?v=1",
+        "prepared_alt": "Buldak Original preparada en sartén junto a su paquete negro",
+        "prepared_source": "Tesco",
+        "prepared_source_url": "https://www.tesco.com/groceries/en-GB/products/301413443",
+        "recommendations": [
+            {"title": "Huevo frito", "text": "La yema redondea el picor y añade cuerpo al fideo."},
+            {"title": "Alga y cebollín", "text": "Refuerzan el acabado tostado y aportan frescura."},
+            {"title": "Bebida láctea fría", "text": "La grasa láctea ayuda a bajar la sensación de capsaicina."},
+        ],
+        "nutrition_source_url": "https://www.samyangfoods.com/eng/brand/view.do?seq=245",
         "image": "/assets/original.png?v=1",
         "colors": {
             "bg_a": "#120e0d",
@@ -71,26 +128,55 @@ PRODUCTS = [
             "ink": "#f8f2ef",
             "accent": "#ff5a20",
         },
-        "keywords": "original hot extra spicy fire classic black ramen",
+        "keywords": "original picante fuego clásico negra chile sésamo alga",
     },
     {
         "id": "quattro",
         "number": "03",
         "name": "Quattro Cheese",
-        "tagline": "Four cheeses, late heat.",
-        "description": "Rich and warm, with the heat arriving one beat late.",
+        "sku": "811150",
+        "tagline": "Cuatro quesos, salsa espesa y picor tardío.",
+        "description": "Mozzarella, cheddar, gouda y camembert sobre la salsa Buldak picante.",
         "price": 2.79,
-        "weight": "145 g · single",
+        "weight": "145 g · paquete individual",
         "heat": 60,
-        "heat_label": "Spicy",
-        "shu": "2,600",
-        "kcal": "560",
-        "story_title": ["Rich.", "Warm.", "Slow to bite."],
+        "heat_label": "Picante con queso · 3/5",
+        "shu": "≈2,323",
+        "kcal": "590",
+        "cook_time": "5 min 30 s",
+        "story_title": ["Cuatro quesos.", "Una salsa.", "Picor tardío."],
         "story": (
-            "Cheddar, gouda, mozzarella and parmesan melt into the sauce as it cools. "
-            "The heat is still there — it just arrives behind the richness."
+            "Mozzarella, cheddar, gouda y camembert forman una salsa densa y salada. "
+            "La primera impresión es láctea; el chile aparece después y se queda en el "
+            "paladar. La bolsa del catálogo contiene 145 g."
         ),
-        "ingredients": ["Cheddar", "Gouda", "Cream", "Noodles"],
+        "story_note": "Cuatro quesos.\nUn final picante.",
+        "ingredients": ["Mozzarella", "Cheddar", "Gouda", "Camembert"],
+        "ingredient_intro": "Los cuatro quesos declarados para Quattro Cheese.",
+        "profile": [
+            {"label": "Entrada", "value": "Mozzarella cremosa"},
+            {"label": "Centro", "value": "Cheddar y gouda salados"},
+            {"label": "Final", "value": "Camembert, ajo y chile"},
+        ],
+        "allergens": "Contiene trigo, soya y leche.",
+        "directions_title": ["Cinco y medio.", "Todo el queso."],
+        "directions_intro": "Preparación para la bolsa Quattro Cheese de 145 g.",
+        "directions": [
+            {"title": "Hierve", "text": "Lleva 600 ml de agua a ebullición."},
+            {"title": "Cocina", "text": "Añade los fideos y cocina 5 minutos con 30 segundos."},
+            {"title": "Reserva", "text": "Escurre, dejando 6 cucharadas (aprox. 90 ml) de agua."},
+            {"title": "Mezcla", "text": "Añade la salsa y el polvo de cuatro quesos; mezcla y sirve."},
+        ],
+        "prepared_image": "/assets/prepared-quattro.webp?v=1",
+        "prepared_alt": "Buldak Quattro Cheese preparada con queso fundido en un tazón amarillo",
+        "prepared_source": "Yami",
+        "prepared_source_url": "https://www.yami.com/en/p/buldak-quattro-cheese-hot-chicken-flavor-stir-fried-ramen-5-pack-x-4-76oz/1021096141",
+        "recommendations": [
+            {"title": "Maíz dorado", "text": "Su dulzor equilibra el chile y combina con los cuatro quesos."},
+            {"title": "Pollo a la plancha", "text": "Añade proteína sin competir con la salsa cremosa."},
+            {"title": "Pepinillos crujientes", "text": "La acidez corta la grasa y refresca entre bocados."},
+        ],
+        "nutrition_source_url": "https://samyangamerica.com/buldak/quattro-cheese",
         "image": "/assets/quattro.png?v=1",
         "colors": {
             "bg_a": "#f3c45d",
@@ -99,7 +185,7 @@ PRODUCTS = [
             "ink": "#392608",
             "accent": "#b64b0c",
         },
-        "keywords": "quattro cheese cheesy four rich orange swicy",
+        "keywords": "quattro cuatro quesos mozzarella cheddar gouda camembert amarilla",
     },
 ]
 
@@ -114,7 +200,7 @@ def index():
 
 @app.get("/api/health")
 def health():
-    return jsonify(status="ok", service="buldak-showroom")
+    return jsonify(status="ok", service="buldakshop")
 
 
 @app.get("/api/products")
@@ -137,9 +223,9 @@ def checkout():
     email = str(customer.get("email", "")).strip()
     name = str(customer.get("name", "")).strip()
     if not name or "@" not in email:
-        return jsonify(error="Please provide a valid name and email."), 400
+        return jsonify(error="Ingresa un nombre y un correo válidos."), 400
     if not isinstance(cart, list) or not cart:
-        return jsonify(error="Your cart is empty."), 400
+        return jsonify(error="Tu carrito está vacío."), 400
 
     total = Decimal("0")
     normalized_cart = []
@@ -150,7 +236,7 @@ def checkout():
         except (TypeError, ValueError):
             quantity = 0
         if product is None or quantity < 1 or quantity > 20:
-            return jsonify(error="One of the cart items is invalid."), 400
+            return jsonify(error="Uno de los artículos del carrito no es válido."), 400
         total += Decimal(str(product["price"])) * quantity
         normalized_cart.append({"id": product["id"], "quantity": quantity})
 

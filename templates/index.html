@@ -1,24 +1,24 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f5d9e1">
-    <meta name="description" content="Pick your burn in an interactive Buldak flavor showroom.">
-    <meta property="og:title" content="Buldak — Pick your burn">
-    <meta property="og:description" content="Three flavors. One interactive showroom.">
+    <meta name="description" content="BuldakShop: sabor, preparación y recomendaciones para cada Buldak.">
+    <meta property="og:title" content="BuldakShop — Elige tu sabor">
+    <meta property="og:description" content="Información específica de la Buldak que tienes seleccionada.">
     <meta property="og:image" content="{{ request.url_root.rstrip('/') }}/og.webp">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <title>Buldak — Pick your burn</title>
+    <title>BuldakShop — Elige tu sabor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=2">
-    <script defer src="/js/app.js?v=3"></script>
+    <link rel="stylesheet" href="/css/style.css?v=4">
+    <script defer src="/js/app.js?v=7"></script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
 
     <div class="ambient" aria-hidden="true">
       <div class="ambient__gradient"></div>
@@ -31,23 +31,23 @@
     </div>
 
     <header class="site-header" data-header>
-      <a class="brand" href="#top" aria-label="Buldak home">Buldak<span class="brand__dot">.</span></a>
+      <a class="brand" href="#top" aria-label="Inicio de BuldakShop">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
-        <span></span><span></span><span></span><span class="sr-only">Open menu</span>
+        <span></span><span></span><span></span><span class="sr-only">Abrir menú</span>
       </button>
-      <nav class="primary-nav" id="primary-nav" aria-label="Primary navigation" data-nav>
-        <a href="#shop">Shop</a>
-        <a href="#flavors">Flavors</a>
-        <a href="#story">Story</a>
-        <a href="#ritual">How to cook</a>
+      <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal" data-nav>
+        <a href="#shop">Comprar</a>
+        <a href="#profile">Perfil</a>
+        <a href="#story">Información</a>
+        <a href="#ritual">Preparación</a>
       </nav>
       <div class="header-actions">
         <button class="pill pill--soft header-search" type="button" data-open-search>
           <span class="search-mark" aria-hidden="true"></span>
-          <span>Search</span>
+          <span>Cambiar sabor</span>
         </button>
-        <button class="pill pill--dark" type="button" data-open-cart aria-label="Open cart">
-          Cart <span class="cart-count" data-cart-count>0</span>
+        <button class="pill pill--dark" type="button" data-open-cart aria-label="Abrir carrito">
+          Carrito <span class="cart-count" data-cart-count>0</span>
         </button>
       </div>
     </header>
@@ -55,25 +55,25 @@
     <main id="main">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy reveal">
-          <p class="eyebrow">Stir-fried ramen · No. <span data-number>01</span></p>
+          <p class="eyebrow">Ramen salteado · No. <span data-number>01</span> · SKU <span data-sku>811140</span></p>
           <div class="hero-copy__content">
             <h1 id="hero-title" data-name>Carbonara</h1>
-            <p data-description>Milk and cheese soften the burn without ever putting it out.</p>
+            <p data-description>Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.</p>
           </div>
           <div class="specs">
             <div class="spec spec--heat">
-              <span class="spec__label">Heat</span>
+              <span class="spec__label">Picor</span>
               <span class="heat-track"><span class="heat-fill" data-heat-fill></span></span>
-              <strong data-heat-label>Creamy heat</strong>
+              <strong data-heat-label>Picor cremoso · 2/5</strong>
             </div>
             <div class="spec">
-              <span class="spec__label">Pack</span>
-              <strong data-weight>130 g · single</strong>
+              <span class="spec__label">Presentación</span>
+              <strong data-weight>130 g · paquete individual</strong>
             </div>
           </div>
         </div>
 
-        <div class="carousel-shell" data-carousel aria-label="Buldak flavor carousel">
+        <div class="carousel-shell" data-carousel aria-label="Selector de sabores Buldak">
           <div class="carousel-glow" aria-hidden="true"></div>
           <div class="carousel-stage">
             {% for product in products %}
@@ -81,158 +81,175 @@
                 class="product-pack{% if loop.first %} is-active{% endif %}"
                 type="button"
                 data-card="{{ loop.index0 }}"
-                aria-label="Select {{ product.name }}"
+                aria-label="Seleccionar {{ product.name }}"
                 aria-pressed="{{ 'true' if loop.first else 'false' }}"
               >
                 <img src="{{ product.image }}" alt="Buldak {{ product.name }} ramen pack" draggable="false">
               </button>
             {% endfor %}
           </div>
-          <p class="drag-hint"><span aria-hidden="true">↔</span> Drag to spin</p>
+          <p class="drag-hint"><span aria-hidden="true">↔</span> Arrastra para girar</p>
         </div>
 
-        <aside class="purchase-card reveal" aria-label="Purchase selected flavor">
+        <aside class="purchase-card reveal" aria-label="Comprar el sabor seleccionado">
           <div class="price-row">
             <div>
-              <span class="spec__label">Single pack</span>
+              <span class="spec__label">Paquete individual</span>
               <strong class="price" data-price>$2.49</strong>
             </div>
-            <div class="stepper" aria-label="Quantity">
-              <button type="button" data-quantity-minus aria-label="Decrease quantity">−</button>
+            <div class="stepper" aria-label="Cantidad">
+              <button type="button" data-quantity-minus aria-label="Reducir cantidad">−</button>
               <output data-quantity aria-live="polite">1</output>
-              <button type="button" data-quantity-plus aria-label="Increase quantity">+</button>
+              <button type="button" data-quantity-plus aria-label="Aumentar cantidad">+</button>
             </div>
           </div>
           <button class="add-button" type="button" data-add-selected>
-            <span>Add to cart</span><span aria-hidden="true">→</span>
+            <span>Agregar al carrito</span><span aria-hidden="true">→</span>
           </button>
-          <p class="microcopy">Ships tomorrow · Free over $35 · <a href="#story">Nutrition</a></p>
+          <p class="microcopy">Envío mañana · Gratis desde $35 · <a href="#story">Ver información</a></p>
         </aside>
 
-        <div class="flavor-controls" aria-label="Choose a flavor">
-          <button class="circle-button" type="button" data-previous aria-label="Previous flavor">←</button>
+        <div class="flavor-controls" aria-label="Elegir un sabor">
+          <button class="circle-button" type="button" data-previous aria-label="Sabor anterior">←</button>
           <div class="flavor-tabs">
             {% for product in products %}
               <button class="flavor-tab{% if loop.first %} is-active{% endif %}" type="button" data-select="{{ loop.index0 }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ product.name }}</button>
             {% endfor %}
           </div>
-          <button class="circle-button" type="button" data-next aria-label="Next flavor">→</button>
+          <button class="circle-button" type="button" data-next aria-label="Siguiente sabor">→</button>
         </div>
-        <p class="scroll-cue">Drag the pack · scroll to discover</p>
+        <p class="scroll-cue">Arrastra la bolsa · baja para conocerla</p>
       </section>
 
       <section class="story section-pad" id="story" aria-labelledby="story-title">
-        <div class="section-index reveal">02 — The burn</div>
+        <div class="section-index reveal">02 — La bolsa seleccionada</div>
         <div class="story-grid">
           <div class="story-copy reveal">
-            <h2 id="story-title" data-story-title>Creamy.<br>Spicy.<br>Dangerously easy.</h2>
-            <p data-story-copy>Four minutes in boiling water, drained, then folded through the sauce off the heat. The cream carries the capsaicin instead of cutting it, which is why the second bite is always hotter than the first.</p>
+            <h2 id="story-title" data-story-title>Cremosa.<br>Picante.<br>Muy Carbonara.</h2>
+            <p data-story-copy>La bolsa rosa mezcla la salsa Buldak con un polvo de queso y crema. Primero llega la mozzarella y la mantequilla; después aparecen el chile, el ajo y la pimienta negra.</p>
             <div class="stat-row">
-              <div><strong data-shu>1,200</strong><span>Scoville</span></div>
-              <div><strong>4:00</strong><span>Cook time</span></div>
-              <div><strong data-kcal>530</strong><span>kcal</span></div>
+              <div><strong data-shu>2,600</strong><span>Scoville</span></div>
+              <div><strong data-cook-time>5 min</strong><span>Cocción</span></div>
+              <div><strong data-kcal>550</strong><span>kcal</span></div>
+              <div><strong data-story-weight>130 g</strong><span>Porción</span></div>
             </div>
+            <p class="nutrition-note">Valores por paquete. La información puede cambiar por mercado; confirma siempre la etiqueta de tu bolsa. <a data-nutrition-source href="https://www.samyangfoods.com/eng/brand/view.do?seq=399" target="_blank" rel="noopener">Fuente del producto</a>.</p>
           </div>
           <div class="story-visual reveal" aria-hidden="true">
             <span class="story-ring story-ring--one"></span>
             <span class="story-ring story-ring--two"></span>
             <img data-story-image src="/assets/carbonara.png" alt="">
-            <span class="story-note">Sauce on last.<br>No broth. No mercy.</span>
+            <span class="story-note" data-story-note>Queso primero.<br>Picor después.</span>
           </div>
         </div>
       </section>
 
       <section class="ingredients section-pad" aria-labelledby="ingredients-title">
         <div class="ingredients-heading reveal">
-          <div class="section-index">03 — What’s inside</div>
-          <h2 id="ingredients-title">Four things doing<br>all the work.</h2>
-          <p>The flavor changes. The ritual stays simple.</p>
+          <div class="section-index">03 — Perfil de ingredientes</div>
+          <h2 id="ingredients-title">Lo que define<br><span data-ingredient-name>Carbonara</span>.</h2>
+          <p data-ingredient-intro>Cuatro notas que explican el sabor de Carbonara.</p>
         </div>
         <div class="ingredient-orbit" data-ingredients>
-          <span class="ingredient ingredient--one" data-ingredient="0">Cream</span>
-          <span class="ingredient ingredient--two" data-ingredient="1">Cheese</span>
-          <span class="ingredient ingredient--three" data-ingredient="2">Chili</span>
-          <span class="ingredient ingredient--four" data-ingredient="3">Noodles</span>
+          <span class="ingredient ingredient--one" data-ingredient="0">Mozzarella</span>
+          <span class="ingredient ingredient--two" data-ingredient="1">Leche</span>
+          <span class="ingredient ingredient--three" data-ingredient="2">Chile</span>
+          <span class="ingredient ingredient--four" data-ingredient="3">Pimienta</span>
         </div>
       </section>
 
-      <section class="flavors section-pad" id="flavors" aria-labelledby="flavors-title">
+      <section class="flavors section-pad" id="profile" aria-labelledby="flavors-title">
         <div class="flavors-heading reveal">
-          <div class="section-index">04 — All three</div>
-          <h2 id="flavors-title">Pick your burn.</h2>
+          <div>
+            <div class="section-index">04 — Notas del sabor</div>
+            <h2 id="flavors-title">Solo <span data-profile-name>Carbonara</span>.</h2>
+          </div>
+          <p class="profile-lead">La ficha cambia completa cuando eliges otra bolsa arriba.</p>
         </div>
-        <div class="flavor-lines">
-          {% for product in products %}
-            <button class="flavor-line{% if loop.first %} is-active{% endif %}" type="button" data-flavor-line="{{ loop.index0 }}">
-              <span class="flavor-line__number">{{ product.number }}</span>
-              <span class="flavor-line__name">{{ product.name }}</span>
-              <span class="flavor-line__heat">{{ product.heat_label }}</span>
-              <span class="flavor-line__arrow" aria-hidden="true">↗</span>
-            </button>
-          {% endfor %}
+        <div class="profile-grid" data-profile-grid>
+          <article class="profile-card"><span data-profile-label="0">Entrada</span><strong data-profile-value="0">Leche y mantequilla</strong></article>
+          <article class="profile-card"><span data-profile-label="1">Centro</span><strong data-profile-value="1">Mozzarella y salsa Buldak</strong></article>
+          <article class="profile-card"><span data-profile-label="2">Final</span><strong data-profile-value="2">Chile, ajo y pimienta negra</strong></article>
+          <article class="profile-card profile-card--allergens"><span>Alérgenos</span><strong data-allergens>Contiene trigo, soya y leche.</strong></article>
         </div>
       </section>
 
       <section class="shop section-pad" id="shop" aria-labelledby="shop-title">
         <div class="shop-heading reveal">
           <div>
-            <div class="section-index">The shelf</div>
-            <h2 id="shop-title">Shop the three.</h2>
+            <div class="section-index">La selección actual</div>
+            <h2 id="shop-title">Llévate <span data-shop-name>Carbonara</span>.</h2>
           </div>
-          <p>Singles and 5-packs · free shipping over $35</p>
+          <p data-shop-meta>SKU 811140 · 130 g · 550 kcal</p>
         </div>
-        <div class="product-grid">
-          {% for product in products %}
-            <article class="product-tile reveal">
-              <button class="product-tile__visual" type="button" data-shop-select="{{ loop.index0 }}" aria-label="View {{ product.name }}">
-                <span class="product-tile__number">{{ product.number }}</span>
-                <img src="{{ product.image }}" alt="Buldak {{ product.name }} ramen">
-              </button>
-              <div class="product-tile__details">
-                <div>
-                  <h3>{{ product.name }}</h3>
-                  <p>{{ product.heat_label }} · {{ product.weight.split(' · ')[0] }}</p>
-                </div>
-                <strong>${{ '%.2f'|format(product.price) }}</strong>
-              </div>
-              <button class="tile-add" type="button" data-quick-add="{{ product.id }}">Add <span class="sr-only">{{ product.name }}</span><span aria-hidden="true">+</span></button>
-            </article>
-          {% endfor %}
+        <div class="selected-product reveal">
+          <div class="selected-product__visual">
+            <span class="selected-product__number">No. <span data-shop-number>01</span></span>
+            <img data-shop-image src="/assets/carbonara.png?v=1" alt="Buldak Carbonara ramen">
+          </div>
+          <div class="selected-product__details">
+            <span class="spec__label">Paquete individual seleccionado</span>
+            <h3 data-shop-detail-name>Carbonara</h3>
+            <p data-shop-description>Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.</p>
+            <div class="selected-product__price"><strong data-shop-price>$2.49</strong><span data-shop-weight>130 g</span></div>
+            <button class="add-button" type="button" data-add-current><span>Agregar Carbonara</span><span aria-hidden="true">→</span></button>
+          </div>
         </div>
       </section>
 
       <section class="ritual section-pad" id="ritual" aria-labelledby="ritual-title">
         <div class="ritual-copy reveal">
-          <div class="section-index">05 — The ritual</div>
-          <h2 id="ritual-title">Four minutes.<br>One brave decision.</h2>
-          <p>Boil hard, drain almost everything, then stir the sauce through off the heat. Finish with flakes. Keep water nearby if you must.</p>
+          <div class="section-index">05 — Preparación exacta</div>
+          <h2 id="ritual-title" data-directions-title>Cinco minutos.<br>Cremosidad exacta.</h2>
+          <p data-directions-intro>Preparación para la bolsa Carbonara de 130 g.</p>
         </div>
         <ol class="ritual-steps">
-          <li class="reveal"><span>01</span><strong>Boil</strong><p>600 ml of water. Let it roll.</p></li>
-          <li class="reveal"><span>02</span><strong>Cook</strong><p>Noodles in for exactly four minutes.</p></li>
-          <li class="reveal"><span>03</span><strong>Drain</strong><p>Leave eight spoons of water behind.</p></li>
-          <li class="reveal"><span>04</span><strong>Stir</strong><p>Sauce on. Thirty seconds. Commit.</p></li>
+          <li class="reveal"><span>01</span><strong data-direction-title="0">Hierve</strong><p data-direction-text="0">Lleva 600 ml de agua a ebullición.</p></li>
+          <li class="reveal"><span>02</span><strong data-direction-title="1">Cocina</strong><p data-direction-text="1">Añade los fideos y cocina durante 5 minutos.</p></li>
+          <li class="reveal"><span>03</span><strong data-direction-title="2">Reserva</strong><p data-direction-text="2">Escurre, dejando 8 cucharadas de agua.</p></li>
+          <li class="reveal"><span>04</span><strong data-direction-title="3">Mezcla</strong><p data-direction-text="3">Agrega la salsa y el polvo de queso; mezcla y sirve.</p></li>
         </ol>
+      </section>
+
+      <section class="prepared section-pad" id="prepared" aria-labelledby="prepared-title">
+        <div class="prepared-heading reveal">
+          <div class="section-index">06 — Servida y acompañada</div>
+          <h2 id="prepared-title">Así queda<br><span data-prepared-name>Carbonara</span>.</h2>
+        </div>
+        <div class="prepared-grid">
+          <figure class="prepared-photo reveal">
+            <img data-prepared-image src="/assets/prepared-carbonara.webp?v=1" alt="Buldak Carbonara preparada en un tazón junto a su paquete rosa">
+            <figcaption>Referencia visual: <a data-prepared-source href="https://mam-shop.at/products/samyang-buldak-carbonara-hot-chicken-ramen-130g" target="_blank" rel="noopener">Modern Asia Market</a></figcaption>
+          </figure>
+          <div class="pairings reveal">
+            <span class="section-index">Va bien con</span>
+            <div class="pairing-list">
+              <article><span>01</span><div><h3 data-pairing-title="0">Huevo suave</h3><p data-pairing-text="0">La yema refuerza la textura cremosa sin ocultar el chile.</p></div></article>
+              <article><span>02</span><div><h3 data-pairing-title="1">Cebollín y hongos</h3><p data-pairing-text="1">Aportan frescura y umami a la salsa de queso.</p></div></article>
+              <article><span>03</span><div><h3 data-pairing-title="2">Pepino frío</h3><p data-pairing-text="2">Un acompañamiento crujiente y ácido limpia el paladar.</p></div></article>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="mobile-showcase section-pad" aria-labelledby="mobile-title">
         <div class="mobile-copy reveal">
-          <div class="section-index">Always in reach</div>
-          <h2 id="mobile-title">The shelf,<br>thumb-sized.</h2>
-          <p>Search flavors, compare the burn and build your cart without losing your place.</p>
-          <button class="text-link" type="button" data-open-search>Find your flavor <span>→</span></button>
+          <div class="section-index">Tu selección siempre visible</div>
+          <h2 id="mobile-title">Una bolsa.<br>Toda su ficha.</h2>
+          <p>El nombre, el picor, el precio y cada detalle pertenecen al sabor que está seleccionado.</p>
+          <button class="text-link" type="button" data-open-search>Cambiar sabor <span>→</span></button>
         </div>
         <div class="phone reveal" aria-label="Mobile Buldak shop preview">
           <div class="phone__screen">
-            <div class="phone__top"><span>9:41</span><strong>Buldak.</strong><span>Cart <b data-mobile-cart-count>0</b></span></div>
+            <div class="phone__top"><span>9:41</span><strong>BuldakShop.</strong><span>Carrito <b data-mobile-cart-count>0</b></span></div>
             <div class="phone__glow"></div>
             <img data-phone-image src="/assets/carbonara.png" alt="Buldak Carbonara ramen pack">
             <div class="phone__details">
-              <span class="phone__eyebrow">Selected flavor</span>
+              <span class="phone__eyebrow">Sabor seleccionado</span>
               <h3 data-phone-name>Carbonara</h3>
-              <p data-phone-tagline>Creamy heat. Still dangerous.</p>
+              <p data-phone-tagline>Cremosa, picante y con final de queso.</p>
               <div><strong data-phone-price>$2.49</strong><span class="mini-heat"><span data-phone-heat></span></span></div>
-              <button type="button" data-phone-add>Add to cart <span>→</span></button>
+              <button type="button" data-phone-add>Agregar al carrito <span>→</span></button>
             </div>
           </div>
         </div>
@@ -241,26 +258,26 @@
 
     <footer class="site-footer">
       <div>
-        <a class="brand brand--footer" href="#top">Buldak<span class="brand__dot">.</span></a>
-        <p>A product showroom concept built around the pack.</p>
+        <a class="brand brand--footer" href="#top">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
+        <p>Una tienda construida alrededor de la bolsa que tienes seleccionada.</p>
       </div>
       <div class="footer-links">
-        <div><span>Explore</span><a href="#flavors">Flavors</a><a href="#story">Story</a><a href="#ritual">How to cook</a></div>
-        <div><span>Shop</span><a href="#shop">Singles</a><a href="#shop">5-packs</a><button type="button" data-open-cart>Your cart</button></div>
+        <div><span>Explorar</span><a href="#profile">Perfil</a><a href="#story">Información</a><a href="#ritual">Preparación</a></div>
+        <div><span>Comprar</span><a href="#shop">Selección actual</a><a href="#prepared">Cómo queda</a><button type="button" data-open-cart>Tu carrito</button></div>
       </div>
-      <p class="disclaimer">Concept design · not affiliated with Samyang Foods</p>
+      <p class="disclaimer">BuldakShop · Concepto independiente, no afiliado con Samyang Foods · Verifica siempre el empaque.</p>
     </footer>
 
     <dialog class="search-dialog" data-search-dialog aria-labelledby="search-title">
       <div class="dialog-head">
-        <span class="section-index">Search</span>
-        <button class="dialog-close" type="button" data-close-search>Close <span aria-hidden="true">×</span></button>
+        <span class="section-index">Cambiar sabor</span>
+        <button class="dialog-close" type="button" data-close-search>Cerrar <span aria-hidden="true">×</span></button>
       </div>
       <div class="search-content">
-        <h2 id="search-title">What are you craving?</h2>
-        <label class="sr-only" for="search-input">Search flavors</label>
-        <input id="search-input" type="search" autocomplete="off" placeholder="Try “cheese” or “extra spicy”" data-search-input>
-        <div class="search-suggestions"><span>Try</span><button type="button" data-suggestion="carb">carb</button><button type="button" data-suggestion="extra spicy">extra spicy</button><button type="button" data-suggestion="cheese">cheese</button></div>
+        <h2 id="search-title">¿Qué bolsa quieres ver?</h2>
+        <label class="sr-only" for="search-input">Buscar sabores</label>
+        <input id="search-input" type="search" autocomplete="off" placeholder="Prueba “queso” o “picante”" data-search-input>
+        <div class="search-suggestions"><span>Prueba</span><button type="button" data-suggestion="carb">carbonara</button><button type="button" data-suggestion="picante">picante</button><button type="button" data-suggestion="queso">queso</button></div>
         <div class="search-results" data-search-results>
           {% for product in products %}
             <button class="search-result" type="button" data-search-result="{{ loop.index0 }}" data-keywords="{{ product.keywords }}">
@@ -277,25 +294,25 @@
     <div class="cart-scrim" data-cart-scrim></div>
     <aside class="cart-drawer" data-cart-drawer aria-labelledby="cart-title" aria-hidden="true">
       <div class="cart-head">
-        <h2 id="cart-title">Your cart <span data-cart-title-count>0</span></h2>
-        <button class="dialog-close" type="button" data-close-cart>Close <span aria-hidden="true">×</span></button>
+        <h2 id="cart-title">Tu carrito <span data-cart-title-count>0</span></h2>
+        <button class="dialog-close" type="button" data-close-cart>Cerrar <span aria-hidden="true">×</span></button>
       </div>
       <div class="cart-body" data-cart-items></div>
       <div class="cart-empty" data-cart-empty>
         <span class="cart-empty__ring"></span>
-        <strong>Nothing in here yet.</strong>
-        <p>Pick a burn and make it yours.</p>
-        <button type="button" data-cart-shop>Shop flavors</button>
+        <strong>Tu carrito está vacío.</strong>
+        <p>Elige una bolsa y agrégala.</p>
+        <button type="button" data-cart-shop>Ver selección</button>
       </div>
       <div class="cart-footer">
         <div><span>Subtotal</span><strong data-subtotal>$0.00</strong></div>
-        <p data-shipping-message>Shipping calculated at checkout</p>
-        <button class="checkout-button" type="button" data-open-checkout disabled>Checkout <span>→</span></button>
+        <p data-shipping-message>El envío se calcula al continuar.</p>
+        <button class="checkout-button" type="button" data-open-checkout disabled>Continuar <span>→</span></button>
       </div>
     </aside>
 
     <dialog class="checkout-dialog" data-checkout-dialog aria-labelledby="checkout-title">
-      <button class="checkout-close" type="button" data-close-checkout aria-label="Close checkout">×</button>
+      <button class="checkout-close" type="button" data-close-checkout aria-label="Cerrar pago">×</button>
       <div data-checkout-form-view>
         <span class="section-index">Demo checkout</span>
         <h2 id="checkout-title">Almost yours.</h2>
@@ -303,15 +320,15 @@
         <form data-checkout-form>
           <label>Full name<input name="name" autocomplete="name" required maxlength="80"></label>
           <label>Email<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
-          <button class="checkout-button" type="submit">Confirm demo order <span>→</span></button>
+          <button class="checkout-button" type="submit">Confirmar pedido demo <span>→</span></button>
           <p class="form-error" data-checkout-error role="alert"></p>
         </form>
       </div>
       <div class="checkout-success" data-checkout-success hidden>
         <span class="success-mark">✓</span>
         <span class="section-index">Order confirmed</span>
-        <h2>Your burn is booked.</h2>
-        <p>Demo order <strong data-order-id></strong> totals <strong data-order-total></strong>.</p>
+        <h2>Tu Buldak está reservada.</h2>
+        <p>El pedido demo <strong data-order-id></strong> suma <strong data-order-total></strong>.</p>
         <button class="checkout-button" type="button" data-finish-checkout>Keep exploring <span>→</span></button>
       </div>
     </dialog>
