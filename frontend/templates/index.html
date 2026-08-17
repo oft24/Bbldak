@@ -16,8 +16,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css?v=9">
-    <script defer src="/js/i18n.js?v=1"></script>
-    <script defer src="/js/app.js?v=11"></script>
+    <script defer src="/js/i18n.js?v=2"></script>
+    <script defer src="/js/app.js?v=12"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -149,11 +149,11 @@
             <article class="catalog-card reveal" data-catalog-card data-category="{{ item.category }}">
               <div class="catalog-card__visual">
                 <span data-catalog-category="{{ item.category }}">{{ item.category_label }}</span>
-                <img src="{{ item.image }}" alt="{{ item.name }} Buldak, SKU {{ item.sku }}" loading="lazy" decoding="async">
+                <img src="{{ item.image }}" alt="{{ item.name }} Buldak, SKU {{ item.sku }}" data-catalog-image="{{ item.id }}" loading="lazy" decoding="async">
               </div>
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
-                <h3>{{ item.name }}</h3>
+                <h3 data-catalog-name="{{ item.id }}">{{ item.name }}</h3>
                 <p data-catalog-meta="{{ item.id }}">{{ item.weight }} · {{ item.case }}</p>
                 <div class="catalog-card__footer">
                   <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}" data-catalog-status="{{ item.id }}">{{ item.status }}</strong>

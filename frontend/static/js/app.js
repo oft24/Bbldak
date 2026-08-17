@@ -78,6 +78,8 @@
     catalogCards: [...document.querySelectorAll("[data-catalog-card]")],
     catalogAdds: [...document.querySelectorAll("[data-catalog-add]")],
     catalogCategories: [...document.querySelectorAll("[data-catalog-category]")],
+    catalogNames: [...document.querySelectorAll("[data-catalog-name]")],
+    catalogImages: [...document.querySelectorAll("[data-catalog-image]")],
     catalogStatuses: [...document.querySelectorAll("[data-catalog-status]")],
     catalogMetas: [...document.querySelectorAll("[data-catalog-meta]")],
   };
@@ -133,8 +135,10 @@
   }
 
   function localizedProduct(product) {
+    if (!product) return product;
     const translated = i18n.productContent?.[state.language]?.[product.id];
-    return translated ? { ...product, ...translated } : product;
+    const name = i18n.productNames?.[state.language]?.[product.id] || product.name;
+    return { ...product, ...(translated || {}), name };
   }
 
   function escapeHtml(value) {
@@ -195,6 +199,16 @@
     dom.catalogCategories.forEach((element) => {
       element.textContent = t(`category.${element.dataset.catalogCategory}`);
     });
+    dom.catalogNames.forEach((element) => {
+      const product = localizedProduct(productById.get(element.dataset.catalogName));
+      element.textContent = product.name;
+    });
+    dom.catalogImages.forEach((element) => {
+      const product = localizedProduct(productById.get(element.dataset.catalogImage));
+      element.alt = state.language === "zh"
+        ? `Buldak ${product.name}，SKU ${product.sku}`
+        : `Buldak ${product.name}, SKU ${product.sku}`;
+    });
     dom.catalogMetas.forEach((element) => {
       const product = productById.get(element.dataset.catalogMeta);
       element.textContent = `${translateWeight(product.weight)} · ${translateCase(product.case)}`;
@@ -209,8 +223,23 @@
     });
     dom.searchResults.forEach((result, index) => {
       const product = localizedProduct(products[index]);
+      const name = result.querySelector("strong");
       const detail = result.querySelector("small");
+      if (name) name.textContent = product.name;
       if (detail) detail.textContent = `${product.heat_label} · ${product.price_label}`;
+    });
+    dom.cards.forEach((card, index) => {
+      const product = localizedProduct(products[index]);
+      card.setAttribute("aria-label", t("hero.selectFlavor", { name: product.name }));
+      const image = card.querySelector("img");
+      if (image) image.alt = state.language === "zh"
+        ? `Buldak ${product.name} 包装`
+        : state.language === "en"
+          ? `Buldak ${product.name} pack`
+          : `Paquete Buldak ${product.name}`;
+    });
+    dom.tabs.forEach((tab, index) => {
+      tab.textContent = localizedProduct(products[index]).name;
     });
     const suggestions = {
       es: [["carbonara", "carbonara"], ["picante", "picante"], ["queso", "queso"]],
@@ -479,7 +508,7 @@
     saveCart();
     renderCart({ highlightId: id });
     animateAddToCart(source, product);
-    showToast(t("cart.added", { name: product.name }));
+    showToast(t("cart.added", { name: localizedProduct(product).name }));
   }
 
   function changeCartQuantity(id, amount, source = null) {

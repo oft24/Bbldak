@@ -25,6 +25,7 @@
       "hero.provisional": "Precio provisional por artículo",
       "hero.viewCatalog": "Ver catálogo completo",
       "hero.carousel": "Selector de sabores Buldak",
+      "hero.selectFlavor": "Seleccionar {name}",
       "hero.drag": "Arrastra para girar",
       "hero.chooseFlavor": "Elegir un sabor",
       "hero.previous": "Sabor anterior",
@@ -141,6 +142,7 @@
       "hero.provisional": "Provisional price per item",
       "hero.viewCatalog": "View full catalog",
       "hero.carousel": "Buldak flavor selector",
+      "hero.selectFlavor": "Select {name}",
       "hero.drag": "Drag to rotate",
       "hero.chooseFlavor": "Choose a flavor",
       "hero.previous": "Previous flavor",
@@ -257,6 +259,7 @@
       "hero.provisional": "每件商品暂定价格",
       "hero.viewCatalog": "查看完整目录",
       "hero.carousel": "Buldak 口味选择器",
+      "hero.selectFlavor": "选择 {name}",
       "hero.drag": "拖动旋转",
       "hero.chooseFlavor": "选择口味",
       "hero.previous": "上一个口味",
@@ -349,6 +352,82 @@
       "legal.dataCopy": "提交的数据仅用于处理所请求的演示。BuldakShop 不保证内容完全无误；如未核对包装或制造商官方信息而作出决定，本网站不承担责任。",
       "legal.acceptance": "使用本网站即表示你接受这些条款，并理解这是演示体验。",
       "noscript": "此互动商店需要启用 JavaScript。"
+    }
+  };
+
+  // Display names are localized in the browser; API and Supabase values stay unchanged.
+  const productNames = {
+    es: {
+      "811140": "Carbonara",
+      "811130": "Carbonara cremosa",
+      "811200": "Queso",
+      "811150": "Cuatro quesos",
+      "811270": "Rosé",
+      "811320": "Dulce y picante",
+      "811000": "Taco",
+      "811340": "Yakisoba",
+      "811220": "Habanero y lima",
+      "811120": "Original",
+      "811210": "Doble picante",
+      "811616": "Dulce y picante · tazón grande",
+      "811618": "Cuatro quesos · tazón grande",
+      "811622": "Carbonara · tazón grande",
+      "811624": "Original · tazón grande",
+      "811640": "Rosé · tazón grande",
+      "811650": "Fideos de cristal anchos Rosé",
+      "811612": "Original · tazón grande",
+      "811710": "Tteokbokki Carbonara",
+      "811720": "Tteokbokki Original",
+      "811910": "Papas fritas Habanero y lima",
+      "811920": "Papas fritas Original"
+    },
+    en: {
+      "811140": "Carbonara",
+      "811130": "Cream Carbonara",
+      "811200": "Cheese",
+      "811150": "Quattro Cheese",
+      "811270": "Rosé",
+      "811320": "Swicy",
+      "811000": "Taco",
+      "811340": "Yakisoba",
+      "811220": "Habanero Lime",
+      "811120": "Original",
+      "811210": "2X Spicy",
+      "811616": "Swicy Big Bowl",
+      "811618": "Quattro Cheese Big Bowl",
+      "811622": "Carbonara Big Bowl",
+      "811624": "Original Big Bowl",
+      "811640": "Rosé Big Bowl",
+      "811650": "Rosé Wide Glass Noodle",
+      "811612": "Original Big Bowl",
+      "811710": "Carbonara Tteokbokki",
+      "811720": "Original Tteokbokki",
+      "811910": "Habanero Lime Potato Chips",
+      "811920": "Original Potato Chips"
+    },
+    zh: {
+      "811140": "奶油味火鸡面",
+      "811130": "奶油干酪味火鸡面",
+      "811200": "芝士味火鸡面",
+      "811150": "芝士联盟火鸡面",
+      "811270": "玫瑰奶油味火鸡面",
+      "811320": "焦糖甜辣味火鸡面",
+      "811000": "塔可味火鸡面",
+      "811340": "日式炒面味火鸡面",
+      "811220": "哈瓦那辣椒青柠味火鸡面",
+      "811120": "原味火鸡面",
+      "811210": "双倍辣火鸡面",
+      "811616": "焦糖甜辣味火鸡面（大碗）",
+      "811618": "芝士联盟火鸡面（大碗）",
+      "811622": "奶油味火鸡面（大碗）",
+      "811624": "原味火鸡面（大碗）",
+      "811640": "玫瑰奶油味火鸡面（大碗）",
+      "811650": "玫瑰奶油味宽粉",
+      "811612": "原味火鸡面（大碗）",
+      "811710": "奶油味火鸡炒年糕",
+      "811720": "原味火鸡炒年糕",
+      "811910": "哈瓦那辣椒青柠味火鸡薯片",
+      "811920": "原味火鸡薯片"
     }
   };
 
@@ -491,5 +570,5 @@
     }
   };
 
-  window.BuldakI18n = Object.freeze({ locales, productContent });
+  window.BuldakI18n = Object.freeze({ locales, productNames, productContent });
 })();
