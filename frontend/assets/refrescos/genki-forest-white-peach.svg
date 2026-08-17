@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 600">
+  <defs>
+    <linearGradient id="genkiBottle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d7e3e6"/>
+      <stop offset=".2" stop-color="#f5fbfb"/>
+      <stop offset=".5" stop-color="#ffffff"/>
+      <stop offset=".8" stop-color="#e8f1f2"/>
+      <stop offset="1" stop-color="#c7d6d8"/>
+    </linearGradient>
+    <linearGradient id="genkiCap" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f6fae"/>
+      <stop offset=".5" stop-color="#5aa0dd"/>
+      <stop offset="1" stop-color="#255d92"/>
+    </linearGradient>
+    <radialGradient id="peachGrad" cx=".35" cy=".3" r=".8">
+      <stop offset="0" stop-color="#ffd9dd"/>
+      <stop offset=".55" stop-color="#ffb0c0"/>
+      <stop offset="1" stop-color="#f4839f"/>
+    </radialGradient>
+    <radialGradient id="genkiShine" cx=".28" cy=".22" r=".8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="150" cy="540" rx="66" ry="14" fill="#aebdc0" opacity=".55"/>
+
+  <path d="M128 62 h44 v42 c0 14 14 20 20 38 c8 22 12 42 12 66 v300 a34 26 0 0 1 -34 26 h-40 a34 26 0 0 1 -34 -26 v-300 c0 -24 4 -44 12 -66 c6 -18 20 -24 20 -38 Z" fill="url(#genkiBottle)"/>
+
+  <rect x="120" y="42" width="60" height="28" rx="6" fill="url(#genkiCap)"/>
+  <rect x="120" y="42" width="60" height="7" fill="#1f4c78"/>
+  <ellipse cx="150" cy="42" rx="30" ry="6" fill="#3f7cb8"/>
+
+  <rect x="86" y="220" width="128" height="230" rx="16" fill="#ffffff" opacity=".88" stroke="#e3ecec" stroke-width="1.5"/>
+
+  <circle cx="150" cy="288" r="44" fill="url(#peachGrad)"/>
+  <path d="M150 250 c8 -14 26 -16 30 -2 c-14 -2 -24 4 -30 2 Z" fill="#5f9a52"/>
+  <path d="M150 246 c0 -10 3 -16 9 -20 c-2 8 -5 14 -9 20 Z" fill="#7fb56f"/>
+  <path d="M150 332 a44 44 0 0 1 -6 -87" fill="none" stroke="#e997ab" stroke-width="2" opacity=".6"/>
+
+  <text x="150" y="368" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="900" font-size="24" fill="#2f6fae" letter-spacing="-.5">元气森林</text>
+  <text x="150" y="396" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="15" fill="#4d5c60" letter-spacing="1">GENKI FOREST</text>
+  <text x="150" y="424" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="16" fill="#f4839f">白桃味 · 苏打气泡水</text>
+  <text x="150" y="444" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="600" font-size="10" fill="#8a9a9d" letter-spacing="1.5">SPARKLING WATER · WHITE PEACH</text>
+
+  <path d="M128 62 h44 v42 c0 14 14 20 20 38 c8 22 12 42 12 66 v300 a34 26 0 0 1 -34 26 h-40 a34 26 0 0 1 -34 -26 v-300 c0 -24 4 -44 12 -66 c6 -18 20 -24 20 -38 Z" fill="url(#genkiShine)" opacity=".55"/>
+</svg>

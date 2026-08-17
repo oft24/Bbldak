@@ -50,6 +50,15 @@
   const productById = new Map(products.map((product) => [product.id, product]));
   const initialProductIndex = Math.max(0, products.findIndex((product) => product.id === "811140"));
 
+  const drinkProducts = (payload.refrescos || []).map((product, index) => ({
+    number: String(index + 1).padStart(2, "0"),
+    description: "",
+    ...product,
+    id: String(product.id),
+    sku: String(product.sku)
+  }));
+  drinkProducts.forEach((product) => productById.set(product.id, product));
+
   const dom = {
     header: document.querySelector("[data-header]"),
     carousel: document.querySelector("[data-carousel]"),
@@ -1045,6 +1054,194 @@
     if (event.key === "ArrowRight") step(1);
     if (event.key === "ArrowLeft") step(-1);
   });
+
+  if (drinkProducts.length) {
+    const refrescoDom = {
+      carousel: document.querySelector("[data-refresco-carousel]"),
+      cards: [...document.querySelectorAll("[data-refresco-card]")],
+      tabs: [...document.querySelectorAll("[data-refresco-select]")],
+      info: document.querySelector(".refrescos-info"),
+      sku: document.querySelector("[data-refresco-sku]"),
+      name: document.querySelector("[data-refresco-name]"),
+      description: document.querySelector("[data-refresco-description]"),
+      weight: document.querySelector("[data-refresco-weight]"),
+      caseSize: document.querySelector("[data-refresco-case]"),
+      price: document.querySelector("[data-refresco-price]"),
+      quantity: document.querySelector("[data-refresco-quantity]"),
+      addSelected: document.querySelector("[data-refresco-add-selected]"),
+    };
+
+    const refrescoState = {
+      selected: 0,
+      quantity: 1,
+      angle: 0,
+      target: 0,
+      velocity: 0,
+      dragging: false,
+      dragStartX: 0,
+      dragStartAngle: 0,
+      lastX: 0,
+      moved: 0,
+    };
+
+    function refrescoDistance(value) {
+      return modulo(value + drinkProducts.length / 2, drinkProducts.length) - drinkProducts.length / 2;
+    }
+
+    function refrescoCycleTo(index) {
+      const rounded = Math.round(refrescoState.target);
+      const current = modulo(rounded, drinkProducts.length);
+      return rounded + refrescoDistance(index - current);
+    }
+
+    function setRefrescoTheme(index) {
+      const baseProduct = drinkProducts[index];
+      const product = localizedProduct(baseProduct);
+      refrescoState.selected = index;
+
+      refrescoDom.info?.classList.remove("is-changing");
+      requestAnimationFrame(() => refrescoDom.info?.classList.add("is-changing"));
+
+      if (refrescoDom.sku) refrescoDom.sku.textContent = product.sku;
+      if (refrescoDom.name) refrescoDom.name.textContent = product.name;
+      if (refrescoDom.description) refrescoDom.description.textContent = product.description || "";
+      if (refrescoDom.weight) refrescoDom.weight.textContent = product.weight || "";
+      if (refrescoDom.caseSize) refrescoDom.caseSize.textContent = product.case || "";
+      if (refrescoDom.price) refrescoDom.price.textContent = product.price_label;
+      if (refrescoDom.addSelected) {
+        refrescoDom.addSelected.disabled = product.is_available === false;
+        const label = refrescoDom.addSelected.querySelector("[data-i18n]");
+        if (label) label.textContent = t(product.is_available === false ? "catalog.soldOut" : "hero.add");
+      }
+
+      refrescoDom.cards.forEach((card, cardIndex) => {
+        const active = cardIndex === index;
+        card.classList.toggle("is-active", active);
+        card.setAttribute("aria-pressed", String(active));
+      });
+      refrescoDom.tabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === index;
+        tab.classList.toggle("is-active", active);
+        tab.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    function goToRefresco(index) {
+      const normalized = modulo(index, drinkProducts.length);
+      refrescoState.target = refrescoCycleTo(normalized);
+      refrescoState.velocity += refrescoDistance(normalized - refrescoState.selected) * 0.015;
+      setRefrescoTheme(normalized);
+    }
+
+    function stepRefresco(direction) {
+      goToRefresco(refrescoState.selected + direction);
+    }
+
+    function drawRefrescoCarousel() {
+      if (refrescoDom.carousel) {
+        if (!refrescoState.dragging) {
+          const delta = refrescoState.target - refrescoState.angle;
+          refrescoState.velocity += delta * 0.038;
+          refrescoState.velocity *= 0.84;
+          refrescoState.angle += refrescoState.velocity;
+          if (Math.abs(delta) < 0.0008 && Math.abs(refrescoState.velocity) < 0.0008) {
+            refrescoState.angle = refrescoState.target;
+            refrescoState.velocity = 0;
+          }
+        }
+
+        const shellWidth = refrescoDom.carousel.clientWidth || 360;
+        const radius = clamp(shellWidth * 0.34, 90, 190);
+        const depth = clamp(shellWidth * 0.3, 80, 170);
+        refrescoDom.cards.forEach((card, index) => {
+          const distance = refrescoDistance(index - refrescoState.angle);
+          const absoluteDistance = Math.abs(distance);
+          const selectedDistance = Math.abs(refrescoDistance(index - refrescoState.selected));
+          const isVisible = selectedDistance <= 1;
+          const theta = clamp(distance, -4, 4) * 0.6;
+          const x = Math.sin(theta) * radius;
+          const z = (Math.cos(theta) - 1) * depth;
+          const proximity = clamp(1 + z / (depth * 2.6), 0, 1);
+          const scale = 0.66 + proximity * 0.34;
+          const rotationY = distance * -26;
+          const float = reducedMotion ? 0 : Math.sin(performance.now() / 2100 + index * 2.1) * 4 * proximity;
+          card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+          card.style.opacity = isVisible ? String(0.22 + proximity * 0.78) : "0";
+          card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 4).toFixed(2)}px)`;
+          card.style.zIndex = String(1000 + Math.round(z));
+          card.style.pointerEvents = isVisible ? "auto" : "none";
+          card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
+          card.setAttribute("aria-hidden", String(!isVisible));
+        });
+      }
+
+      requestAnimationFrame(drawRefrescoCarousel);
+    }
+
+    function refrescoNearestSelectionFromAngle() {
+      const selected = modulo(Math.round(refrescoState.angle), drinkProducts.length);
+      if (selected !== refrescoState.selected) setRefrescoTheme(selected);
+    }
+
+    function onRefrescoPointerDown(event) {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      refrescoState.dragging = true;
+      refrescoState.dragStartX = event.clientX;
+      refrescoState.lastX = event.clientX;
+      refrescoState.dragStartAngle = refrescoState.angle;
+      refrescoState.moved = 0;
+      refrescoState.velocity = 0;
+      refrescoDom.carousel.classList.add("is-dragging");
+      refrescoDom.carousel.setPointerCapture?.(event.pointerId);
+    }
+
+    function onRefrescoPointerMove(event) {
+      if (!refrescoState.dragging) return;
+      const delta = event.clientX - refrescoState.dragStartX;
+      refrescoState.moved = Math.max(refrescoState.moved, Math.abs(delta));
+      const shellWidth = refrescoDom.carousel.clientWidth || 360;
+      refrescoState.angle = refrescoState.dragStartAngle - delta / clamp(shellWidth * 0.7, 160, 320);
+      refrescoState.velocity = -(event.clientX - refrescoState.lastX) / 260;
+      refrescoState.lastX = event.clientX;
+      refrescoNearestSelectionFromAngle();
+    }
+
+    function onRefrescoPointerUp(event) {
+      if (!refrescoState.dragging) return;
+      refrescoState.dragging = false;
+      refrescoDom.carousel.classList.remove("is-dragging");
+      refrescoDom.carousel.releasePointerCapture?.(event.pointerId);
+      refrescoState.target = Math.round(refrescoState.angle + refrescoState.velocity * 2.4);
+      goToRefresco(modulo(refrescoState.target, drinkProducts.length));
+    }
+
+    refrescoDom.carousel.addEventListener("pointerdown", onRefrescoPointerDown);
+    window.addEventListener("pointermove", onRefrescoPointerMove, { passive: true });
+    window.addEventListener("pointerup", onRefrescoPointerUp);
+    window.addEventListener("pointercancel", onRefrescoPointerUp);
+
+    document.querySelector("[data-refresco-previous]")?.addEventListener("click", () => stepRefresco(-1));
+    document.querySelector("[data-refresco-next]")?.addEventListener("click", () => stepRefresco(1));
+    refrescoDom.tabs.forEach((tab, index) => tab.addEventListener("click", () => goToRefresco(index)));
+    refrescoDom.cards.forEach((card, index) => card.addEventListener("click", () => {
+      if (refrescoState.moved < 7) goToRefresco(index);
+    }));
+
+    document.querySelector("[data-refresco-quantity-minus]")?.addEventListener("click", () => {
+      refrescoState.quantity = clamp(refrescoState.quantity - 1, 1, 20);
+      if (refrescoDom.quantity) refrescoDom.quantity.textContent = String(refrescoState.quantity);
+    });
+    document.querySelector("[data-refresco-quantity-plus]")?.addEventListener("click", () => {
+      refrescoState.quantity = clamp(refrescoState.quantity + 1, 1, 20);
+      if (refrescoDom.quantity) refrescoDom.quantity.textContent = String(refrescoState.quantity);
+    });
+    refrescoDom.addSelected?.addEventListener("click", (event) => {
+      addToCart(drinkProducts[refrescoState.selected].id, refrescoState.quantity, event.currentTarget);
+    });
+
+    setRefrescoTheme(0);
+    requestAnimationFrame(drawRefrescoCarousel);
+  }
 
   const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {

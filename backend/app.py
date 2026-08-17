@@ -327,6 +327,37 @@ for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
         is_available=not catalog_product["status"].startswith("Agotado"),
     )
 
+
+REFRESCOS_PRODUCTS = [
+    {
+        "sku": "833130", "name": "Coco Palm Jugo de Coco", "category": "refrescos", "category_label": "Refresco",
+        "weight": "245 ml · lata", "case": "24 latas x 245 ml", "image": "/assets/refrescos/coco-palm.svg",
+        "description": "Jugo de coco 100% natural en lata, ligero, dulce y sin pulpa.",
+        "status": "Disponible",
+    },
+    {
+        "sku": "833210", "name": "Wang Lo Kat Té de Hierbas", "category": "refrescos", "category_label": "Refresco",
+        "weight": "310 ml · lata", "case": "24 latas x 310 ml", "image": "/assets/refrescos/wanglaoji.svg",
+        "description": "Bebida herbal china clásica (凉茶), dulce y refrescante, ideal para acompañar comidas picantes.",
+        "status": "Disponible",
+    },
+    {
+        "sku": "831190", "name": "Genki Forest Soda Durazno Blanco", "category": "refrescos", "category_label": "Refresco",
+        "weight": "480 ml · botella", "case": "15 botellas x 480 ml", "image": "/assets/refrescos/genki-forest-white-peach.svg",
+        "description": "Agua con gas sabor durazno blanco, cero azúcar, ligera y burbujeante.",
+        "status": "Disponible",
+    },
+]
+
+for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
+    refresco_product.update(
+        id=refresco_product["sku"],
+        price=0.01,
+        price_label="$0.01",
+        sort_order=sort_order,
+        is_available=not refresco_product["status"].startswith("Agotado"),
+    )
+
 PRODUCT_ASSET_DIR = FRONTEND_DIR / "assets"
 repository = ProductRepository()
 
@@ -362,6 +393,7 @@ def index():
         catalog_products=catalog_products,
         carousel_products=carousel_catalog(catalog_products),
         catalog_categories=CATALOG_CATEGORIES,
+        refrescos_products=REFRESCOS_PRODUCTS,
     )
 
 
@@ -385,6 +417,11 @@ def catalog():
     return jsonify(products=current_catalog(), source=repository.last_source)
 
 
+@app.get("/api/refrescos")
+def refrescos():
+    return jsonify(products=REFRESCOS_PRODUCTS)
+
+
 @app.get("/assets/<path:filename>")
 def product_asset(filename: str):
     """Serve product photography through Flask in every WSGI environment."""
@@ -403,7 +440,7 @@ def checkout():
         return jsonify(error="Ingresa un nombre y un correo válidos."), 400
     if not isinstance(cart, list) or not cart:
         return jsonify(error="Tu carrito está vacío."), 400
-    catalog_by_id = {product["id"]: product for product in current_catalog()}
+    catalog_by_id = {product["id"]: product for product in [*current_catalog(), *REFRESCOS_PRODUCTS]}
     total = Decimal("0")
     normalized_cart = []
     for item in cart:
