@@ -553,6 +553,16 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .catalog-card.is-detail-selected { box-shadow: 0 0 0 3px #fb775d, 0 28px 70px rgba(0, 0, 0, .28); }
 .catalog-card.is-detail-selected .catalog-card__detail { color: #9d2441; }
 
+/* English and Japanese market names, shown under every product title. */
+.intl-names { display: flex; flex-direction: column; gap: 2px; margin: 7px 0 0; }
+.catalog-card__body > .intl-names { margin-top: 7px; }
+.intl-names span { color: #8a7c80; font-size: 10px; line-height: 1.32; letter-spacing: -.005em; }
+.intl-names span[lang="en"] { font-weight: 650; font-style: italic; }
+.intl-names span[lang="ja"] { font-weight: 600; letter-spacing: .01em; }
+.intl-names span:empty { display: none; }
+.intl-names--detail { margin: 8px 0 0; }
+.intl-names--detail span { color: currentColor; opacity: .62; font-size: 12px; }
+
 .story { --detail-bg-a: var(--bg-a); --detail-bg-b: var(--bg-b); --detail-glow: var(--glow); --detail-ink: var(--ink); --detail-accent: var(--accent); min-height: 105vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; color: var(--detail-ink); background: linear-gradient(145deg, var(--detail-bg-a), var(--detail-bg-b)); transition: color 500ms ease, background 650ms var(--ease); }
 .story::before { content: ""; position: absolute; width: min(70vw, 920px); aspect-ratio: 1; right: -15%; top: 5%; border-radius: 50%; background: var(--detail-glow); filter: blur(80px); opacity: .45; pointer-events: none; }
 .story > * { position: relative; z-index: 1; }

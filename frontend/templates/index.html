@@ -158,6 +158,10 @@
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
                 <h3 data-catalog-name="{{ item.id }}">{{ item.name }}</h3>
+                <p class="intl-names" data-intl-names="{{ item.id }}">
+                  <span lang="en">{{ item.name_en }}</span>
+                  <span lang="ja">{{ item.name_ja }}</span>
+                </p>
                 <p class="pack-line" data-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
                 <div class="catalog-card__footer">
                   <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}" data-catalog-status="{{ item.id }}">{{ item.status }}</strong>
@@ -259,8 +263,12 @@
 
         <div class="refrescos-layout">
           <aside class="refrescos-info reveal" aria-live="polite">
-            <p class="eyebrow"><span data-i18n="refrescos.type">Refresco</span> · SKU <span data-refresco-sku>{{ refrescos_products[0].sku }}</span></p>
+            <p class="eyebrow"><span data-refresco-category>{{ refrescos_products[0].category_label }}</span> · SKU <span data-refresco-sku>{{ refrescos_products[0].sku }}</span></p>
             <h3 data-refresco-name tabindex="-1">{{ refrescos_products[0].name }}</h3>
+            <p class="intl-names intl-names--detail">
+              <span lang="en" data-refresco-name-en>{{ refrescos_products[0].name_en }}</span>
+              <span lang="ja" data-refresco-name-ja>{{ refrescos_products[0].name_ja }}</span>
+            </p>
             <p data-refresco-description>{{ refrescos_products[0].description }}</p>
             <p class="promo-tag" data-refresco-promo hidden></p>
             <div class="specs">
@@ -344,7 +352,11 @@
               </div>
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
-                <h3>{{ item.name }}</h3>
+                <h3 data-refresco-catalog-name="{{ item.id }}">{{ item.name }}</h3>
+                <p class="intl-names" data-intl-names="{{ item.id }}">
+                  <span lang="en">{{ item.name_en }}</span>
+                  <span lang="ja">{{ item.name_ja }}</span>
+                </p>
                 <p class="pack-line" data-refresco-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
                 {% if item.promo %}<p class="promo-tag promo-tag--card" data-i18n="{{ item.promo }}">Promoción</p>{% endif %}
                 <div class="catalog-card__footer">
@@ -363,6 +375,9 @@
                     </button>
                   </div>
                 </div>
+                <button class="catalog-card__detail" type="button" data-refresco-detail="{{ item.id }}" aria-pressed="false">
+                  <span data-refresco-detail-label="{{ item.id }}">Ver descripción</span><span aria-hidden="true">↑</span>
+                </button>
               </div>
             </article>
           {% endfor %}

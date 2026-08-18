@@ -364,6 +364,83 @@ def apply_pack(product, units, unit_size, case_price, unit_noun, inner=None, pro
     return product
 
 
+# Market names for every SKU: the English name the maker exports under and the
+# Japanese name it is sold as. Buldak follows Samyang Japan's "<sabor>ブルダック炒め麺".
+INTL_NAMES = {
+    # --- Buldak ---
+    "811140": ("Carbonara Buldak Stir-Fried Ramen", "カルボナーラブルダック炒め麺"),
+    "811130": ("Cream Carbonara Buldak Stir-Fried Ramen", "クリームカルボナーラブルダック炒め麺"),
+    "811200": ("Cheese Buldak Stir-Fried Ramen", "チーズブルダック炒め麺"),
+    "811150": ("Quattro Cheese Buldak Stir-Fried Ramen", "クアトロチーズブルダック炒め麺"),
+    "811270": ("Rosé Buldak Stir-Fried Ramen", "ロゼブルダック炒め麺"),
+    "811320": ("Swicy Buldak Stir-Fried Ramen", "スワイシーブルダック炒め麺"),
+    "811000": ("Taco Buldak Stir-Fried Ramen", "タコブルダック炒め麺"),
+    "811340": ("Yakisoba Buldak Stir-Fried Ramen", "焼きそばブルダック炒め麺"),
+    "811220": ("Habanero Lime Buldak Stir-Fried Ramen", "ハバネロライムブルダック炒め麺"),
+    "811120": ("Original Buldak Stir-Fried Ramen", "ブルダック炒め麺"),
+    "811210": ("2X Spicy Buldak Stir-Fried Ramen", "2倍辛ブルダック炒め麺"),
+    "811616": ("Swicy Buldak Stir-Fried Ramen Big Bowl", "スワイシーブルダック炒め麺 BIG"),
+    "811618": ("Quattro Cheese Buldak Stir-Fried Ramen Big Bowl", "クアトロチーズブルダック炒め麺 BIG"),
+    "811622": ("Carbonara Buldak Stir-Fried Ramen Big Bowl", "カルボナーラブルダック炒め麺 BIG"),
+    "811624": ("Original Buldak Stir-Fried Ramen Big Bowl", "ブルダック炒め麺 BIG"),
+    "811640": ("Rosé Buldak Stir-Fried Ramen Big Bowl", "ロゼブルダック炒め麺 BIG"),
+    "811650": ("Rosé Buldak Wide Glass Noodle", "ロゼブルダック太春雨"),
+    "811612": ("Original Buldak Stir-Fried Ramen Big Bowl", "ブルダック炒め麺 BIG"),
+    "811710": ("Carbonara Buldak Tteokbokki", "カルボナーラブルダックトッポギ"),
+    "811720": ("Original Buldak Tteokbokki", "ブルダックトッポギ"),
+    "811910": ("Buldak Potato Chips Habanero Lime", "ブルダックポテトチップス ハバネロライム"),
+    "811920": ("Buldak Potato Chips Original", "ブルダックポテトチップス オリジナル"),
+    # --- Refrescos ---
+    "833130": ("Coconut Palm Coconut Juice", "椰樹 ココナッツジュース"),
+    "833210": ("Wong Lo Kat Herbal Tea", "王老吉 漢方茶"),
+    "831190": ("Chi Forest Sparkling Water White Peach", "元気森林 スパークリングウォーター 白桃"),
+    "194280": ("Vita Peach Tea", "ビタ ピーチティー"),
+    "880350": ("Binggrae Melon Flavored Milk", "ビングレ メロン牛乳"),
+    "831214": ("Chi Forest Sparkling Water Lemon Cola", "元気森林 スパークリングウォーター レモンコーラ"),
+    "834510": ("Shuiquanwan Lactic Acid Yogurt Drink", "水泉湾 乳酸菌飲料"),
+    "832110": ("Master Kong Jasmine Green Tea", "康師傅 ジャスミン緑茶"),
+    "832160": ("Master Kong Rock Sugar Pear Drink", "康師傅 氷糖雪梨"),
+    "832140": ("Master Kong Honey Pomelo Tea", "康師傅 蜂蜜柚子茶"),
+    "831831": ("Hawthorn Juice and Pulp Drink", "山楂樹下 サンザシドリンク"),
+    "837410": ("Tea 365 Green Tea Lemon & Lemongrass", "緑茶365 レモン&レモングラス"),
+    "837412": ("Tea 365 Green Tea Honey", "緑茶365 ハニー"),
+    "831160": ("Chi Forest Sparkling Water Lychee", "元気森林 スパークリングウォーター ライチ"),
+    "831220": ("Chi Forest Sparkling Water White Peach Can", "元気森林 スパークリングウォーター 白桃 缶"),
+    "831170": ("Chi Forest Sparkling Water Grape Delight", "元気森林 スパークリングウォーター ブドウ"),
+    "831140": ("Chi Forest Sparkling Water Orange Vitamin C", "元気森林 スパークリングウォーター オレンジ"),
+    "831240": ("Chi Forest Sparkling Water Lychee Can", "元気森林 スパークリングウォーター ライチ 缶"),
+    "833320": ("Taisun Grass Jelly Drink Original", "泰山 仙草蜜ドリンク オリジナル"),
+    "833330": ("Taisun Grass Jelly Drink Lychee", "泰山 仙草蜜ドリンク ライチ"),
+    "833340": ("Taisun Grass Jelly Drink Coconut", "泰山 仙草蜜ドリンク ココナッツ"),
+    "837520": ("J WAY Instant Boba Fruit Juice Kit", "J WAY タピオカ フルーツジュースキット"),
+    "837510": ("J WAY Instant Boba Milk Tea Kit", "J WAY タピオカ ミルクティーキット"),
+    "838210": ("Dongpeng Water Boost Electrolyte Drink Lemon", "東鵬 補水啦 電解質ドリンク レモン"),
+    "838212": ("Dongpeng Water Boost Electrolyte Drink Grapefruit", "東鵬 補水啦 電解質ドリンク グレープフルーツ"),
+    "838214": ("Dongpeng Water Boost Electrolyte Drink Lychee", "東鵬 補水啦 電解質ドリンク ライチ"),
+    "838312": ("Dongpeng Water Boost Electrolyte Drink Lemon 555 ml", "東鵬 補水啦 電解質ドリンク レモン 555ml"),
+    "838314": ("Dongpeng Water Boost Electrolyte Drink Lychee 555 ml", "東鵬 補水啦 電解質ドリンク ライチ 555ml"),
+    "838310": ("Dongpeng Water Boost Electrolyte Drink Grapefruit 555 ml", "東鵬 補水啦 電解質ドリンク グレープフルーツ 555ml"),
+    "880910": ("Haitai Grape Bongbong Juice", "ヘテ ぶどうボンボン"),
+    "880010": ("Yogo Vera Aloe Vera Drink Mango", "ヨゴベラ アロエドリンク マンゴー"),
+    "880020": ("Yogo Vera Aloe Vera Drink Mango 1.5 L", "ヨゴベラ アロエドリンク マンゴー 1.5L"),
+    "880030": ("Yogo Vera Aloe Vera Drink Strawberry", "ヨゴベラ アロエドリンク いちご"),
+    "880040": ("Yogo Vera Aloe Vera Drink Peach 1.5 L", "ヨゴベラ アロエドリンク 白桃 1.5L"),
+    "831390": ("Ramune Soda Strawberry", "ラムネ いちご"),
+    "831410": ("Ramune Soda Original", "ラムネ オリジナル"),
+    "880600": ("Tomomasu Watermelon Soda", "友桝飲料 スイカサイダー"),
+    "880604": ("Tomomasu White Peach Soda", "友桝飲料 白桃サイダー"),
+    "880602": ("Tomomasu Mango Soda", "友桝飲料 マンゴーサイダー"),
+}
+
+
+def apply_intl_names(product):
+    """Attach the English and Japanese market names to one product."""
+    name_en, name_ja = INTL_NAMES.get(product["sku"], (product["name"], ""))
+    product["name_en"] = name_en
+    product["name_ja"] = name_ja
+    return product
+
+
 for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
     units, unit_size, case_price, unit_noun = BULDAK_PACKS[catalog_product["sku"]]
     catalog_product.update(
@@ -372,6 +449,7 @@ for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
         is_available=not catalog_product["status"].startswith("Agotado"),
     )
     apply_pack(catalog_product, units, unit_size, case_price, unit_noun)
+    apply_intl_names(catalog_product)
     catalog_product["case"] = catalog_product["pack_label"]
 
 
@@ -395,7 +473,7 @@ def _refresco(sku, name, category, image, description, units, unit_size, case_pr
         "sku": sku, "id": sku, "name": name, "category": category,
         "category_label": _REFRESCOS_CATEGORY_LABELS[category],
         "weight": f"{unit_size} · {unit_noun.rstrip('es').rstrip('s')}",
-        "image": f"/assets/refrescos/{image}.webp?v=1",
+        "image": f"/assets/refrescos/{image}.webp?v=2",
         "description": description, "status": "Disponible",
     }
     apply_pack(product, units, unit_size, case_price, unit_noun, inner=inner, promo=promo)
@@ -533,6 +611,7 @@ for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
         sort_order=sort_order,
         is_available=not refresco_product["status"].startswith("Agotado"),
     )
+    apply_intl_names(refresco_product)
 
 # The featured story cards mirror catalog pricing so one product never shows two prices.
 _CATALOG_BY_ID = {p["id"]: p for p in CATALOG_PRODUCTS}
@@ -543,6 +622,7 @@ for featured in PRODUCTS:
                       "units_per_case", "unit_size", "unit_noun", "inner_packs", "promo"):
             featured[field] = source[field]
         featured["weight"] = source["pack_label"]
+    apply_intl_names(featured)
 
 
 PRODUCT_ASSET_DIR = FRONTEND_DIR / "assets"

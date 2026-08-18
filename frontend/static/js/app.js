@@ -473,6 +473,10 @@
       const product = productById.get(element.dataset.refrescoCatalogMeta);
       if (product) element.textContent = packLabel(product);
     });
+    document.querySelectorAll("[data-refresco-catalog-name]").forEach((element) => {
+      const product = productById.get(element.dataset.refrescoCatalogName);
+      if (product) element.textContent = localizedProduct(product).name;
+    });
     refreshRefrescos?.();
 
     setTheme(state.selected, { syncDetail: false });
@@ -1158,7 +1162,10 @@
       tabs: [...document.querySelectorAll("[data-refresco-select]")],
       info: document.querySelector(".refrescos-info"),
       sku: document.querySelector("[data-refresco-sku]"),
+      category: document.querySelector("[data-refresco-category]"),
       name: document.querySelector("[data-refresco-name]"),
+      nameEn: document.querySelector("[data-refresco-name-en]"),
+      nameJa: document.querySelector("[data-refresco-name-ja]"),
       description: document.querySelector("[data-refresco-description]"),
       weight: document.querySelector("[data-refresco-weight]"),
       caseSize: document.querySelector("[data-refresco-case]"),
@@ -1167,6 +1174,8 @@
       promo: document.querySelector("[data-refresco-promo]"),
       quantity: document.querySelector("[data-refresco-quantity]"),
       addSelected: document.querySelector("[data-refresco-add-selected]"),
+      detailButtons: [...document.querySelectorAll("[data-refresco-detail]")],
+      detailLabels: [...document.querySelectorAll("[data-refresco-detail-label]")],
     };
 
     const refrescoState = {
@@ -1201,7 +1210,10 @@
       requestAnimationFrame(() => refrescoDom.info?.classList.add("is-changing"));
 
       if (refrescoDom.sku) refrescoDom.sku.textContent = product.sku;
+      if (refrescoDom.category) refrescoDom.category.textContent = product.category_label || t("refrescos.type");
       if (refrescoDom.name) refrescoDom.name.textContent = product.name;
+      if (refrescoDom.nameEn) refrescoDom.nameEn.textContent = product.name_en || "";
+      if (refrescoDom.nameJa) refrescoDom.nameJa.textContent = product.name_ja || "";
       if (refrescoDom.description) refrescoDom.description.textContent = product.description || "";
       if (refrescoDom.weight) refrescoDom.weight.textContent = `${product.unit_size} · ${unitNounSingular(product)}`;
       if (refrescoDom.caseSize) refrescoDom.caseSize.textContent = packLabel(product);
@@ -1227,6 +1239,31 @@
         tab.classList.toggle("is-active", active);
         tab.setAttribute("aria-pressed", String(active));
       });
+      updateRefrescoDetailButtons(String(baseProduct.id));
+    }
+
+    function updateRefrescoDetailButtons(activeId) {
+      refrescoDom.detailButtons.forEach((button) => {
+        const active = button.dataset.refrescoDetail === activeId;
+        button.setAttribute("aria-pressed", String(active));
+        button.closest("[data-refresco-catalog-card]")?.classList.toggle("is-detail-selected", active);
+      });
+      refrescoDom.detailLabels.forEach((label) => {
+        const active = label.dataset.refrescoDetailLabel === activeId;
+        label.textContent = t(active ? "catalog.selected" : "catalog.details");
+      });
+    }
+
+    function showRefrescoDetail(id) {
+      const index = drinkProducts.findIndex((product) => product.id === String(id));
+      if (index < 0) return;
+      goToRefresco(index);
+      const target = document.querySelector("[data-refrescos-section]");
+      target?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+      window.setTimeout(
+        () => refrescoDom.name?.focus({ preventScroll: true }),
+        reducedMotion ? 0 : 650
+      );
     }
 
     function goToRefresco(index) {
@@ -1338,6 +1375,10 @@
       refrescoState.quantity = clamp(refrescoState.quantity + 1, 1, 20);
       if (refrescoDom.quantity) refrescoDom.quantity.textContent = String(refrescoState.quantity);
     });
+    refrescoDom.detailButtons.forEach((button) =>
+      button.addEventListener("click", () => showRefrescoDetail(button.dataset.refrescoDetail))
+    );
+
     refrescoDom.addSelected?.addEventListener("click", (event) => {
       addToCart(drinkProducts[refrescoState.selected].id, refrescoState.quantity, event.currentTarget);
     });
