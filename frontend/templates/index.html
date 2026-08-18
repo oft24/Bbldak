@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=16">
-    <script defer src="/js/i18n.js?v=6"></script>
-    <script defer src="/js/app.js?v=20"></script>
+    <link rel="stylesheet" href="/css/style.css?v=20">
+    <script defer src="/js/i18n.js?v=8"></script>
+    <script defer src="/js/app.js?v=23"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -79,8 +79,8 @@
               <strong data-heat-label>Picor cremoso · 2/5</strong>
             </div>
             <div class="spec">
-              <span class="spec__label" data-i18n="hero.presentation">Presentación</span>
-              <strong data-weight>130 g · paquete individual</strong>
+              <span class="spec__label" data-i18n="refrescos.case">Caja de mayoreo</span>
+              <strong data-weight>40 paquetes de 130 g</strong>
             </div>
           </div>
         </div>
@@ -107,19 +107,20 @@
         <aside class="purchase-card reveal" aria-label="Comprar el sabor seleccionado">
           <div class="price-row">
             <div>
-              <span class="spec__label" data-i18n="hero.individualPack">Paquete individual</span>
-              <strong class="price" data-price>$0.01</strong>
+              <span class="spec__label" data-i18n="wholesale.perCase">Precio por caja</span>
+              <strong class="price" data-price>$1,120</strong>
+              <span class="unit-price"><span data-unit-price>$28.00</span> <span data-i18n="wholesale.perUnit">por unidad</span></span>
             </div>
-            <div class="stepper" aria-label="Cantidad" data-i18n-aria="hero.quantity">
-              <button type="button" data-quantity-minus aria-label="Reducir cantidad" data-i18n-aria="hero.reduceQuantity">−</button>
+            <div class="stepper" aria-label="Cajas" data-i18n-aria="wholesale.cases">
+              <button type="button" data-quantity-minus aria-label="Reducir cajas" data-i18n-aria="wholesale.reduceCases">−</button>
               <output data-quantity aria-live="polite">1</output>
-              <button type="button" data-quantity-plus aria-label="Aumentar cantidad" data-i18n-aria="hero.increaseQuantity">+</button>
+              <button type="button" data-quantity-plus aria-label="Aumentar cajas" data-i18n-aria="wholesale.increaseCases">+</button>
             </div>
           </div>
           <button class="add-button" type="button" data-add-selected>
-            <span data-i18n="hero.add">Agregar al carrito</span><span aria-hidden="true">→</span>
+            <span data-i18n="wholesale.addCase">Agregar caja al pedido</span><span aria-hidden="true">→</span>
           </button>
-          <p class="microcopy"><span data-i18n="hero.provisional">Precio provisional por artículo</span> · <a href="#catalog" data-i18n="hero.viewCatalog">Ver catálogo completo</a></p>
+          <p class="microcopy"><span data-i18n="wholesale.note">Venta por caja cerrada · precios de mayoreo</span> · <a href="#catalog" data-i18n="hero.viewCatalog">Ver catálogo completo</a></p>
         </aside>
 
         <div class="flavor-controls" aria-label="Elegir un sabor" data-i18n-aria="hero.chooseFlavor">
@@ -140,7 +141,7 @@
             <div class="section-index" data-i18n="catalog.index">02 — Catálogo de julio</div>
             <h2 id="catalog-title" data-i18n-html="catalog.title">Todos los productos.<br><span>Listos para tu carrito.</span></h2>
           </div>
-          <p data-i18n="catalog.copy">{{ catalog_products|length }} productos disponibles. Cada artículo usa el precio provisional de $0.01 hasta recibir la lista final.</p>
+          <p data-i18n="catalog.copy">{{ catalog_products|length }} productos disponibles para mayoreo. Cada precio corresponde a la caja cerrada del catálogo.</p>
         </div>
         <div class="catalog-filters reveal" aria-label="Filtrar catálogo" data-i18n-aria="catalog.filter">
           {% for category in catalog_categories %}
@@ -157,12 +158,12 @@
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
                 <h3 data-catalog-name="{{ item.id }}">{{ item.name }}</h3>
-                <p data-catalog-meta="{{ item.id }}">{{ item.weight }} · {{ item.case }}</p>
+                <p class="pack-line" data-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
                 <div class="catalog-card__footer">
                   <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}" data-catalog-status="{{ item.id }}">{{ item.status }}</strong>
                 </div>
                 <div class="catalog-card__actions">
-                  <span class="catalog-card__price">{{ item.price_label }}</span>
+                  <span class="catalog-card__price">{{ item.price_label }}<small class="unit-price">{{ item.unit_price_label }} <span data-i18n="wholesale.perUnit">por unidad</span></small></span>
                   <div class="catalog-card__buy">
                     <div class="catalog-stepper" data-catalog-stepper="{{ item.id }}" aria-label="Cantidad de {{ item.name }}">
                       <button type="button" data-catalog-qty-minus="{{ item.id }}" aria-label="Reducir cantidad de {{ item.name }}"{% if not item.is_available %} disabled{% endif %}>−</button>
@@ -253,7 +254,7 @@
             <div class="section-index" data-i18n="refrescos.index">06 — Refrescos</div>
             <h2 id="refrescos-title" data-i18n-html="refrescos.title">Bebidas para acompañar.<br><span>Elige tu refresco.</span></h2>
           </div>
-          <p data-i18n="refrescos.copy">{{ refrescos_products|length }} refrescos del catálogo Bbldak, con el mismo precio provisional de $0.01.</p>
+          <p data-i18n="refrescos.copy">{{ refrescos_products|length }} refrescos del catálogo Bbldak, con precios de mayoreo por caja cerrada.</p>
         </div>
 
         <div class="refrescos-layout">
@@ -261,31 +262,33 @@
             <p class="eyebrow"><span data-i18n="refrescos.type">Refresco</span> · SKU <span data-refresco-sku>{{ refrescos_products[0].sku }}</span></p>
             <h3 data-refresco-name tabindex="-1">{{ refrescos_products[0].name }}</h3>
             <p data-refresco-description>{{ refrescos_products[0].description }}</p>
+            <p class="promo-tag" data-refresco-promo hidden></p>
             <div class="specs">
               <div class="spec">
                 <span class="spec__label" data-i18n="hero.presentation">Presentación</span>
                 <strong data-refresco-weight>{{ refrescos_products[0].weight }}</strong>
               </div>
               <div class="spec">
-                <span class="spec__label" data-i18n="refrescos.case">Empaque</span>
-                <strong data-refresco-case>{{ refrescos_products[0].case }}</strong>
+                <span class="spec__label" data-i18n="refrescos.case">Caja de mayoreo</span>
+                <strong data-refresco-case>{{ refrescos_products[0].pack_label }}</strong>
               </div>
             </div>
             <div class="price-row">
               <div>
-                <span class="spec__label" data-i18n="hero.individualPack">Paquete individual</span>
+                <span class="spec__label" data-i18n="wholesale.perCase">Precio por caja</span>
                 <strong class="price" data-refresco-price>{{ refrescos_products[0].price_label }}</strong>
+                <span class="unit-price"><span data-refresco-unit-price>{{ refrescos_products[0].unit_price_label }}</span> <span data-i18n="wholesale.perUnit">por unidad</span></span>
               </div>
-              <div class="stepper" aria-label="Cantidad" data-i18n-aria="hero.quantity">
-                <button type="button" data-refresco-quantity-minus aria-label="Reducir cantidad" data-i18n-aria="hero.reduceQuantity">−</button>
+              <div class="stepper" aria-label="Cajas" data-i18n-aria="wholesale.cases">
+                <button type="button" data-refresco-quantity-minus aria-label="Reducir cajas" data-i18n-aria="wholesale.reduceCases">−</button>
                 <output data-refresco-quantity aria-live="polite">1</output>
-                <button type="button" data-refresco-quantity-plus aria-label="Aumentar cantidad" data-i18n-aria="hero.increaseQuantity">+</button>
+                <button type="button" data-refresco-quantity-plus aria-label="Aumentar cajas" data-i18n-aria="wholesale.increaseCases">+</button>
               </div>
             </div>
             <button class="add-button" type="button" data-refresco-add-selected>
-              <span data-i18n="hero.add">Agregar al carrito</span><span aria-hidden="true">→</span>
+              <span data-i18n="wholesale.addCase">Agregar caja al pedido</span><span aria-hidden="true">→</span>
             </button>
-            <p class="microcopy"><span data-i18n="hero.provisional">Precio provisional por artículo</span> · <a href="#refrescos-catalog" data-i18n="refrescos.viewCatalog">Ver catálogo completo de refrescos</a></p>
+            <p class="microcopy"><span data-i18n="wholesale.note">Venta por caja cerrada · precios de mayoreo</span> · <a href="#refrescos-catalog" data-i18n="refrescos.viewCatalog">Ver catálogo completo de refrescos</a></p>
           </aside>
 
           <div class="refrescos-carousel-shell" data-refresco-carousel aria-label="Selector de refrescos" data-i18n-aria="refrescos.carousel">
@@ -325,7 +328,7 @@
             <div class="section-index" data-i18n="refrescos.catalogIndex">07 — Catálogo de refrescos</div>
             <h2 id="refrescos-catalog-title" data-i18n-html="refrescos.catalogTitle">Todos los refrescos.<br><span>Del mismo distribuidor.</span></h2>
           </div>
-          <p data-i18n="refrescos.catalogCopy">{{ refrescos_products|length }} refrescos disponibles, con el mismo precio provisional de $0.01.</p>
+          <p data-i18n="refrescos.catalogCopy">{{ refrescos_products|length }} refrescos disponibles, todos con precio de mayoreo por caja cerrada.</p>
         </div>
         <div class="refrescos-filters reveal" aria-label="Filtrar refrescos" data-i18n-aria="refrescos.filter">
           {% for category in refrescos_categories %}
@@ -342,12 +345,13 @@
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
                 <h3>{{ item.name }}</h3>
-                <p>{{ item.weight }} · {{ item.case }}</p>
+                <p class="pack-line" data-refresco-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
+                {% if item.promo %}<p class="promo-tag promo-tag--card" data-i18n="{{ item.promo }}">Promoción</p>{% endif %}
                 <div class="catalog-card__footer">
                   <strong>{{ item.description }}</strong>
                 </div>
                 <div class="catalog-card__actions">
-                  <span class="catalog-card__price">{{ item.price_label }}</span>
+                  <span class="catalog-card__price">{{ item.price_label }}<small class="unit-price">{{ item.unit_price_label }} <span data-i18n="wholesale.perUnit">por unidad</span></small></span>
                   <div class="catalog-card__buy">
                     <div class="catalog-stepper" data-refresco-catalog-stepper="{{ item.id }}" aria-label="Cantidad de {{ item.name }}">
                       <button type="button" data-refresco-catalog-qty-minus="{{ item.id }}" aria-label="Reducir cantidad de {{ item.name }}">−</button>
@@ -421,7 +425,7 @@
       </div>
       <div class="cart-footer">
         <div><span data-i18n="cart.subtotal">Subtotal</span><strong data-subtotal>$0.00</strong></div>
-        <p data-shipping-message>Envío provisional: $0.00.</p>
+        <p data-shipping-message>Envío por cotizar.</p>
         <button class="checkout-button" type="button" data-open-checkout data-i18n="cart.checkout" disabled>Confirmar pedido demo</button>
       </div>
     </aside>
@@ -431,7 +435,7 @@
       <div data-checkout-form-view>
         <span class="section-index" data-i18n="checkout.index">Pedido de prueba</span>
         <h2 id="checkout-title" data-i18n="checkout.title">Confirma tu carrito.</h2>
-        <p data-i18n="checkout.copy">Los artículos usan el precio provisional de $0.01 y no se realizará ningún cobro.</p>
+        <p data-i18n="checkout.copy">Tu pedido se registra por cajas cerradas. Es una cotización de demostración y no se realizará ningún cobro.</p>
         <form data-checkout-form>
           <label><span data-i18n="checkout.name">Nombre completo</span><input name="name" autocomplete="name" required maxlength="80"></label>
           <label><span data-i18n="checkout.email">Correo</span><input name="email" type="email" autocomplete="email" required maxlength="120"></label>
@@ -455,7 +459,7 @@
       <p class="legal-updated" data-i18n="legal.updated">Última actualización: 17 de agosto de 2026</p>
       <div class="legal-sections">
         <section><h3 data-i18n="legal.independentTitle">Sitio independiente</h3><p data-i18n="legal.independentCopy">BuldakShop es un proyecto independiente. No está afiliado, asociado, patrocinado, autorizado ni respaldado por Samyang Foods Co., Ltd. ni por la marca Buldak.</p></section>
-        <section><h3 data-i18n="legal.catalogTitle">Catálogo y precios</h3><p data-i18n="legal.catalogCopy">El contenido es informativo y demostrativo. Los precios de $0.01 son provisionales, no constituyen una oferta comercial y pueden cambiar antes de habilitar ventas reales.</p></section>
+        <section><h3 data-i18n="legal.catalogTitle">Catálogo y precios</h3><p data-i18n="legal.catalogCopy">Los precios mostrados son de mayoreo por caja cerrada y provienen del catálogo vigente del distribuidor. Son informativos, pueden cambiar sin previo aviso y no constituyen una oferta comercial en firme.</p></section>
         <section><h3 data-i18n="legal.orderTitle">Pedidos de demostración</h3><p data-i18n="legal.orderCopy">El checkout actual registra pedidos de prueba y no procesa pagos. Una confirmación no crea una obligación de venta, envío o entrega.</p></section>
         <section><h3 data-i18n="legal.productTitle">Marcas e información de producto</h3><p data-i18n="legal.productCopy">Las marcas, nombres de producto e imágenes pertenecen a sus respectivos titulares. Ingredientes, alérgenos, valores nutricionales, disponibilidad y preparación pueden variar por mercado; siempre prevalece el empaque oficial.</p></section>
         <section><h3 data-i18n="legal.dataTitle">Datos y responsabilidad</h3><p data-i18n="legal.dataCopy">Los datos ingresados se usan únicamente para procesar la demostración solicitada. BuldakShop no garantiza que el contenido esté libre de errores y no asume responsabilidad por decisiones tomadas sin verificar el empaque o la información oficial del fabricante.</p></section>

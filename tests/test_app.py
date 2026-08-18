@@ -14,7 +14,8 @@ class ShowroomTests(unittest.TestCase):
         self.assertIn(b"811140", response.data)
         self.assertIn(b"811920", response.data)
         self.assertIn(b"Todos los productos", response.data)
-        self.assertIn(b"$0.01", response.data)
+        self.assertIn(b"$1,120", response.data)
+        self.assertNotIn(b"$0.01", response.data)
         self.assertNotIn(b"Ll\xc3\xa9vate Original", response.data)
         self.assertNotIn(b"Solo Original", response.data)
         self.assertNotIn(b"Lo que define", response.data)
@@ -23,9 +24,9 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=16', response.data)
-        self.assertIn(b'js/i18n.js?v=6', response.data)
-        self.assertIn(b'js/app.js?v=20', response.data)
+        self.assertIn(b'css/style.css?v=20', response.data)
+        self.assertIn(b'js/i18n.js?v=8', response.data)
+        self.assertIn(b'js/app.js?v=23', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
         self.assertIn(b'data-catalog-image="811920"', response.data)
         self.assertEqual(response.data.count(b'data-catalog-detail="'), 22)
@@ -62,8 +63,8 @@ class ShowroomTests(unittest.TestCase):
             self.assertEqual(len(product["directions"]), 4)
             self.assertEqual(len(product["recommendations"]), 3)
             self.assertTrue(product["prepared_image"].startswith("/assets/prepared-"))
-            self.assertEqual(product["price"], 0.01)
-            self.assertEqual(product["price_label"], "$0.01")
+            self.assertGreater(product["price"], 1)
+            self.assertTrue(product["price_label"].startswith("$"))
 
     def test_catalog_has_all_references_and_images(self):
         response = self.client.get("/api/catalog")
@@ -73,8 +74,10 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual({item["sku"] for item in catalog}.__len__(), 22)
         self.assertIn("Agotado", next(item["status"] for item in catalog if item["sku"] == "811720"))
         for item in catalog:
-            self.assertEqual(item["price"], 0.01)
-            self.assertEqual(item["price_label"], "$0.01")
+            self.assertGreater(item["price"], 1, item["sku"])
+            self.assertTrue(item["price_label"].startswith("$"), item["sku"])
+            self.assertGreaterEqual(item["units_per_case"], 6, item["sku"])
+            self.assertIn(" de ", item["pack_label"], item["sku"])
             self.assertTrue(item["image"].endswith("?v=3"), item["sku"])
             self.assertTrue(item["source_url"].startswith("https://buldak.com/"), item["sku"])
             image_response = self.client.get(item["image"].split("?")[0])
@@ -84,7 +87,7 @@ class ShowroomTests(unittest.TestCase):
             finally:
                 image_response.close()
 
-    def test_checkout_accepts_catalog_products_at_provisional_price(self):
+    def test_checkout_accepts_catalog_products_at_case_price(self):
         invalid = self.client.post("/api/checkout", json={"cart": []})
         self.assertEqual(invalid.status_code, 400)
 
@@ -101,9 +104,29 @@ class ShowroomTests(unittest.TestCase):
         payload = valid.get_json()
         self.assertEqual(valid.status_code, 200)
         self.assertEqual(len(payload["items"]), 2)
-        self.assertEqual(payload["subtotal"], "0.05")
+        # 811140 and 811120 are both $1,120 per case: 2 + 3 cases = $5,600.
+        self.assertEqual(payload["subtotal"], "5600.00")
         self.assertEqual(payload["shipping"], "0.00")
-        self.assertEqual(payload["total"], "0.05")
+        self.assertEqual(payload["total"], "5600.00")
+
+    def test_refrescos_catalog_is_wholesale_with_real_photos(self):
+        response = self.client.get("/api/refrescos")
+        self.assertEqual(response.status_code, 200)
+        drinks = response.get_json()["products"]
+        self.assertEqual(len(drinks), 39)
+        self.assertEqual(len({item["sku"] for item in drinks}), 39)
+        for item in drinks:
+            self.assertTrue(item["image"].startswith("/assets/refrescos/"), item["sku"])
+            self.assertIn(item["sku"], item["image"])
+            self.assertGreater(item["price"], 1, item["sku"])
+            self.assertGreaterEqual(item["units_per_case"], 8, item["sku"])
+            self.assertIn(" de ", item["pack_label"], item["sku"])
+            image_response = self.client.get(item["image"].split("?")[0])
+            try:
+                self.assertEqual(image_response.status_code, 200, item["sku"])
+                self.assertGreater(len(image_response.get_data()), 4000, item["sku"])
+            finally:
+                image_response.close()
 
     def test_checkout_rejects_sold_out_product(self):
         response = self.client.post(

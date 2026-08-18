@@ -670,6 +670,25 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pairing-list h3 { margin: 0; font-size: clamp(24px, 2.5vw, 38px); letter-spacing: -.045em; }
 .pairing-list p { margin: 10px 0 0; color: #b8adaf; font-size: 13px; line-height: 1.6; }
 
+/* --- Wholesale (case) pricing --- */
+.unit-price { display: block; margin-top: 5px; color: var(--soft); font-size: 11px; font-weight: 650; letter-spacing: 0; }
+.catalog-card__price .unit-price { color: #8a7d80; font-size: 10px; font-weight: 600; }
+.pack-line { font-variant-numeric: tabular-nums; }
+.promo-tag {
+  align-self: flex-start;
+  margin: 12px 0 0;
+  padding: 6px 11px;
+  border-radius: 999px;
+  color: #8c1030;
+  background: rgba(179, 18, 63, .1);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.promo-tag[hidden] { display: none; }
+.promo-tag--card { display: inline-block; margin: 10px 0 0; padding: 5px 9px; font-size: 9px; }
+
 [data-refrescos-view] { padding-top: var(--header-h); background: #f8f2ee; }
 [data-refrescos-view][hidden] { display: none; }
 .refrescos-view-bar { padding: 20px clamp(22px, 5vw, 80px) 0; }
@@ -726,7 +745,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   position: absolute;
   inset: 4% 4%;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, #ffd0b0 82%, white) 0, transparent 68%);
+  background: radial-gradient(circle, #ffffff 0, color-mix(in srgb, #ffd9c0 62%, white) 44%, transparent 72%);
   filter: blur(2px);
 }
 .refrescos-carousel-shell .carousel-glow::after {
@@ -803,7 +822,11 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .refrescos-filter { min-height: 42px; padding: 0 18px; flex: 0 0 auto; border: 1px solid rgba(32, 25, 27, .16); border-radius: 999px; color: #514649; background: transparent; font-size: 11px; font-weight: 750; cursor: pointer; transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease; }
 .refrescos-filter:hover, .refrescos-filter.is-active { border-color: #20191b; color: #fff; background: #20191b; }
 .refrescos-catalog .catalog-grid { margin-top: 30px; }
-.refrescos-catalog .catalog-card__visual { background: linear-gradient(155deg, #fff, #f0e9e6); }
+/* The catalog photographs sit on white, so a near-white tile hides the JPEG
+   fringe around each cut-out; depth comes from the ground shadow instead. */
+.refrescos-catalog .catalog-card__visual { background: linear-gradient(158deg, #ffffff 0%, #fbfaf9 52%, #f2eeeb 100%); }
+.refrescos-catalog .catalog-card__visual::after { inset: auto 18% 6%; height: 14%; background: rgba(55, 44, 48, .22); filter: blur(14px); }
+.refrescos-catalog .catalog-card__visual img { filter: drop-shadow(0 14px 14px rgba(30, 22, 26, .16)); }
 .refrescos-catalog .catalog-card__footer strong { color: #766c6f; font-weight: 600; }
 
 .site-footer { position: relative; z-index: 3; min-height: 380px; padding: clamp(58px, 7vw, 100px) clamp(22px, 5vw, 80px) 34px; display: grid; grid-template-columns: 1fr auto; gap: 80px; color: #f7efed; background: #141112; }

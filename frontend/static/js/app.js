@@ -71,6 +71,7 @@
     name: document.querySelector("[data-name]"),
     description: document.querySelector("[data-description]"),
     price: document.querySelector("[data-price]"),
+    unitPrice: document.querySelector("[data-unit-price]"),
     weight: document.querySelector("[data-weight]"),
     heatFill: document.querySelector("[data-heat-fill]"),
     heatLabel: document.querySelector("[data-heat-label]"),
@@ -229,6 +230,55 @@
       .replace(/SKU alterno/gi, "备用 SKU");
   }
 
+  // Set once the drinks section initialises; lets applyLanguage re-render it.
+  let refreshRefrescos = null;
+
+  function formatMoney(value) {
+    return `$${Number(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  const UNIT_NOUNS = {
+    en: { "paquetes": "packs", "bolsas": "bags", "botellas": "bottles", "latas": "cans",
+          "vasos": "cups", "bowls grandes": "big bowls", "bowls": "bowls" },
+    zh: { "paquetes": "袋", "bolsas": "袋", "botellas": "瓶", "latas": "罐",
+          "vasos": "杯", "bowls grandes": "大碗", "bowls": "碗" }
+  };
+
+  // Naive de-pluralising turns "bottles" into "bottl", so spell the forms out.
+  const UNIT_SINGULAR = {
+    es: { "botellas": "botella", "latas": "lata", "vasos": "vaso", "paquetes": "paquete",
+          "bolsas": "bolsa", "bowls": "bowl", "bowls grandes": "bowl grande" },
+    en: { "bottles": "bottle", "cans": "can", "cups": "cup", "packs": "pack",
+          "bags": "bag", "bowls": "bowl", "big bowls": "big bowl" }
+  };
+
+  /** The unit noun in singular, for "480 ml · botella". */
+  function unitNounSingular(product) {
+    const noun = product.unit_noun || "";
+    if (state.language === "es") return UNIT_SINGULAR.es[noun] || noun;
+    const word = UNIT_NOUNS[state.language]?.[noun] || noun;
+    if (state.language === "zh") return word;
+    return UNIT_SINGULAR.en[word] || word;
+  }
+
+  /** "24 latas de 330 ml" / "4 paquetes de 6 latas de 330 ml", localised. */
+  function packLabel(product) {
+    const { units_per_case: units, inner_packs: inner, unit_size: size, unit_noun: noun } = product;
+    if (!units || !size || !noun) return translateWeight(product.weight || "");
+    const lang = state.language;
+    const word = lang === "es" ? noun : (UNIT_NOUNS[lang]?.[noun] || noun);
+    const gram = lang === "zh" ? String(size).replace(/\s*g\b/gi, " 克") : size;
+    if (inner) {
+      const outer = units / inner;
+      if (lang === "en") return `${outer} packs of ${inner} ${word} of ${gram}`;
+      if (lang === "zh") return `${outer} 包 × ${inner} ${word} × ${gram}`;
+      return `${outer} paquetes de ${inner} ${word} de ${gram}`;
+    }
+    if (lang === "en") return `${units} ${word} of ${gram}`;
+    if (lang === "zh") return `${units} ${word} × ${gram}`;
+    return `${units} ${word} de ${gram}`;
+  }
+
   function productDetail(product) {
     return i18n.productDetails?.[state.language]?.[product.id] || {};
   }
@@ -363,8 +413,7 @@
         : `Buldak ${product.name}, SKU ${product.sku}`;
     });
     dom.catalogMetas.forEach((element) => {
-      const product = productById.get(element.dataset.catalogMeta);
-      element.textContent = `${translateWeight(product.weight)} · ${translateCase(product.case)}`;
+      element.textContent = packLabel(productById.get(element.dataset.catalogMeta));
     });
     dom.catalogStatuses.forEach((element) => {
       const product = productById.get(element.dataset.catalogStatus);
@@ -420,6 +469,12 @@
       button.textContent = suggestions[index][1];
     });
 
+    document.querySelectorAll("[data-refresco-catalog-meta]").forEach((element) => {
+      const product = productById.get(element.dataset.refrescoCatalogMeta);
+      if (product) element.textContent = packLabel(product);
+    });
+    refreshRefrescos?.();
+
     setTheme(state.selected, { syncDetail: false });
     renderStoryById(state.detailProductId);
     renderCart({ animate: false });
@@ -463,12 +518,13 @@
     dom.name.textContent = product.name;
     dom.description.textContent = product.description || detail.description || "";
     dom.price.textContent = product.price_label;
-    dom.weight.textContent = translateWeight(product.weight);
+    if (dom.unitPrice) dom.unitPrice.textContent = product.unit_price_label || "";
+    dom.weight.textContent = packLabel(product);
     dom.heatFill.style.width = `${product.heat || 0}%`;
     dom.heatLabel.textContent = product.heat_label || "—";
     dom.addSelected.disabled = product.is_available === false;
     const addLabel = dom.addSelected.querySelector("[data-i18n]");
-    if (addLabel) addLabel.textContent = t(product.is_available === false ? "catalog.soldOut" : "hero.add");
+    if (addLabel) addLabel.textContent = t(product.is_available === false ? "catalog.soldOut" : "wholesale.addCase");
 
     if (Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length) {
       dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
@@ -732,7 +788,7 @@
       const product = productById.get(item.id);
       return total + Number(product.price) * item.quantity;
     }, 0);
-    dom.subtotal.textContent = `$${subtotal.toFixed(2)}`;
+    dom.subtotal.textContent = formatMoney(subtotal);
     dom.checkoutButton.disabled = count === 0;
     dom.clearCart.hidden = count === 0;
     dom.cartEmpty.classList.toggle("is-visible", count === 0);
@@ -749,8 +805,8 @@
         <article class="cart-item${highlightId === product.id ? " is-updated" : ""}" data-cart-item="${safeId}">
           <div class="cart-item__image"><img src="${escapeHtml(product.image)}" alt=""></div>
           <div class="cart-item__details">
-            <div class="cart-item__top"><h3>${safeName}</h3><strong>$${(Number(product.price) * item.quantity).toFixed(2)}</strong></div>
-            <p>${escapeHtml(translateWeight(product.weight))} · ${escapeHtml(product.price_label)} ${escapeHtml(t("cart.each"))}</p>
+            <div class="cart-item__top"><h3>${safeName}</h3><strong>${escapeHtml(formatMoney(Number(product.price) * item.quantity))}</strong></div>
+            <p>${escapeHtml(packLabel(product))} · ${escapeHtml(product.price_label)} ${escapeHtml(t("wholesale.perCaseShort"))}</p>
             <div class="cart-item__actions">
               <div class="mini-stepper" aria-label="${escapeHtml(t("cart.quantity", { name: product.name }))}">
                 <button type="button" data-cart-minus="${safeId}" aria-label="${escapeHtml(t("cart.reduce", { name: product.name }))}">−</button>
@@ -1107,6 +1163,8 @@
       weight: document.querySelector("[data-refresco-weight]"),
       caseSize: document.querySelector("[data-refresco-case]"),
       price: document.querySelector("[data-refresco-price]"),
+      unitPrice: document.querySelector("[data-refresco-unit-price]"),
+      promo: document.querySelector("[data-refresco-promo]"),
       quantity: document.querySelector("[data-refresco-quantity]"),
       addSelected: document.querySelector("[data-refresco-add-selected]"),
     };
@@ -1145,13 +1203,18 @@
       if (refrescoDom.sku) refrescoDom.sku.textContent = product.sku;
       if (refrescoDom.name) refrescoDom.name.textContent = product.name;
       if (refrescoDom.description) refrescoDom.description.textContent = product.description || "";
-      if (refrescoDom.weight) refrescoDom.weight.textContent = product.weight || "";
-      if (refrescoDom.caseSize) refrescoDom.caseSize.textContent = product.case || "";
+      if (refrescoDom.weight) refrescoDom.weight.textContent = `${product.unit_size} · ${unitNounSingular(product)}`;
+      if (refrescoDom.caseSize) refrescoDom.caseSize.textContent = packLabel(product);
       if (refrescoDom.price) refrescoDom.price.textContent = product.price_label;
+      if (refrescoDom.unitPrice) refrescoDom.unitPrice.textContent = product.unit_price_label || "";
+      if (refrescoDom.promo) {
+        refrescoDom.promo.textContent = product.promo ? t(product.promo) : "";
+        refrescoDom.promo.hidden = !product.promo;
+      }
       if (refrescoDom.addSelected) {
         refrescoDom.addSelected.disabled = product.is_available === false;
         const label = refrescoDom.addSelected.querySelector("[data-i18n]");
-        if (label) label.textContent = t(product.is_available === false ? "catalog.soldOut" : "hero.add");
+        if (label) label.textContent = t(product.is_available === false ? "catalog.soldOut" : "wholesale.addCase");
       }
 
       refrescoDom.cards.forEach((card, cardIndex) => {
@@ -1280,6 +1343,7 @@
     });
 
     setRefrescoTheme(0);
+    refreshRefrescos = () => setRefrescoTheme(refrescoState.selected);
     requestAnimationFrame(drawRefrescoCarousel);
 
     const refrescoCatalogDom = {
