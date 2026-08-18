@@ -630,8 +630,21 @@ repository = ProductRepository()
 
 
 def current_catalog() -> list[dict]:
-    """Return Supabase products, preserving a local fallback for development."""
-    return repository.list_products(CATALOG_PRODUCTS)
+    """Return Supabase products, preserving a local fallback for development.
+
+    Supabase stores the per-unit row: name, image, availability. The wholesale
+    case model and the English/Japanese market names live here in code, so they
+    are re-applied on top of whatever the database returns. Without this a
+    Supabase-backed deploy would show the raw unit price and no pack line.
+    """
+    catalog = repository.list_products(CATALOG_PRODUCTS)
+    for product in catalog:
+        pack = BULDAK_PACKS.get(product["sku"])
+        if pack:
+            apply_pack(product, *pack)
+            product["case"] = product["pack_label"]
+        apply_intl_names(product)
+    return catalog
 
 
 def carousel_catalog(catalog_products: list[dict]) -> list[dict]:
