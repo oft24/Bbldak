@@ -144,6 +144,7 @@
     catalogImages: [...document.querySelectorAll("[data-catalog-image]")],
     catalogStatuses: [...document.querySelectorAll("[data-catalog-status]")],
     catalogMetas: [...document.querySelectorAll("[data-catalog-meta]")],
+    catalogSpiceLabels: [...document.querySelectorAll("[data-catalog-spice-label]")],
   };
 
   const state = {
@@ -429,6 +430,14 @@
     });
     dom.catalogMetas.forEach((element) => {
       element.textContent = packLabel(productById.get(element.dataset.catalogMeta));
+    });
+    dom.catalogSpiceLabels.forEach((element) => {
+      const level = Number(element.dataset.spiceLevel);
+      element.textContent = t("catalog.spiceLevel", { level });
+      element.closest("[data-catalog-spice]")?.setAttribute(
+        "aria-label",
+        t("catalog.spiceLevelLong", { level })
+      );
     });
     dom.catalogStatuses.forEach((element) => {
       const product = productById.get(element.dataset.catalogStatus);

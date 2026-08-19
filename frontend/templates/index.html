@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=27">
-    <script defer src="/js/i18n.js?v=13"></script>
-    <script defer src="/js/app.js?v=29"></script>
+    <link rel="stylesheet" href="/css/style.css?v=28">
+    <script defer src="/js/i18n.js?v=14"></script>
+    <script defer src="/js/app.js?v=30"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -180,6 +180,14 @@
                   {% if item.name_zh %}<span lang="zh-CN">{{ item.name_zh }}</span>{% endif %}
                 </p>
                 <p class="pack-line" data-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
+                {% if item.spice_level %}
+                  <div class="catalog-card__spice" data-catalog-spice="{{ item.id }}" aria-label="Nivel de picante {{ item.spice_level }} de 5">
+                    <span class="catalog-card__spice-label" data-catalog-spice-label="{{ item.id }}" data-spice-level="{{ item.spice_level }}">Picante {{ item.spice_level }}/5</span>
+                    <span class="catalog-card__spice-meter" aria-hidden="true">
+                      {% for level in range(1, 6) %}<i{% if level <= item.spice_level %} class="is-active"{% endif %}></i>{% endfor %}
+                    </span>
+                  </div>
+                {% endif %}
                 <div class="catalog-card__footer">
                   <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}" data-catalog-status="{{ item.id }}">{{ item.status }}</strong>
                 </div>

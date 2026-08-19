@@ -720,6 +720,22 @@ CATALOG_PACKS = {
 }
 
 
+# Relative heat for every noodle/rice-cake item in the main catalog. This is a
+# 1–5 storefront scale rather than a claimed Scoville value because several
+# brands do not publish SHU figures.
+CATALOG_SPICE_LEVELS = {
+    "811130": 1, "811270": 2, "811140": 2, "811200": 3, "811150": 3,
+    "811320": 2, "811000": 3, "811340": 3, "811220": 4, "811120": 4,
+    "811210": 5, "811616": 2, "811618": 3, "811622": 2, "811624": 4,
+    "811640": 2, "811650": 2, "811612": 4, "811710": 2, "811720": 4,
+    "811430": 4, "811611": 4,
+    "811311": 2, "811312": 2, "811310": 3,
+    "811810": 1, "811815": 1, "811816": 1, "811814": 1,
+    "634210": 1, "634220": 1, "634240": 1, "634250": 2,
+    "634260": 1, "634270": 3, "634280": 4, "634252": 4,
+}
+
+
 def apply_pack(product, units, unit_size, case_price, unit_noun, inner=None, promo=None):
     """Attach the wholesale case model every product is sold by."""
     if inner:
@@ -862,6 +878,9 @@ for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
         is_available=not catalog_product["status"].startswith("Agotado"),
     )
     apply_pack(catalog_product, *CATALOG_PACKS[catalog_product["sku"]])
+    spice_level = CATALOG_SPICE_LEVELS.get(catalog_product["sku"])
+    if spice_level is not None:
+        catalog_product["spice_level"] = spice_level
     apply_intl_names(catalog_product)
     catalog_product["case"] = catalog_product["pack_label"]
 
@@ -886,7 +905,7 @@ def _refresco(sku, name, category, image, description, units, unit_size, case_pr
         "sku": sku, "id": sku, "name": name, "category": category,
         "category_label": _REFRESCOS_CATEGORY_LABELS[category],
         "weight": f"{unit_size} · {unit_noun.rstrip('es').rstrip('s')}",
-        "image": f"/assets/refrescos/{image}.webp?v=2",
+        "image": f"/assets/refrescos/{image}.webp?v=4",
         "description": description, "status": "Disponible",
     }
     apply_pack(product, units, unit_size, case_price, unit_noun, inner=inner, promo=promo)
@@ -1080,14 +1099,14 @@ REFRESCOS_PRODUCTS.extend([
         "Soda china clásica de naranja en botella de vidrio.", "Classic Chinese orange soda in a glass bottle.", "经典北冰洋玻璃瓶橙汁汽水。", 12, "248 ml", 384),
     _mx26_drink("871110", "Arctic Ocean soda de naranja · lata", "Arctic Ocean Orange Soda · Can", "北冰洋橙汁汽水（罐装）", "agua_gas", "Arctic Ocean",
         "La soda clásica de naranja en presentación de lata.", "The classic orange soda in a can.", "经典北冰洋罐装橙汁汽水。", 24, "11 oz", 600, "latas"),
-    _mx26_drink("880170", "Youngwoo bebida de aloe", "Youngwoo Aloe Drink", "Youngwoo 芦荟饮料", "jugos_lacteos", "Youngwoo",
+    _mx26_drink("880170", "Woongjin bebida de aloe", "Woongjin Aloe Drink", "熊津芦荟饮料", "jugos_lacteos", "Woongjin",
         "Bebida coreana de aloe, dulce y refrescante.", "Sweet, refreshing Korean aloe drink.", "清甜爽口的韩国芦荟饮料。", 20, "500 ml", 760),
-    _mx26_drink("880210", "Leche de coco con plátano", "Banana Coconut Milk Drink", "香蕉味椰奶饮料", "jugos_lacteos", "Coconut Palm",
-        "Bebida cremosa de coco y plátano.", "Creamy coconut and banana drink.", "香浓顺滑的香蕉味椰奶饮料。", 24, "290 ml", 980, "latas", inner=6),
-    _mx26_drink("880220", "Leche de coco con mango", "Mango Coconut Milk Drink", "芒果味椰奶饮料", "jugos_lacteos", "Coconut Palm",
-        "Bebida cremosa de coco y mango.", "Creamy coconut and mango drink.", "香浓顺滑的芒果味椰奶饮料。", 24, "290 ml", 980, "latas", inner=6),
-    _mx26_drink("880230", "Leche de coco con fresa", "Strawberry Coconut Milk Drink", "草莓味椰奶饮料", "jugos_lacteos", "Coconut Palm",
-        "Bebida cremosa de coco y fresa.", "Creamy coconut and strawberry drink.", "香浓顺滑的草莓味椰奶饮料。", 24, "290 ml", 980, "latas", inner=6),
+    _mx26_drink("880210", "GUGEN bebida de coco con plátano", "GUGEN Banana Coconut Milk Drink", "GUGEN 香蕉味椰奶饮料", "jugos_lacteos", "GUGEN",
+        "Bebida cremosa de coco y plátano con nata de coco.", "Creamy banana coconut drink with nata de coco.", "香浓顺滑的香蕉味椰奶果粒饮料。", 24, "290 ml", 980, "botellas", inner=6),
+    _mx26_drink("880220", "GUGEN bebida de coco con mango", "GUGEN Mango Coconut Milk Drink", "GUGEN 芒果味椰奶饮料", "jugos_lacteos", "GUGEN",
+        "Bebida cremosa de coco y mango con nata de coco.", "Creamy mango coconut drink with nata de coco.", "香浓顺滑的芒果味椰奶果粒饮料。", 24, "290 ml", 980, "botellas", inner=6),
+    _mx26_drink("880230", "GUGEN bebida de coco con fresa", "GUGEN Strawberry Coconut Milk Drink", "GUGEN 草莓味椰奶饮料", "jugos_lacteos", "GUGEN",
+        "Bebida cremosa de coco y fresa con nata de coco.", "Creamy strawberry coconut drink with nata de coco.", "香浓顺滑的草莓味椰奶果粒饮料。", 24, "290 ml", 980, "botellas", inner=6),
     _mx26_drink("880330", "Binggrae leche de plátano", "Binggrae Banana Flavored Milk", "宾格瑞香蕉牛奶", "jugos_lacteos", "Binggrae",
         "La bebida láctea coreana clásica con sabor a plátano.", "The classic Korean banana-flavored milk drink.", "经典韩国宾格瑞香蕉牛奶。", 24, "200 ml", 720, "botellas", inner=6),
     _mx26_drink("880340", "Binggrae leche de fresa", "Binggrae Strawberry Flavored Milk", "宾格瑞草莓牛奶", "jugos_lacteos", "Binggrae",

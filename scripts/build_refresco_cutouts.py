@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor
+import time
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
@@ -36,9 +37,17 @@ def background_mask(image: Image.Image) -> Image.Image:
 def build_cutout(source: Path, destination: Path) -> None:
     image = Image.open(source).convert("RGBA")
     image.thumbnail((MAX_SIZE, MAX_SIZE), Image.Resampling.LANCZOS)
-    image.putalpha(background_mask(image))
+    detected_background = background_mask(image)
+    image.putalpha(ImageChops.multiply(image.getchannel("A"), detected_background))
     destination.parent.mkdir(parents=True, exist_ok=True)
-    image.save(destination, "WEBP", quality=88, method=4, alpha_quality=100)
+    for attempt in range(4):
+        try:
+            image.save(destination, "WEBP", quality=88, method=4, alpha_quality=100)
+            break
+        except OSError:
+            if attempt == 3:
+                raise
+            time.sleep(0.2 * (attempt + 1))
 
 
 def build_source(source: Path) -> None:

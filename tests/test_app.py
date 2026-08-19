@@ -1,4 +1,7 @@
 import unittest
+from pathlib import Path
+
+from PIL import Image
 
 from app import app
 
@@ -24,9 +27,9 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=27', response.data)
-        self.assertIn(b'js/i18n.js?v=13', response.data)
-        self.assertIn(b'js/app.js?v=29', response.data)
+        self.assertIn(b'css/style.css?v=28', response.data)
+        self.assertIn(b'js/i18n.js?v=14', response.data)
+        self.assertIn(b'js/app.js?v=30', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
         self.assertIn(b'data-catalog-image="811920"', response.data)
         self.assertIn(b'data-catalog-name="634210"', response.data)
@@ -42,6 +45,9 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(response.data.count(b'data-card-product="'), 83)
         self.assertEqual(response.data.count(b'data-select-product="'), 83)
         self.assertEqual(response.data.count(b'data-search-product="'), 83)
+        self.assertEqual(response.data.count(b'data-catalog-spice="'), 37)
+        self.assertIn(b'data-catalog-spice="811130"', response.data)
+        self.assertIn(b'data-catalog-spice="634280"', response.data)
         self.assertEqual(response.data.count(b'/assets/refrescos/cutouts/'), 71)
         self.assertLess(response.data.index(b'data-card-product="811120"'), response.data.index(b'data-card-product="811140"'))
         self.assertLess(response.data.index(b'data-card-product="811140"'), response.data.index(b'data-card-product="811150"'))
@@ -113,6 +119,14 @@ class ShowroomTests(unittest.TestCase):
                 self.assertGreater(len(image_response.get_data()), 1000, item["sku"])
             finally:
                 image_response.close()
+
+        spicy_items = [
+            item for item in catalog
+            if item["category"] in {"soups", "bowls", "tteokbokki"}
+        ]
+        self.assertEqual(len(spicy_items), 37)
+        for item in spicy_items:
+            self.assertIn(item["spice_level"], range(1, 6), item["sku"])
 
     def test_checkout_accepts_catalog_products_at_case_price(self):
         invalid = self.client.post("/api/checkout", json={"cart": []})
@@ -186,6 +200,25 @@ class ShowroomTests(unittest.TestCase):
                 self.assertGreater(len(cutout_response.get_data()), 4000, item["sku"])
             finally:
                 cutout_response.close()
+
+    def test_all_refresco_assets_are_hd_and_cutouts_are_transparent(self):
+        asset_root = Path(__file__).resolve().parents[1] / "frontend" / "assets" / "refrescos"
+        originals = sorted(asset_root.glob("*.webp"))
+        cutouts = sorted((asset_root / "cutouts").glob("*.webp"))
+        self.assertEqual(len(originals), 71)
+        self.assertEqual({path.name for path in originals}, {path.name for path in cutouts})
+
+        for original_path in originals:
+            with Image.open(original_path) as original:
+                original.verify()
+            with Image.open(original_path) as original:
+                self.assertEqual(original.size, (1600, 1600), original_path.name)
+
+            with Image.open(asset_root / "cutouts" / original_path.name) as cutout:
+                cutout.verify()
+            with Image.open(asset_root / "cutouts" / original_path.name) as cutout:
+                self.assertIn("A", cutout.getbands(), original_path.name)
+                self.assertGreaterEqual(max(cutout.size), 1000, original_path.name)
 
     def test_checkout_rejects_sold_out_product(self):
         response = self.client.post(
