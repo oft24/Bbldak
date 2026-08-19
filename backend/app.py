@@ -191,10 +191,11 @@ PRODUCTS = [
 
 CATALOG_CATEGORIES = [
     {"id": "all", "label": "Todos"},
-    {"id": "bags", "label": "Bolsas"},
-    {"id": "bowls", "label": "Bowls"},
+    {"id": "soups", "label": "Sopas y fideos"},
+    {"id": "bowls", "label": "Bowls y vasos"},
     {"id": "tteokbokki", "label": "Tteokbokki"},
-    {"id": "snacks", "label": "Snacks"},
+    {"id": "sauces", "label": "Salsas"},
+    {"id": "chips", "label": "Papas y botanas"},
 ]
 
 
@@ -312,10 +313,265 @@ CATALOG_PRODUCTS = [
 ]
 
 
-# Wholesale packing taken from the July Buldak price list: how many retail units
-# travel inside one case, the size of each unit, and the price of that case.
+def _catalog_item(
+    sku, name_es, name_en, name_zh, category, category_label, brand,
+    description_es, description_en, description_zh, unit_size, source_url,
+):
+    """Create one local catalog row with copy for every supported language."""
+    return {
+        "sku": sku,
+        "name": name_es,
+        "name_es": name_es,
+        "name_en": name_en,
+        "name_zh": name_zh,
+        "category": category,
+        "category_label": category_label,
+        "brand": brand,
+        "description": description_es,
+        "description_es": description_es,
+        "description_en": description_en,
+        "description_zh": description_zh,
+        "weight": unit_size,
+        "image": f"/assets/products/{sku}.webp?v=1",
+        "source_url": source_url,
+        "status": "Disponible",
+    }
+
+
+# Products from CATALAGO ACTUALIZADO MX26 that were not present in the first
+# Buldak-only build. The storefront groups them by department instead of by PDF.
+CATALOG_PRODUCTS.extend([
+    _catalog_item(
+        "811430", "Buldak Original · vaso", "Buldak Ramen Original Cup",
+        "原味火鸡面（杯装）", "bowls", "Vaso", "Buldak",
+        "El sabor Original en vaso individual: salsa espesa, sésamo, alga y picor directo.",
+        "Original Buldak in a single cup, with thick sauce, sesame, seaweed and direct heat.",
+        "经典原味杯装火鸡面，浓郁辣酱搭配芝麻与海苔，辣味直接。", "70 g",
+        "https://buldak.com/us/product/buldak-ramen-original-cup/",
+    ),
+    _catalog_item(
+        "811300", "Salsa Buldak Carbonara", "Buldak Hot Sauce Carbonara",
+        "奶油味火鸡辣酱", "sauces", "Salsa", "Buldak",
+        "Salsa cremosa y picante estilo Carbonara para pasta, pollo, papas o botanas.",
+        "Creamy, spicy Carbonara-style sauce for pasta, chicken, fries or snacks.",
+        "奶油味火鸡辣酱，适合意面、鸡肉、薯条和零食蘸食。", "200 g",
+        "https://buldak.com/us/product/buldak-hot-sauce-carbonara-200g/",
+    ),
+    _catalog_item(
+        "811280", "Salsa Buldak Original", "Buldak Hot Sauce Original",
+        "原味火鸡辣酱", "sauces", "Salsa", "Buldak",
+        "La salsa clásica Buldak en botella: picante, sabrosa y lista para cocinar o acompañar.",
+        "Classic Buldak sauce in a bottle: hot, savory and ready for cooking or dipping.",
+        "瓶装经典原味火鸡辣酱，香辣浓郁，可用于烹饪或蘸食。", "200 g",
+        "https://buldak.com/us/product/buldak-hot-sauce-original-200g/",
+    ),
+    _catalog_item(
+        "811290", "Sobres de salsa Buldak Original", "Buldak Hot Sauce Original Sticks",
+        "原味火鸡辣酱便携条", "sauces", "Sobres", "Buldak",
+        "Porciones individuales de salsa Original para llevar y dosificar con facilidad.",
+        "Single-serve Original sauce sticks that are easy to carry and portion.",
+        "原味火鸡辣酱便携条装，方便携带并精准控制用量。", "6 g",
+        "https://buldak.com/us/product/buldak-hot-sauce-original-6g/",
+    ),
+    _catalog_item(
+        "811311", "MEP ajo y almeja", "MEP Garlic & Clam Ramen",
+        "MEP 蒜香蛤蜊拉面", "soups", "Sopa", "MEP",
+        "Caldo marino limpio con almeja, alga y un golpe aromático de ajo.",
+        "A clean seafood broth with clam, seaweed and an aromatic garlic kick.",
+        "清爽海鲜汤底，融合蛤蜊、海苔与浓郁蒜香。", "120 g",
+        "https://samyangamerica.com/mep/Garlic-clam",
+    ),
+    _catalog_item(
+        "811312", "MEP res y pimienta negra", "MEP Black Pepper & Beef Ramen",
+        "MEP 黑胡椒牛肉拉面", "soups", "Sopa", "MEP",
+        "Caldo de res con mucho umami, pimienta negra fragante y picor en capas.",
+        "Umami-rich beef broth with fragrant black pepper and layered heat.",
+        "浓郁牛肉汤底，黑胡椒香气突出，辣味层次丰富。", "120 g",
+        "https://samyangamerica.com/mep/Black-Pepper-Beef",
+    ),
+    _catalog_item(
+        "811310", "MEP pollo, chile rojo y cilantro", "MEP Red Pepper, Chicken & Cilantro Ramen",
+        "MEP 红椒香菜鸡肉拉面", "soups", "Sopa", "MEP",
+        "Caldo ligero de pollo con chile rojo, cilantro y un final brillante de lima.",
+        "Light chicken broth with red pepper, cilantro and a bright lime finish.",
+        "清爽鸡汤搭配红椒、香菜与青柠尾韵。", "120 g",
+        "https://samyangamerica.com/mep/red-pepper",
+    ),
+    _catalog_item(
+        "811810", "Tangle tomate intenso", "Tangle Chunky Tomato Pasta",
+        "Tangle 浓郁番茄意面", "soups", "Pasta", "Tangle",
+        "Pasta instantánea con salsa de tomate espesa, ajo, cebolla y trozos de tomate.",
+        "Instant pasta with chunky tomato sauce, garlic, onion and tomato pieces.",
+        "即食意面搭配浓郁番茄酱、大蒜、洋葱与番茄颗粒。", "105 g",
+        "https://longdan.co.uk/products/samyang-tangle-chunky-tomato-pasta-105g",
+    ),
+    _catalog_item(
+        "811815", "Tangle bulgogi Alfredo", "Tangle Bulgogi Alfredo Big Bowl",
+        "Tangle 韩式烤肉白酱意面（大碗）", "bowls", "Bowl", "Tangle",
+        "Fideos anchos con salsa Alfredo cremosa y notas dulces y saladas de bulgogi.",
+        "Wide noodles with creamy Alfredo sauce and sweet-savory bulgogi notes.",
+        "宽面搭配奶油白酱与韩式烤肉的甜咸风味。", "105 g",
+        "https://en.tangle-pasta.com/products/",
+    ),
+    _catalog_item(
+        "811816", "Tangle crema de hongos", "Tangle Creamy Mushroom Big Bowl",
+        "Tangle 奶油蘑菇意面（大碗）", "bowls", "Bowl", "Tangle",
+        "Pasta cremosa con hongos, pimienta y una textura elástica de fideo ancho.",
+        "Creamy mushroom pasta with pepper and bouncy wide noodles.",
+        "奶油蘑菇酱搭配胡椒与弹韧宽面。", "105 g",
+        "https://en.tangle-pasta.com/products/",
+    ),
+    _catalog_item(
+        "811814", "Tangle ajo y aceite", "Tangle Garlic Oil Big Bowl",
+        "Tangle 蒜香油意面（大碗）", "bowls", "Bowl", "Tangle",
+        "Pasta de ajo y aceite con perejil, chile suave y fideo ancho de alta proteína.",
+        "Garlic-oil pasta with parsley, gentle chili and high-protein wide noodles.",
+        "蒜香油意面搭配欧芹、柔和辣椒与高蛋白宽面。", "100 g",
+        "https://en.tangle-pasta.com/products/",
+    ),
+    _catalog_item(
+        "634210", "Master Kong costilla y cebollín", "Master Kong Scallion Braised Ribs Noodle",
+        "康师傅葱香排骨面", "soups", "Sopa", "Master Kong",
+        "Sopa suave de costilla de cerdo con cebollín y chalota aromática.",
+        "Mild pork-rib soup with scallion and aromatic shallot.",
+        "温和排骨汤底，融合葱香与红葱头香气。", "104 g",
+        "https://www.lunarmart.co.za/products/scallion-braised-rib-noodle",
+    ),
+    _catalog_item(
+        "634220", "Master Kong res estofada", "Master Kong Braised Beef Noodle",
+        "康师傅红烧牛肉面", "soups", "Sopa", "Master Kong",
+        "El clásico caldo rojo de res estofada, profundo, especiado y reconfortante.",
+        "The classic braised-beef red broth: deep, spiced and comforting.",
+        "经典红烧牛肉汤底，浓郁、香料丰富且温暖满足。", "106 g",
+        "https://tonymarket.shop/products/ksf-braised-beef-flavour-noodles-104g",
+    ),
+    _catalog_item(
+        "634240", "Master Kong camarón y pastel de pescado", "Master Kong Shrimp & Fish Cake Noodle",
+        "康师傅鲜虾鱼板面", "soups", "Sopa", "Master Kong",
+        "Caldo marino ligero con camarón, alga y rebanadas de pastel de pescado.",
+        "Light seafood broth with shrimp, seaweed and fish-cake slices.",
+        "清爽海鲜汤底，搭配鲜虾、海带与鱼板。", "98 g",
+        "https://www.nicedayshop.eu/product/%E5%BA%B7%E5%B8%88%E5%82%85%E9%B2%9C%E8%99%BE%E9%B1%BC%E6%9D%BF%E9%9D%A2-98g/",
+    ),
+    _catalog_item(
+        "634250", "Master Kong res con mostaza encurtida", "Master Kong Pickled Mustard Beef Noodle",
+        "康师傅老坛酸菜牛肉面", "soups", "Sopa", "Master Kong",
+        "Caldo de res ácido y sabroso con mostaza encurtida al estilo tradicional.",
+        "Tangy, savory beef broth with traditionally pickled mustard greens.",
+        "酸爽牛肉汤底，搭配传统老坛酸菜。", "117 g",
+        "https://www.lunarmart.co.za/products/beef-sour-pickle-noodles",
+    ),
+    _catalog_item(
+        "634260", "Master Kong pollo y hongo shiitake", "Master Kong Mushroom Chicken Noodle",
+        "康师傅香菇炖鸡面", "soups", "Sopa", "Master Kong",
+        "Caldo suave de pollo guisado con el umami terroso del hongo shiitake.",
+        "Gentle stewed-chicken broth with earthy shiitake umami.",
+        "温润炖鸡汤底，融合香菇的醇厚鲜味。", "100 g",
+        "https://www.ramencrate.co.nz/products/master-kang-mushroom-chicken-ramen-box",
+    ),
+    _catalog_item(
+        "634270", "Master Kong res picante", "Master Kong Spicy Beef Noodle",
+        "康师傅香辣牛肉面", "soups", "Sopa", "Master Kong",
+        "Caldo rojo de res con chile, cilantro y un picor cálido y persistente.",
+        "Red beef broth with chili, cilantro and warm, lingering heat.",
+        "红汤牛肉面搭配辣椒与香菜，辣味温暖持久。", "104 g",
+        "https://www.norexmarket.no/products/%E5%BA%B7%E5%B8%88%E5%82%85-%E9%A6%99%E8%BE%A3%E7%89%9B%E8%82%89%E9%9D%A2-inst-noodles-spicy-beef-104g",
+    ),
+    _catalog_item(
+        "634280", "Master Kong res con pimienta verde", "Master Kong Green Peppercorn Beef Noodle",
+        "康师傅藤椒牛肉面", "soups", "Sopa", "Master Kong",
+        "Caldo de res con pimienta verde de Sichuan: cítrico, aromático y ligeramente adormecedor.",
+        "Beef broth with green Sichuan peppercorn: citrusy, aromatic and gently numbing.",
+        "牛肉汤搭配藤椒，清香柑橘感并带来轻柔麻感。", "102 g",
+        "https://barakibodegon.net/products/maestro-kong-ramen-fideos-con-carne",
+    ),
+    _catalog_item(
+        "634252", "Master Kong res con pimienta verde · bowl", "Master Kong Green Peppercorn Beef Bowl",
+        "康师傅藤椒牛肉面（碗装）", "bowls", "Bowl", "Master Kong",
+        "La sopa de res y pimienta verde de Sichuan en un bowl práctico de 108 g.",
+        "Green Sichuan peppercorn beef soup in a convenient 108 g bowl.",
+        "藤椒牛肉面碗装，108 克方便冲泡。", "108 g",
+        "https://www.suning.com/item/0071470014/11027098006.html",
+    ),
+    _catalog_item(
+        "802150", "Lay's pepino", "Lay's Cucumber Flavor Potato Chips",
+        "乐事黄瓜味薯片", "chips", "Papas", "Lay's",
+        "Papas delgadas con sabor fresco de pepino, sal ligera y final limpio.",
+        "Thin chips with fresh cucumber flavor, light salt and a clean finish.",
+        "薄脆薯片带有清新黄瓜风味、轻盐感与清爽尾韵。", "90 g",
+        "https://mc.alpremium.ca/products/alp-m000692474392794",
+    ),
+    _catalog_item(
+        "802440", "Lay's Max calamar a la parrilla", "Lay's Max Grilled Squid Flavor",
+        "乐事铁板鱿鱼味大波浪薯片", "chips", "Papas", "Lay's",
+        "Papas onduladas con sabor ahumado, salado y umami de calamar a la parrilla.",
+        "Wavy chips with smoky, savory grilled-squid umami.",
+        "大波浪薯片呈现铁板鱿鱼的烟熏咸鲜风味。", "70 g",
+        "https://lilisglass.com/products/lay-s-grilled-squid-flavor",
+    ),
+    _catalog_item(
+        "802120", "Lay's hot pot picante", "Lay's Numb & Spicy Hot Pot Flavor",
+        "乐事飘香麻辣锅味薯片", "chips", "Papas", "Lay's",
+        "Papas con chile, especias de hot pot y un toque ligeramente adormecedor.",
+        "Chips with chili, hot-pot spices and a gently numbing finish.",
+        "薯片融合辣椒与麻辣火锅香料，并带有轻微麻感。", "70 g",
+        "https://candyfunhouse.ca/products/lays-numb-spicy-hot-pot-chips-china-80g",
+    ),
+    _catalog_item(
+        "802110", "Lay's estofado italiano", "Lay's Italian Red Meat Flavor",
+        "乐事意大利香浓红烩味薯片", "chips", "Papas", "Lay's",
+        "Papas con tomate, hierbas y el perfil sabroso de un estofado de carne.",
+        "Chips with tomato, herbs and the savory profile of a red meat stew.",
+        "薯片融合番茄、香草与浓郁红烩肉风味。", "70 g",
+        "https://lilisglass.com/products/lay-s-italian-red-meat-favor-70g",
+    ),
+    _catalog_item(
+        "802410", "Lay's Max picante", "Lay's Max Pure Spicy Flavor",
+        "乐事辛辣味大波浪薯片", "chips", "Papas", "Lay's",
+        "Corte ondulado grueso con chile directo y textura extra crujiente.",
+        "Thick wavy-cut chips with direct chili heat and extra crunch.",
+        "厚切大波浪薯片，辣椒风味直接，口感格外酥脆。", "70 g",
+        "https://www.joybuy.co.uk/dp/Lays-Big-Wave-Potato-Chips-Spicy/10005951",
+    ),
+    _catalog_item(
+        "802420", "Lay's Max alita de pollo asada", "Lay's Max Roasted Chicken Wing Flavor",
+        "乐事香脆烤鸡翅味大波浪薯片", "chips", "Papas", "Lay's",
+        "Papas onduladas con notas de pollo asado, ajo, dulzor suave y humo.",
+        "Wavy chips with roasted chicken, garlic, gentle sweetness and smoke.",
+        "大波浪薯片融合烤鸡翅、蒜香、微甜与烟熏风味。", "70 g",
+        "https://theexoticclub.com/products/lays-roasted-chicken-wing-flavor-asia",
+    ),
+    _catalog_item(
+        "802160", "Lay's cangrejo dorado", "Lay's Golden Fried Crab Flavor",
+        "乐事金黄炒蟹味薯片", "chips", "Papas", "Lay's",
+        "Papas crujientes con cangrejo salado, un punto dulce y acabado marino.",
+        "Crisp chips with savory crab, gentle sweetness and a seafood finish.",
+        "酥脆薯片呈现咸鲜蟹味、微甜感与海鲜尾韵。", "70 g",
+        "https://popshoplife.com/products/lays-fried-crab-flavor-china",
+    ),
+    _catalog_item(
+        "854170", "Want Want rollos sabor verduras", "Want Want Lonely God Vegetable Potato Rolls",
+        "旺旺浪味仙田园蔬菜味", "chips", "Botana", "Want Want",
+        "Rollos ligeros de papa con cebollín, ajo y un condimento suave de verduras.",
+        "Light potato rolls with scallion, garlic and mild vegetable seasoning.",
+        "轻盈花式薯卷，融合葱香、蒜香与柔和田园蔬菜味。", "70 g",
+        "https://www.yami.com/zh/p/fruit-melty-sticks-strawberry-dragon-fruit-apple-flavor-18g/3150016651",
+    ),
+    _catalog_item(
+        "854180", "Want Want rollos sabor alga", "Want Want Lonely God Seaweed Potato Rolls",
+        "旺旺浪味仙海苔味", "chips", "Botana", "Want Want",
+        "Rollos crujientes de papa con alga tostada y un final salado lleno de umami.",
+        "Crisp potato rolls with roasted seaweed and a savory umami finish.",
+        "酥脆花式薯卷搭配烤海苔，咸鲜味十足。", "70 g",
+        "https://www.cvmart.co.uk/product-10206.html",
+    ),
+])
+
+
+# Wholesale packing taken from the three supplied price lists: how many retail
+# units travel inside one case, the size of each unit, and the price of that case.
 # (units, unit_size, case_price, unit_noun)
-BULDAK_PACKS = {
+CATALOG_PACKS = {
     "811140": (40, "130 g", 1120, "paquetes"),
     "811130": (40, "140 g", 1120, "paquetes"),
     "811200": (40, "140 g", 1120, "paquetes"),
@@ -333,11 +589,39 @@ BULDAK_PACKS = {
     "811624": (6, "105 g", 340, "bowls grandes"),
     "811640": (6, "105 g", 340, "bowls grandes"),
     "811612": (6, "105 g", 290, "bowls grandes"),
-    "811650": (16, "169.4 g", 1050, "bowls"),
-    "811710": (16, "179 g", 1375, "bowls"),
-    "811720": (16, "179 g", 1375, "bowls"),
+    "811650": (12, "169.4 g", 1020, "bowls"),
+    "811710": (16, "179 g", 928, "bowls"),
+    "811720": (16, "185 g", 928, "bowls"),
     "811910": (12, "120 g", 900, "bolsas"),
     "811920": (12, "120 g", 900, "bolsas"),
+    "811430": (6, "70 g", 186, "vasos"),
+    "811300": (24, "200 g", 2640, "botellas"),
+    "811280": (24, "200 g", 2688, "botellas"),
+    "811290": (200, "6 g", 1000, "sobres", 50),
+    "811311": (32, "120 g", 896, "bolsas"),
+    "811312": (32, "120 g", 896, "bolsas"),
+    "811310": (32, "120 g", 896, "bolsas"),
+    "811810": (32, "105 g", 1024, "bolsas"),
+    "811815": (6, "105 g", 354, "bowls"),
+    "811816": (6, "105 g", 354, "bowls"),
+    "811814": (6, "100 g", 354, "bowls"),
+    "634210": (30, "104 g", 507, "bolsas", 5),
+    "634220": (30, "106 g", 507, "bolsas", 5),
+    "634240": (30, "98 g", 507, "bolsas", 6),
+    "634250": (30, "117 g", 507, "bolsas", 5),
+    "634260": (30, "100 g", 507, "bolsas", 5),
+    "634270": (30, "104 g", 507, "bolsas", 5),
+    "634280": (30, "102 g", 507, "bolsas", 5),
+    "634252": (12, "108 g", 384, "bowls"),
+    "802150": (24, "90 g", 912, "bolsas"),
+    "802440": (22, "70 g", 770, "bolsas"),
+    "802120": (22, "70 g", 770, "bolsas"),
+    "802110": (22, "70 g", 770, "bolsas"),
+    "802410": (22, "70 g", 770, "bolsas"),
+    "802420": (22, "70 g", 770, "bolsas"),
+    "802160": (22, "70 g", 770, "bolsas"),
+    "854170": (12, "70 g", 456, "bolsas"),
+    "854180": (12, "70 g", 456, "bolsas"),
 }
 
 
@@ -364,8 +648,8 @@ def apply_pack(product, units, unit_size, case_price, unit_noun, inner=None, pro
     return product
 
 
-# Market names for every SKU: the English name the maker exports under and the
-# Japanese name it is sold as. Buldak follows Samyang Japan's "<sabor>ブルダック炒め麺".
+# Export names retained from the earlier catalog. The second value is legacy
+# Japanese copy and is intentionally not exposed by the three-language UI.
 INTL_NAMES = {
     # --- Buldak ---
     "811140": ("Carbonara Buldak Stir-Fried Ramen", "カルボナーラブルダック炒め麺"),
@@ -432,23 +716,57 @@ INTL_NAMES = {
     "880602": ("Tomomasu Mango Soda", "友桝飲料 マンゴーサイダー"),
 }
 
+ZH_NAMES = {
+    "811140": "奶油味火鸡面", "811130": "奶油干酪味火鸡面", "811200": "芝士味火鸡面",
+    "811150": "芝士联盟火鸡面", "811270": "玫瑰奶油味火鸡面", "811320": "焦糖甜辣味火鸡面",
+    "811000": "塔可味火鸡面", "811340": "日式炒面味火鸡面", "811220": "哈瓦那辣椒青柠味火鸡面",
+    "811120": "原味火鸡面", "811210": "双倍辣火鸡面", "811616": "焦糖甜辣味火鸡面（大碗）",
+    "811618": "芝士联盟火鸡面（大碗）", "811622": "奶油味火鸡面（大碗）",
+    "811624": "原味火鸡面（大碗）", "811640": "玫瑰奶油味火鸡面（大碗）",
+    "811650": "玫瑰奶油味宽粉", "811612": "原味火鸡面（大碗）", "811710": "奶油味火鸡炒年糕",
+    "811720": "原味火鸡炒年糕", "811910": "哈瓦那辣椒青柠味火鸡薯片", "811920": "原味火鸡薯片",
+    "833130": "椰树椰汁", "833210": "王老吉凉茶", "831190": "元气森林白桃味气泡水",
+    "194280": "维他蜜桃茶", "880350": "宾格瑞哈密瓜牛奶", "831214": "元气森林柠檬可乐味气泡水",
+    "834510": "水泉湾乳酸菌饮品", "832110": "康师傅茉莉花茶", "832160": "康师傅冰糖雪梨",
+    "832140": "康师傅蜂蜜柚子茶", "831831": "山楂树下山楂汁", "837410": "365绿茶 柠檬香茅味",
+    "837412": "365绿茶 蜂蜜味", "831160": "元气森林荔枝味气泡水", "831220": "元气森林白桃味气泡水（罐装）",
+    "831170": "元气森林葡萄味气泡水", "831140": "元气森林橙子味气泡水", "831240": "元气森林荔枝味气泡水（罐装）",
+    "833320": "泰山仙草蜜 原味", "833330": "泰山仙草蜜 荔枝味", "833340": "泰山仙草蜜 椰子味",
+    "837520": "J WAY 鲜果茶波霸套装", "837510": "J WAY 奶茶波霸套装", "838210": "东鹏补水啦 柠檬味",
+    "838212": "东鹏补水啦 西柚味", "838214": "东鹏补水啦 荔枝味", "838312": "东鹏补水啦 柠檬味 555ml",
+    "838314": "东鹏补水啦 荔枝味 555ml", "838310": "东鹏补水啦 西柚味 555ml", "880910": "海太葡萄汁",
+    "880010": "芦荟芒果饮料", "880020": "芦荟芒果饮料 1.5L", "880030": "芦荟草莓饮料",
+    "880040": "芦荟白桃饮料 1.5L", "831390": "弹珠汽水 草莓味", "831410": "弹珠汽水 原味",
+    "880600": "友桝西瓜汽水", "880604": "友桝白桃汽水", "880602": "友桝芒果汽水",
+}
+
 
 def apply_intl_names(product):
-    """Attach the English and Japanese market names to one product."""
-    name_en, name_ja = INTL_NAMES.get(product["sku"], (product["name"], ""))
-    product["name_en"] = name_en
-    product["name_ja"] = name_ja
+    """Attach language-ready display copy without changing the database row."""
+    name_en, _legacy_name = INTL_NAMES.get(product["sku"], (product["name"], ""))
+    product["name_es"] = product.get("name_es") or product["name"]
+    product["name_en"] = product.get("name_en") or name_en
+    product["name_zh"] = product.get("name_zh") or ZH_NAMES.get(product["sku"], product["name"])
+    product["description_es"] = product.get("description_es") or product.get("description") or f"{product['name_es']} de {product.get('brand', 'Buldak')}, disponible por caja cerrada."
+    product["description_en"] = product.get("description_en") or f"{product['name_en']}, available by wholesale full case."
+    product["description_zh"] = product.get("description_zh") or f"{product['name_zh']}，按批发整箱出售。"
     return product
 
 
 for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
-    units, unit_size, case_price, unit_noun = BULDAK_PACKS[catalog_product["sku"]]
+    # Older rows used product-format categories; the complete store uses the
+    # three departments requested by the shop owner.
+    if catalog_product["category"] == "bags":
+        catalog_product.update(category="soups", category_label="Sopa y fideos")
+    elif catalog_product["category"] == "snacks":
+        catalog_product.update(category="chips", category_label="Papas y botanas")
+    catalog_product.setdefault("brand", "Buldak")
     catalog_product.update(
         id=catalog_product["sku"],
         sort_order=sort_order,
         is_available=not catalog_product["status"].startswith("Agotado"),
     )
-    apply_pack(catalog_product, units, unit_size, case_price, unit_noun)
+    apply_pack(catalog_product, *CATALOG_PACKS[catalog_product["sku"]])
     apply_intl_names(catalog_product)
     catalog_product["case"] = catalog_product["pack_label"]
 
@@ -607,11 +925,58 @@ REFRESCOS_PRODUCTS = [
 ]
 
 for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
+    brand_by_prefix = {
+        "833130": "Coconut Palm", "833210": "Wong Lo Kat", "194280": "Vita",
+        "880350": "Binggrae", "834510": "Shui Lian Wan", "831831": "Shan Zha Shu Xia",
+        "837410": "MASAN", "837412": "MASAN", "837520": "J WAY", "837510": "J WAY",
+        "880910": "Haitai", "831390": "Ramune", "831410": "Ramune",
+    }
+    if refresco_product["sku"].startswith("831") and refresco_product["sku"] not in brand_by_prefix:
+        brand = "Chi Forest"
+    elif refresco_product["sku"].startswith("832"):
+        brand = "Master Kong"
+    elif refresco_product["sku"].startswith("8333"):
+        brand = "Taisun"
+    elif refresco_product["sku"].startswith("838"):
+        brand = "Dongpeng"
+    elif refresco_product["sku"].startswith("8800"):
+        brand = "Yogo Vera"
+    elif refresco_product["sku"].startswith("8806"):
+        brand = "Tomomasu"
+    else:
+        brand = brand_by_prefix.get(refresco_product["sku"], "Importación asiática")
     refresco_product.update(
         sort_order=sort_order,
         is_available=not refresco_product["status"].startswith("Agotado"),
+        brand=brand,
     )
     apply_intl_names(refresco_product)
+
+
+BRANDS = [
+    {"name": "Buldak", "kind": "noodles"},
+    {"name": "Samyang", "kind": "noodles"},
+    {"name": "MEP", "kind": "noodles"},
+    {"name": "Tangle", "kind": "noodles"},
+    {"name": "Master Kong", "kind": "noodles"},
+    {"name": "Lay's", "kind": "snacks"},
+    {"name": "Want Want", "kind": "snacks"},
+    {"name": "Chi Forest", "kind": "drinks"},
+    {"name": "Vita", "kind": "drinks"},
+    {"name": "Binggrae", "kind": "drinks"},
+    {"name": "Coconut Palm", "kind": "drinks"},
+    {"name": "Wong Lo Kat", "kind": "drinks"},
+    {"name": "Shui Lian Wan", "kind": "drinks"},
+    {"name": "MASAN", "kind": "drinks"},
+    {"name": "Taisun", "kind": "drinks"},
+    {"name": "J WAY", "kind": "drinks"},
+    {"name": "Dongpeng", "kind": "drinks"},
+    {"name": "Haitai", "kind": "drinks"},
+    {"name": "Yogo Vera", "kind": "drinks"},
+    {"name": "Ramune", "kind": "drinks"},
+    {"name": "Tomomasu", "kind": "drinks"},
+    {"name": "Shan Zha Shu Xia", "kind": "drinks"},
+]
 
 # The featured story cards mirror catalog pricing so one product never shows two prices.
 _CATALOG_BY_ID = {p["id"]: p for p in CATALOG_PRODUCTS}
@@ -630,31 +995,41 @@ repository = ProductRepository()
 
 
 def current_catalog() -> list[dict]:
-    """Return Supabase products, preserving a local fallback for development.
+    """Merge editable Supabase rows with the complete catalog shipped in code.
 
-    Supabase stores the per-unit row: name, image, availability. The wholesale
-    case model and the English/Japanese market names live here in code, so they
-    are re-applied on top of whatever the database returns. Without this a
-    Supabase-backed deploy would show the raw unit price and no pack line.
+    This lets the production database continue controlling availability and
+    product imagery while newly catalogued SKUs appear immediately, even before
+    a database migration is applied.
     """
-    catalog = repository.list_products(CATALOG_PRODUCTS)
-    for product in catalog:
-        pack = BULDAK_PACKS.get(product["sku"])
+    stored = repository.list_products(CATALOG_PRODUCTS)
+    stored_by_sku = {str(product["sku"]): product for product in stored}
+    catalog = []
+    for local in CATALOG_PRODUCTS:
+        product = {**local, **stored_by_sku.get(str(local["sku"]), {})}
+        # Department, brand and translated copy are versioned with the site.
+        for field in (
+            "category", "category_label", "brand", "name_es", "name_en", "name_zh",
+            "description", "description_es", "description_en", "description_zh",
+        ):
+            if field in local:
+                product[field] = local[field]
+        pack = CATALOG_PACKS.get(product["sku"])
         if pack:
             apply_pack(product, *pack)
             product["case"] = product["pack_label"]
         apply_intl_names(product)
+        catalog.append(product)
     return catalog
 
 
 def carousel_catalog(catalog_products: list[dict]) -> list[dict]:
-    """Keep ramen first, bowls in the middle, and snacks at the end."""
+    """Keep three Buldak packs first, soups next, bowls mid-list and chips last."""
     lead_ids = ("811120", "811140", "811150")
     product_by_id = {str(product["id"]): product for product in catalog_products}
     lead = [product_by_id[product_id] for product_id in lead_ids if product_id in product_by_id]
     lead_set = set(lead_ids)
     remainder = [product for product in catalog_products if str(product["id"]) not in lead_set]
-    category_order = {"bags": 0, "bowls": 1, "tteokbokki": 2, "snacks": 3}
+    category_order = {"soups": 0, "bowls": 1, "tteokbokki": 2, "sauces": 3, "chips": 4}
     remainder.sort(
         key=lambda product: (
             category_order.get(product.get("category", ""), 4),
@@ -675,6 +1050,7 @@ def index():
         catalog_categories=CATALOG_CATEGORIES,
         refrescos_products=REFRESCOS_PRODUCTS,
         refrescos_categories=REFRESCOS_CATEGORIES,
+        brands=BRANDS,
     )
 
 

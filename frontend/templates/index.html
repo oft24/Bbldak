@@ -4,20 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f5d9e1">
-    <meta name="description" content="BuldakShop: sabor, preparación y recomendaciones para cada Buldak." data-i18n-meta="meta.description">
-    <meta property="og:title" content="BuldakShop — Elige tu sabor">
-    <meta property="og:description" content="Información específica de la Buldak que tienes seleccionada.">
+    <meta name="description" content="BuldakShop: catálogo asiático de sopas, papas y bebidas con precios de mayoreo." data-i18n-meta="meta.description">
+    <meta property="og:title" content="BuldakShop — Catálogo asiático">
+    <meta property="og:description" content="Sopas, fideos, papas y bebidas con precios por caja.">
     <meta property="og:image" content="{{ request.url_root.rstrip('/') }}/og.webp?v=3">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <title>BuldakShop — Elige tu sabor</title>
+    <title>BuldakShop — Catálogo asiático</title>
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=20">
-    <script defer src="/js/i18n.js?v=8"></script>
-    <script defer src="/js/app.js?v=23"></script>
+    <link rel="stylesheet" href="/css/style.css?v=21">
+    <script defer src="/js/i18n.js?v=9"></script>
+    <script defer src="/js/app.js?v=24"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -39,10 +39,10 @@
       </button>
       <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal" data-nav>
         <a href="#catalog" data-i18n="nav.catalog" data-view-toggle="shop">Catálogo</a>
-        <a href="#catalog" data-i18n="nav.buy" data-view-toggle="shop">Comprar</a>
-        <a href="#story" data-i18n="nav.info" data-view-toggle="shop">Información</a>
-        <a href="#ritual" data-i18n="nav.preparation" data-view-toggle="shop">Preparación</a>
+        <a href="#catalog" data-i18n="nav.soups" data-view-toggle="shop" data-department-filter="soups">Sopas</a>
+        <a href="#catalog" data-i18n="nav.chips" data-view-toggle="shop" data-department-filter="chips">Papas</a>
         <a href="#refrescos" class="nav-refrescos" data-i18n="nav.refrescos" data-view-toggle="refrescos">Refrescos</a>
+        <a href="#brands" data-i18n="nav.brands" data-view-toggle="shop">Marcas</a>
       </nav>
       <div class="header-actions">
         <button class="pill pill--soft header-search" type="button" data-open-search>
@@ -143,6 +143,23 @@
           </div>
           <p data-i18n="catalog.copy">{{ catalog_products|length }} productos disponibles para mayoreo. Cada precio corresponde a la caja cerrada del catálogo.</p>
         </div>
+        <div class="catalog-departments reveal" aria-label="Apartados del catálogo" data-i18n-aria="departments.label">
+          <button type="button" class="department-card department-card--soups" data-department-filter="soups">
+            <span class="department-card__index">01</span>
+            <strong data-i18n="departments.soups">Sopas y fideos</strong>
+            <small><span>{{ catalog_products | selectattr('category', 'equalto', 'soups') | list | length }}</span> <span data-i18n="departments.products">productos</span></small>
+          </button>
+          <button type="button" class="department-card department-card--chips" data-department-filter="chips">
+            <span class="department-card__index">02</span>
+            <strong data-i18n="departments.chips">Papas y botanas</strong>
+            <small><span>{{ catalog_products | selectattr('category', 'equalto', 'chips') | list | length }}</span> <span data-i18n="departments.products">productos</span></small>
+          </button>
+          <button type="button" class="department-card department-card--drinks" data-view-toggle="refrescos">
+            <span class="department-card__index">03</span>
+            <strong data-i18n="departments.drinks">Refrescos y bebidas</strong>
+            <small><span>{{ refrescos_products|length }}</span> <span data-i18n="departments.products">productos</span></small>
+          </button>
+        </div>
         <div class="catalog-filters reveal" aria-label="Filtrar catálogo" data-i18n-aria="catalog.filter">
           {% for category in catalog_categories %}
             <button class="catalog-filter{% if loop.first %} is-active{% endif %}" type="button" data-catalog-filter="{{ category.id }}" data-i18n="filter.{{ category.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ category.label }}</button>
@@ -153,14 +170,15 @@
             <article class="catalog-card reveal" data-catalog-card data-category="{{ item.category }}">
               <div class="catalog-card__visual">
                 <span data-catalog-category="{{ item.category }}">{{ item.category_label }}</span>
-                <img src="{{ item.image }}" alt="{{ item.name }} Buldak, SKU {{ item.sku }}" data-catalog-image="{{ item.id }}" loading="lazy" decoding="async">
+                <span class="catalog-card__brand">{{ item.brand }}</span>
+                <img src="{{ item.image }}" alt="{{ item.name }}, SKU {{ item.sku }}" data-catalog-image="{{ item.id }}" loading="lazy" decoding="async">
               </div>
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
                 <h3 data-catalog-name="{{ item.id }}">{{ item.name }}</h3>
                 <p class="intl-names" data-intl-names="{{ item.id }}">
                   <span lang="en">{{ item.name_en }}</span>
-                  <span lang="ja">{{ item.name_ja }}</span>
+                  {% if item.name_zh %}<span lang="zh-CN">{{ item.name_zh }}</span>{% endif %}
                 </p>
                 <p class="pack-line" data-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
                 <div class="catalog-card__footer">
@@ -183,6 +201,24 @@
                   <span data-catalog-detail-label="{{ item.id }}">Ver descripción</span><span aria-hidden="true">↓</span>
                 </button>
               </div>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="brands-section section-pad" id="brands" aria-labelledby="brands-title">
+        <div class="brands-heading reveal">
+          <div>
+            <div class="section-index" data-i18n="brands.index">Marcas</div>
+            <h2 id="brands-title" data-i18n-html="brands.title">Lo que vendemos.<br><span>Una selección de Asia.</span></h2>
+          </div>
+          <p data-i18n="brands.copy">Las marcas se conservan con su nombre comercial; los productos y descripciones cambian entre español, inglés y chino.</p>
+        </div>
+        <div class="brands-grid reveal">
+          {% for brand in brands %}
+            <article class="brand-card brand-card--{{ brand.kind }}">
+              <span data-i18n="brands.kind.{{ brand.kind }}">{{ brand.kind }}</span>
+              <strong>{{ brand.name }}</strong>
             </article>
           {% endfor %}
         </div>
@@ -267,7 +303,7 @@
             <h3 data-refresco-name tabindex="-1">{{ refrescos_products[0].name }}</h3>
             <p class="intl-names intl-names--detail">
               <span lang="en" data-refresco-name-en>{{ refrescos_products[0].name_en }}</span>
-              <span lang="ja" data-refresco-name-ja>{{ refrescos_products[0].name_ja }}</span>
+              <span lang="zh-CN" data-refresco-name-zh>{{ refrescos_products[0].name_zh }}</span>
             </p>
             <p data-refresco-description>{{ refrescos_products[0].description }}</p>
             <p class="promo-tag" data-refresco-promo hidden></p>
@@ -348,6 +384,7 @@
             <article class="catalog-card reveal" data-refresco-catalog-card data-category="{{ item.category }}">
               <div class="catalog-card__visual">
                 <span>{{ item.category_label }}</span>
+                <span class="catalog-card__brand">{{ item.brand }}</span>
                 <img src="{{ item.image }}" alt="{{ item.name }}, SKU {{ item.sku }}" loading="lazy" decoding="async">
               </div>
               <div class="catalog-card__body">
@@ -355,7 +392,7 @@
                 <h3 data-refresco-catalog-name="{{ item.id }}">{{ item.name }}</h3>
                 <p class="intl-names" data-intl-names="{{ item.id }}">
                   <span lang="en">{{ item.name_en }}</span>
-                  <span lang="ja">{{ item.name_ja }}</span>
+                  {% if item.name_zh %}<span lang="zh-CN">{{ item.name_zh }}</span>{% endif %}
                 </p>
                 <p class="pack-line" data-refresco-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
                 {% if item.promo %}<p class="promo-tag promo-tag--card" data-i18n="{{ item.promo }}">Promoción</p>{% endif %}

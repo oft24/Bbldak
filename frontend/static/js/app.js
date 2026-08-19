@@ -87,6 +87,8 @@
     storyWeight: document.querySelector("[data-story-weight]"),
     storyNote: document.querySelector("[data-story-note]"),
     nutritionSource: document.querySelector("[data-nutrition-source]"),
+    ritualSection: document.querySelector("#ritual"),
+    preparedSection: document.querySelector("#prepared"),
     directionsTitle: document.querySelector("[data-directions-title]"),
     directionsIntro: document.querySelector("[data-directions-intro]"),
     directionTitles: [...document.querySelectorAll("[data-direction-title]")],
@@ -197,8 +199,14 @@
   function localizedProduct(product) {
     if (!product) return product;
     const translated = i18n.productContent?.[state.language]?.[product.id];
-    const name = i18n.productNames?.[state.language]?.[product.id] || product.name;
-    return { ...product, ...(translated || {}), name };
+    const name = i18n.productNames?.[state.language]?.[product.id]
+      || product[`name_${state.language}`]
+      || product.name;
+    const description = translated?.description
+      || product[`description_${state.language}`]
+      || product.description
+      || "";
+    return { ...product, ...(translated || {}), name, description };
   }
 
   function escapeHtml(value) {
@@ -239,17 +247,17 @@
 
   const UNIT_NOUNS = {
     en: { "paquetes": "packs", "bolsas": "bags", "botellas": "bottles", "latas": "cans",
-          "vasos": "cups", "bowls grandes": "big bowls", "bowls": "bowls" },
+          "vasos": "cups", "sobres": "sticks", "bowls grandes": "big bowls", "bowls": "bowls" },
     zh: { "paquetes": "袋", "bolsas": "袋", "botellas": "瓶", "latas": "罐",
-          "vasos": "杯", "bowls grandes": "大碗", "bowls": "碗" }
+          "vasos": "杯", "sobres": "条", "bowls grandes": "大碗", "bowls": "碗" }
   };
 
   // Naive de-pluralising turns "bottles" into "bottl", so spell the forms out.
   const UNIT_SINGULAR = {
     es: { "botellas": "botella", "latas": "lata", "vasos": "vaso", "paquetes": "paquete",
-          "bolsas": "bolsa", "bowls": "bowl", "bowls grandes": "bowl grande" },
+          "bolsas": "bolsa", "sobres": "sobre", "bowls": "bowl", "bowls grandes": "bowl grande" },
     en: { "bottles": "bottle", "cans": "can", "cups": "cup", "packs": "pack",
-          "bags": "bag", "bowls": "bowl", "big bowls": "big bowl" }
+          "bags": "bag", "sticks": "stick", "bowls": "bowl", "big bowls": "big bowl" }
   };
 
   /** The unit noun in singular, for "480 ml · botella". */
@@ -343,16 +351,20 @@
     dom.storyCopy.textContent = product.story || detail.description || product.description || "";
     dom.storyImage.src = product.image;
     dom.storyImage.alt = state.language === "zh"
-      ? `Buldak ${product.name} 包装`
+      ? `${product.name} 产品包装`
       : state.language === "en"
-        ? `Buldak ${product.name} pack`
-        : `Paquete Buldak ${product.name}`;
+        ? `${product.name} product pack`
+        : `Empaque de ${product.name}`;
     setStoryStat(dom.shu, product.shu);
     setStoryStat(dom.kcal, product.kcal);
     setStoryStat(dom.cookTime, product.cook_time);
     setStoryStat(dom.storyWeight, translateWeight(product.weight).split(" · ")[0]);
     dom.storyNote.innerHTML = escapeHtml(product.story_note || detail.note || product.name).replace("\n", "<br>");
     dom.nutritionSource.href = product.nutrition_source_url || product.source_url || "#";
+    const hasDirections = Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length;
+    const hasPreparedServing = Boolean(product.prepared_image && Array.isArray(product.recommendations));
+    dom.ritualSection.hidden = !hasDirections;
+    dom.preparedSection.hidden = !hasPreparedServing;
     state.detailProductId = String(product.id);
     document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
     updateCatalogDetailButtons();
@@ -409,8 +421,8 @@
     dom.catalogImages.forEach((element) => {
       const product = localizedProduct(productById.get(element.dataset.catalogImage));
       element.alt = state.language === "zh"
-        ? `Buldak ${product.name}，SKU ${product.sku}`
-        : `Buldak ${product.name}, SKU ${product.sku}`;
+        ? `${product.name}，SKU ${product.sku}`
+        : `${product.name}, SKU ${product.sku}`;
     });
     dom.catalogMetas.forEach((element) => {
       element.textContent = packLabel(productById.get(element.dataset.catalogMeta));
@@ -451,10 +463,10 @@
       card.setAttribute("aria-label", t("hero.selectFlavor", { name: product.name }));
       const image = card.querySelector("img");
       if (image) image.alt = state.language === "zh"
-        ? `Buldak ${product.name} 包装`
+        ? `${product.name} 产品包装`
         : state.language === "en"
-          ? `Buldak ${product.name} pack`
-          : `Paquete Buldak ${product.name}`;
+          ? `${product.name} product pack`
+          : `Empaque de ${product.name}`;
     });
     dom.tabs.forEach((tab, index) => {
       tab.textContent = localizedProduct(products[index]).name;
@@ -516,7 +528,7 @@
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     if (themeMeta) themeMeta.setAttribute("content", theme.bgA);
 
-    dom.productType.textContent = product.category === "bags" ? t("hero.type") : t(`category.${product.category}`);
+    dom.productType.textContent = t(`category.${product.category}`);
     dom.number.textContent = product.number;
     dom.sku.textContent = product.sku;
     dom.name.textContent = product.name;
@@ -530,7 +542,12 @@
     const addLabel = dom.addSelected.querySelector("[data-i18n]");
     if (addLabel) addLabel.textContent = t(product.is_available === false ? "catalog.soldOut" : "wholesale.addCase");
 
-    if (Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length) {
+    const hasDirections = Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length;
+    const hasPreparedServing = Boolean(product.prepared_image && Array.isArray(product.recommendations));
+    dom.ritualSection.hidden = !hasDirections;
+    dom.preparedSection.hidden = !hasPreparedServing;
+
+    if (hasDirections) {
       dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
       dom.directionsIntro.textContent = product.directions_intro;
       dom.directionTitles.forEach((element, directionIndex) => {
@@ -541,7 +558,7 @@
       });
     }
 
-    if (product.prepared_image && Array.isArray(product.recommendations)) {
+    if (hasPreparedServing) {
       dom.preparedName.textContent = product.name;
       dom.preparedImage.src = product.prepared_image;
       dom.preparedImage.alt = product.prepared_alt;
@@ -1007,12 +1024,17 @@
     const prepared = document.querySelector("#prepared");
     const footer = document.querySelector(".site-footer");
     const headerLine = y + 45;
+    const ritualVisible = !ritual.hidden;
+    const preparedVisible = !prepared.hidden;
+    const storyEnd = ritualVisible ? ritual.offsetTop : preparedVisible ? prepared.offsetTop : footer.offsetTop;
+    const ritualEnd = preparedVisible ? prepared.offsetTop : footer.offsetTop;
     const overCatalog = headerLine >= catalog.offsetTop && headerLine < story.offsetTop;
-    const overStory = headerLine >= story.offsetTop && headerLine < ritual.offsetTop;
-    const overPrepared = headerLine >= prepared.offsetTop && headerLine < footer.offsetTop;
+    const overStory = headerLine >= story.offsetTop && headerLine < storyEnd;
+    const overRitual = ritualVisible && headerLine >= ritual.offsetTop && headerLine < ritualEnd;
+    const overPrepared = preparedVisible && headerLine >= prepared.offsetTop && headerLine < footer.offsetTop;
     const overFooter = headerLine >= footer.offsetTop;
     dom.header.classList.toggle("force-dark", overPrepared || (overStory && !story.classList.contains("is-dark")));
-    dom.header.classList.toggle("force-light", overCatalog || overFooter || (overStory && story.classList.contains("is-dark")) || (headerLine >= ritual.offsetTop && headerLine < prepared.offsetTop));
+    dom.header.classList.toggle("force-light", overCatalog || overFooter || overRitual || (overStory && story.classList.contains("is-dark")));
   }
 
   dom.carousel.addEventListener("pointerdown", onPointerDown);
@@ -1143,7 +1165,15 @@
       const rawTargetId = href && href.startsWith("#") ? href.slice(1) : null;
       const targetId = rawTargetId === "top" || rawTargetId === "refrescos" ? null : rawTargetId;
       event.preventDefault();
+      if (toggle.dataset.departmentFilter) setCatalogFilter(toggle.dataset.departmentFilter);
       setView(toggle.dataset.viewToggle, { scrollTargetId: targetId });
+    });
+  });
+
+  document.querySelectorAll("[data-department-filter]:not([data-view-toggle])").forEach((control) => {
+    control.addEventListener("click", () => {
+      setCatalogFilter(control.dataset.departmentFilter);
+      setView("shop", { scrollTargetId: "catalog" });
     });
   });
 
@@ -1165,7 +1195,7 @@
       category: document.querySelector("[data-refresco-category]"),
       name: document.querySelector("[data-refresco-name]"),
       nameEn: document.querySelector("[data-refresco-name-en]"),
-      nameJa: document.querySelector("[data-refresco-name-ja]"),
+      nameZh: document.querySelector("[data-refresco-name-zh]"),
       description: document.querySelector("[data-refresco-description]"),
       weight: document.querySelector("[data-refresco-weight]"),
       caseSize: document.querySelector("[data-refresco-case]"),
@@ -1213,7 +1243,7 @@
       if (refrescoDom.category) refrescoDom.category.textContent = product.category_label || t("refrescos.type");
       if (refrescoDom.name) refrescoDom.name.textContent = product.name;
       if (refrescoDom.nameEn) refrescoDom.nameEn.textContent = product.name_en || "";
-      if (refrescoDom.nameJa) refrescoDom.nameJa.textContent = product.name_ja || "";
+      if (refrescoDom.nameZh) refrescoDom.nameZh.textContent = product.name_zh || "";
       if (refrescoDom.description) refrescoDom.description.textContent = product.description || "";
       if (refrescoDom.weight) refrescoDom.weight.textContent = `${product.unit_size} · ${unitNounSingular(product)}`;
       if (refrescoDom.caseSize) refrescoDom.caseSize.textContent = packLabel(product);
