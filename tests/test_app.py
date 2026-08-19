@@ -24,9 +24,9 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=25', response.data)
-        self.assertIn(b'js/i18n.js?v=12', response.data)
-        self.assertIn(b'js/app.js?v=27', response.data)
+        self.assertIn(b'css/style.css?v=27', response.data)
+        self.assertIn(b'js/i18n.js?v=13', response.data)
+        self.assertIn(b'js/app.js?v=29', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
         self.assertIn(b'data-catalog-image="811920"', response.data)
         self.assertIn(b'data-catalog-name="634210"', response.data)
@@ -47,6 +47,8 @@ class ShowroomTests(unittest.TestCase):
         self.assertLess(response.data.index(b'data-card-product="811140"'), response.data.index(b'data-card-product="811150"'))
         self.assertLess(response.data.index(b'data-card-product="811650"'), response.data.index(b'data-card-product="811910"'))
         self.assertIn(b'data-clear-cart', response.data)
+        self.assertIn(b'data-whatsapp-quote', response.data)
+        self.assertIn(b'Cotizar por WhatsApp', response.data)
         self.assertIn(b'data-story-section', response.data)
         self.assertIn(b'Tu carrito', response.data)
         self.assertIn(b"T\xc3\xa9rminos y condiciones", response.data)
@@ -62,6 +64,13 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["status"], "ok")
         self.assertEqual(response.get_json()["service"], "buldakshop")
+
+    def test_whatsapp_quote_targets_requested_number(self):
+        response = self.client.get("/js/app.js")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'const WHATSAPP_NUMBER = "5229723373"', response.data)
+        self.assertIn(b"https://wa.me/${WHATSAPP_NUMBER}", response.data)
+        self.assertIn(b"buildWhatsAppMessage", response.data)
 
     def test_products_have_complete_selected_flavor_content(self):
         response = self.client.get("/api/products")

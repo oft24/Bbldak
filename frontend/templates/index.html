@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=25">
-    <script defer src="/js/i18n.js?v=12"></script>
-    <script defer src="/js/app.js?v=27"></script>
+    <link rel="stylesheet" href="/css/style.css?v=27">
+    <script defer src="/js/i18n.js?v=13"></script>
+    <script defer src="/js/app.js?v=29"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -459,29 +459,30 @@
       <div class="cart-footer">
         <div><span data-i18n="cart.subtotal">Subtotal</span><strong data-subtotal>$0.00</strong></div>
         <p data-shipping-message>Envío por cotizar.</p>
-        <button class="checkout-button" type="button" data-open-checkout data-i18n="cart.checkout" disabled>Confirmar pedido demo</button>
+        <button class="checkout-button" type="button" data-open-checkout data-i18n="cart.checkout" disabled>Cotizar por WhatsApp</button>
       </div>
     </aside>
 
     <dialog class="checkout-dialog" data-checkout-dialog aria-labelledby="checkout-title">
       <button class="checkout-close" type="button" data-close-checkout aria-label="Cerrar pedido" data-i18n-aria="checkout.close">×</button>
       <div data-checkout-form-view>
-        <span class="section-index" data-i18n="checkout.index">Pedido de prueba</span>
+        <span class="section-index" data-i18n="checkout.index">Cotización por WhatsApp</span>
         <h2 id="checkout-title" data-i18n="checkout.title">Confirma tu carrito.</h2>
-        <p data-i18n="checkout.copy">Tu pedido se registra por cajas cerradas. Es una cotización de demostración y no se realizará ningún cobro.</p>
+        <p data-i18n="checkout.copy">Prepararemos un mensaje con tus productos, cantidades y precios. Podrás revisarlo antes de enviarlo por WhatsApp.</p>
         <form data-checkout-form>
           <label><span data-i18n="checkout.name">Nombre completo</span><input name="name" autocomplete="name" required maxlength="80"></label>
           <label><span data-i18n="checkout.email">Correo</span><input name="email" type="email" autocomplete="email" required maxlength="120"></label>
-          <button class="checkout-button" type="submit"><span data-checkout-submit-label data-i18n="checkout.submit">Confirmar pedido demo</span> <span>→</span></button>
+          <button class="checkout-button" type="submit"><span data-checkout-submit-label data-i18n="checkout.submit">Continuar a WhatsApp</span> <span>→</span></button>
           <p class="form-error" data-checkout-error role="alert"></p>
         </form>
       </div>
       <div class="checkout-success" data-checkout-success hidden>
         <span class="success-mark">✓</span>
-        <span class="section-index" data-i18n="checkout.successIndex">Pedido confirmado</span>
-        <h2 data-i18n="checkout.successTitle">Tu pedido demo quedó registrado.</h2>
-        <p data-checkout-success-copy>Pedido confirmado.</p>
-        <button class="checkout-button" type="button" data-finish-checkout><span data-i18n="checkout.continue">Seguir explorando</span> <span>→</span></button>
+        <span class="section-index" data-i18n="checkout.successIndex">Cotización preparada</span>
+        <h2 data-i18n="checkout.successTitle">Tu mensaje está listo.</h2>
+        <p data-checkout-success-copy>Cotización preparada.</p>
+        <a class="checkout-button checkout-whatsapp" href="#" target="_blank" rel="noopener noreferrer" data-whatsapp-quote hidden><span data-i18n="checkout.openWhatsApp">Abrir WhatsApp</span> <span>↗</span></a>
+        <button class="checkout-secondary" type="button" data-finish-checkout data-i18n="checkout.continue">Seguir explorando</button>
       </div>
     </dialog>
 

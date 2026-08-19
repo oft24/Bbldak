@@ -335,7 +335,7 @@ def _catalog_item(
         "description_en": description_en,
         "description_zh": description_zh,
         "weight": unit_size,
-        "image": f"/assets/products/{sku}.webp?v=1",
+        "image": f"/assets/products/{sku}.webp?v=2",
         "source_url": source_url,
         "status": "Disponible",
     }

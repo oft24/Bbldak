@@ -49,6 +49,8 @@
   }));
   const productById = new Map(products.map((product) => [product.id, product]));
   const initialProductIndex = Math.max(0, products.findIndex((product) => product.id === "811140"));
+  const WHATSAPP_NUMBER = "5229723373";
+  const SHOP_URL = "https://buldakshop.vercel.app/";
 
   const drinkProducts = (payload.refrescos || []).map((product, index) => ({
     number: String(index + 1).padStart(2, "0"),
@@ -120,6 +122,7 @@
     checkoutError: document.querySelector("[data-checkout-error]"),
     checkoutSubmitLabel: document.querySelector("[data-checkout-submit-label]"),
     checkoutSuccessCopy: document.querySelector("[data-checkout-success-copy]"),
+    checkoutWhatsApp: document.querySelector("[data-whatsapp-quote]"),
     legalDialog: document.querySelector("[data-legal-dialog]"),
     toast: document.querySelector("[data-toast]"),
     nav: document.querySelector("[data-nav]"),
@@ -912,6 +915,8 @@
     closeCart({ restoreFocus: false });
     dom.checkoutFormView.hidden = false;
     dom.checkoutSuccess.hidden = true;
+    dom.checkoutWhatsApp.hidden = true;
+    dom.checkoutWhatsApp.removeAttribute("href");
     dom.checkoutError.textContent = "";
     if (!dom.checkoutDialog.open) dom.checkoutDialog.showModal();
     document.body.classList.add("is-locked");
@@ -950,10 +955,36 @@
     if (!dom.legalDialog.open && !dom.searchDialog.open) document.body.classList.remove("is-locked");
   }
 
+  function buildWhatsAppMessage(orderId, customerName, cartSnapshot) {
+    const itemLines = cartSnapshot.map((item) => {
+      const product = localizedProduct(productById.get(item.id));
+      const lineTotal = Number(product.price) * item.quantity;
+      return `• ${item.quantity} × ${product.name} — ${product.price_label} ${t("wholesale.perCaseShort")} = ${formatMoney(lineTotal)}`;
+    });
+    const subtotal = cartSnapshot.reduce((total, item) => {
+      const product = productById.get(item.id);
+      return total + Number(product.price) * item.quantity;
+    }, 0);
+    return [
+      t("checkout.whatsappGreeting"),
+      "",
+      t("checkout.whatsappOrder", { id: orderId }),
+      t("checkout.whatsappCustomer", { name: customerName }),
+      "",
+      ...itemLines,
+      "",
+      t("checkout.whatsappSubtotal", { total: formatMoney(subtotal) }),
+      t("checkout.whatsappShipping"),
+      t("checkout.whatsappSource", { url: SHOP_URL })
+    ].join("\n");
+  }
+
   async function submitCheckout(event) {
     event.preventDefault();
     const submitButton = dom.checkoutForm.querySelector('button[type="submit"]');
     const formData = new FormData(dom.checkoutForm);
+    const cartSnapshot = state.cart.map((item) => ({ ...item }));
+    const quoteWindow = window.open("", "buldakshop-whatsapp");
     dom.checkoutError.textContent = "";
     submitButton.disabled = true;
     dom.checkoutSubmitLabel.textContent = t("checkout.submitting");
@@ -970,17 +1001,23 @@
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || t("checkout.error"));
 
-      state.lastOrder = { id: payload.order_id, total: `$${payload.total}` };
+      const whatsappMessage = buildWhatsAppMessage(payload.order_id, String(formData.get("name") || ""), cartSnapshot);
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
+      state.lastOrder = { id: payload.order_id, total: formatMoney(payload.total), whatsappUrl };
       dom.checkoutSuccessCopy.textContent = t("checkout.successCopy", {
         id: state.lastOrder.id,
         total: state.lastOrder.total
       });
+      dom.checkoutWhatsApp.href = whatsappUrl;
+      dom.checkoutWhatsApp.hidden = false;
       dom.checkoutFormView.hidden = true;
       dom.checkoutSuccess.hidden = false;
       state.cart = [];
       saveCart();
       renderCart();
+      if (quoteWindow) quoteWindow.location.replace(whatsappUrl);
     } catch (error) {
+      quoteWindow?.close();
       dom.checkoutError.textContent = error.message;
     } finally {
       submitButton.disabled = false;
@@ -991,6 +1028,7 @@
   function toggleNavigation(force) {
     const open = typeof force === "boolean" ? force : !dom.nav.classList.contains("is-open");
     dom.nav.classList.toggle("is-open", open);
+    dom.header.classList.toggle("menu-open", open);
     dom.navToggle.setAttribute("aria-expanded", String(open));
     document.body.classList.toggle("is-locked", open);
   }
