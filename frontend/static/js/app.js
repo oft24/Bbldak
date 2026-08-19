@@ -247,17 +247,17 @@
 
   const UNIT_NOUNS = {
     en: { "paquetes": "packs", "bolsas": "bags", "botellas": "bottles", "latas": "cans",
-          "vasos": "cups", "sobres": "sticks", "bowls grandes": "big bowls", "bowls": "bowls" },
+          "vasos": "cups", "sobres": "sticks", "cajas": "boxes", "bowls grandes": "big bowls", "bowls": "bowls" },
     zh: { "paquetes": "袋", "bolsas": "袋", "botellas": "瓶", "latas": "罐",
-          "vasos": "杯", "sobres": "条", "bowls grandes": "大碗", "bowls": "碗" }
+          "vasos": "杯", "sobres": "条", "cajas": "盒", "bowls grandes": "大碗", "bowls": "碗" }
   };
 
   // Naive de-pluralising turns "bottles" into "bottl", so spell the forms out.
   const UNIT_SINGULAR = {
     es: { "botellas": "botella", "latas": "lata", "vasos": "vaso", "paquetes": "paquete",
-          "bolsas": "bolsa", "sobres": "sobre", "bowls": "bowl", "bowls grandes": "bowl grande" },
+          "bolsas": "bolsa", "sobres": "sobre", "cajas": "caja", "bowls": "bowl", "bowls grandes": "bowl grande" },
     en: { "bottles": "bottle", "cans": "can", "cups": "cup", "packs": "pack",
-          "bags": "bag", "sticks": "stick", "bowls": "bowl", "big bowls": "big bowl" }
+          "bags": "bag", "sticks": "stick", "boxes": "box", "bowls": "bowl", "big bowls": "big bowl" }
   };
 
   /** The unit noun in singular, for "480 ml · botella". */
@@ -930,13 +930,18 @@
   }
 
   function setCatalogFilter(category) {
+    const departments = {
+      noodles: new Set(["soups", "bowls", "tteokbokki", "sauces"]),
+      snacks: new Set(["chips", "cookies", "candy", "bakery"]),
+    };
     dom.catalogFilters.forEach((button) => {
       const active = button.dataset.catalogFilter === category;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     });
     dom.catalogCards.forEach((card) => {
-      card.hidden = category !== "all" && card.dataset.category !== category;
+      const grouped = departments[category];
+      card.hidden = category !== "all" && card.dataset.category !== category && !grouped?.has(card.dataset.category);
     });
   }
 

@@ -16,8 +16,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css?v=21">
-    <script defer src="/js/i18n.js?v=9"></script>
-    <script defer src="/js/app.js?v=24"></script>
+    <script defer src="/js/i18n.js?v=10"></script>
+    <script defer src="/js/app.js?v=25"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -39,8 +39,8 @@
       </button>
       <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal" data-nav>
         <a href="#catalog" data-i18n="nav.catalog" data-view-toggle="shop">Catálogo</a>
-        <a href="#catalog" data-i18n="nav.soups" data-view-toggle="shop" data-department-filter="soups">Sopas</a>
-        <a href="#catalog" data-i18n="nav.chips" data-view-toggle="shop" data-department-filter="chips">Papas</a>
+        <a href="#catalog" data-i18n="nav.soups" data-view-toggle="shop" data-department-filter="noodles">Sopas</a>
+        <a href="#catalog" data-i18n="nav.chips" data-view-toggle="shop" data-department-filter="snacks">Papas</a>
         <a href="#refrescos" class="nav-refrescos" data-i18n="nav.refrescos" data-view-toggle="refrescos">Refrescos</a>
         <a href="#brands" data-i18n="nav.brands" data-view-toggle="shop">Marcas</a>
       </nav>
@@ -97,7 +97,7 @@
                 aria-label="Seleccionar {{ product.name }}"
                 aria-pressed="{{ 'true' if product.id == '811140' else 'false' }}"
               >
-                <img src="{{ product.image }}" alt="Buldak {{ product.name }} ramen pack" draggable="false">
+                <img src="{{ product.image }}" alt="Buldak {{ product.name }} ramen pack" draggable="false" loading="{{ 'eager' if loop.index0 < 3 else 'lazy' }}" decoding="async"{% if loop.index0 < 3 %} fetchpriority="high"{% endif %}>
               </button>
             {% endfor %}
           </div>
@@ -144,15 +144,15 @@
           <p data-i18n="catalog.copy">{{ catalog_products|length }} productos disponibles para mayoreo. Cada precio corresponde a la caja cerrada del catálogo.</p>
         </div>
         <div class="catalog-departments reveal" aria-label="Apartados del catálogo" data-i18n-aria="departments.label">
-          <button type="button" class="department-card department-card--soups" data-department-filter="soups">
+          <button type="button" class="department-card department-card--soups" data-department-filter="noodles">
             <span class="department-card__index">01</span>
             <strong data-i18n="departments.soups">Sopas y fideos</strong>
-            <small><span>{{ catalog_products | selectattr('category', 'equalto', 'soups') | list | length }}</span> <span data-i18n="departments.products">productos</span></small>
+            <small><span>{{ department_counts.noodles }}</span> <span data-i18n="departments.products">productos</span></small>
           </button>
-          <button type="button" class="department-card department-card--chips" data-department-filter="chips">
+          <button type="button" class="department-card department-card--chips" data-department-filter="snacks">
             <span class="department-card__index">02</span>
             <strong data-i18n="departments.chips">Papas y botanas</strong>
-            <small><span>{{ catalog_products | selectattr('category', 'equalto', 'chips') | list | length }}</span> <span data-i18n="departments.products">productos</span></small>
+            <small><span>{{ department_counts.snacks }}</span> <span data-i18n="departments.products">productos</span></small>
           </button>
           <button type="button" class="department-card department-card--drinks" data-view-toggle="refrescos">
             <span class="department-card__index">03</span>
@@ -347,7 +347,7 @@
                   aria-label="Seleccionar {{ drink.name }}"
                   aria-pressed="{{ 'true' if loop.first else 'false' }}"
                 >
-                  <img src="{{ drink.image }}" alt="{{ drink.name }}" draggable="false">
+                  <img src="{{ drink.image }}" alt="{{ drink.name }}" draggable="false" loading="{{ 'eager' if loop.index0 < 3 else 'lazy' }}" decoding="async"{% if loop.index0 < 3 %} fetchpriority="high"{% endif %}>
                 </button>
               {% endfor %}
             </div>
@@ -449,7 +449,7 @@
         <div class="search-results" data-search-results>
           {% for product in carousel_products %}
             <button class="search-result" type="button" data-search-result="{{ loop.index0 }}" data-search-product="{{ product.id }}" data-keywords="{{ product.name }} {{ product.category }} {{ product.category_label }}">
-              <img src="{{ product.image }}" alt="">
+              <img src="{{ product.image }}" alt="" loading="lazy" decoding="async">
               <span><strong>{{ product.name }}</strong><small>{{ product.category_label }} · {{ product.price_label }}</small></span>
               <b aria-hidden="true">↗</b>
             </button>

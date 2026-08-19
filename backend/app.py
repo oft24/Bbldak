@@ -196,6 +196,9 @@ CATALOG_CATEGORIES = [
     {"id": "tteokbokki", "label": "Tteokbokki"},
     {"id": "sauces", "label": "Salsas"},
     {"id": "chips", "label": "Papas y botanas"},
+    {"id": "cookies", "label": "Galletas"},
+    {"id": "candy", "label": "Dulces y gomitas"},
+    {"id": "bakery", "label": "Pan y pastel"},
 ]
 
 
@@ -568,6 +571,65 @@ CATALOG_PRODUCTS.extend([
 ])
 
 
+def _snack_item(sku, name_es, name_en, name_zh, category, label, brand,
+                profile_es, profile_en, profile_zh, unit_size, source_url):
+    """Create a multilingual snack or bakery row from the MX26 catalog."""
+    return _catalog_item(
+        sku, name_es, name_en, name_zh, category, label, brand,
+        f"{name_es}: {profile_es}",
+        f"{name_en}: {profile_en}",
+        f"{name_zh}：{profile_zh}",
+        unit_size, source_url,
+    )
+
+
+# Remaining consumer products from CATALAGO ACTUALIZADO MX26. Tableware and
+# disposable food-service supplies from Catalogo 0908 are intentionally kept
+# outside the shop because they are not retail food or beverage merchandise.
+CATALOG_PRODUCTS.extend([
+    _catalog_item(
+        "811611", "Buldak Original · tazón grande", "Buldak Original Big Bowl",
+        "原味火鸡面（大碗）", "bowls", "Bowl", "Buldak",
+        "Tazón grande de fideos Buldak Original con salsa picante, sésamo y alga.",
+        "Large Buldak Original noodle bowl with spicy sauce, sesame and seaweed.",
+        "原味火鸡面大碗装，搭配香辣酱、芝麻与海苔。", "105 g",
+        "https://buldak.com/us/product/buldak-ramen-original-big-bowl/",
+    ),
+    _snack_item("880700", "Pocky chocolate", "Pocky Chocolate Biscuit Sticks", "百奇巧克力味饼干棒", "cookies", "Galletas", "Pocky", "palitos de galleta crujiente cubiertos con chocolate.", "crisp biscuit sticks coated in chocolate.", "酥脆饼干棒裹上巧克力涂层。", "70 g", "https://www.glico.com/global/"),
+    _snack_item("880701", "Pocky fresa", "Pocky Strawberry Biscuit Sticks", "百奇草莓味饼干棒", "cookies", "Galletas", "Pocky", "palitos de galleta con cobertura dulce de fresa.", "biscuit sticks with a sweet strawberry coating.", "饼干棒裹上香甜草莓涂层。", "51 g", "https://www.glico.com/global/"),
+    _snack_item("807331", "KitKat chocolate oscuro", "KitKat Dark Chocolate Pouch", "奇巧黑巧克力威化", "cookies", "Chocolate", "KitKat", "obleas crujientes cubiertas con chocolate oscuro.", "crisp wafers coated in dark chocolate.", "酥脆威化裹上黑巧克力。", "96 g", "https://www.kitkat.com/"),
+    _snack_item("807341", "KitKat chocolate con leche", "KitKat Milk Chocolate Pouch", "奇巧牛奶巧克力威化", "cookies", "Chocolate", "KitKat", "obleas crujientes cubiertas con chocolate con leche.", "crisp wafers coated in milk chocolate.", "酥脆威化裹上牛奶巧克力。", "96 g", "https://www.kitkat.com/"),
+    _snack_item("807810", "Maiduowei gomita de mango pelable", "Maiduowei Peelable Mango Gummy", "麦多维多芒果剥皮软糖", "candy", "Gomitas", "Maiduowei", "gomita de mango con textura pelable y centro suave.", "mango gummy with a peelable texture and soft center.", "可剥皮芒果软糖，口感柔软有趣。", "141 g", "https://www.google.com/search?q=Maiduowei+peelable+mango+gummy"),
+    _snack_item("164397", "Hsu Fu Chi pastel de piña tradicional", "Hsu Fu Chi Thick Pineapple Cake", "徐福记厚切土凤梨酥", "cookies", "Pastelillo", "Hsu Fu Chi", "pastelillo grueso con relleno de piña dulce y ligeramente ácido.", "thick pastry with sweet, gently tart pineapple filling.", "厚切酥皮包裹酸甜土凤梨馅。", "190 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("164398", "Hsu Fu Chi pastel de piña y mango", "Hsu Fu Chi Mango Pineapple Cake", "徐福记台农芒果凤梨酥", "cookies", "Pastelillo", "Hsu Fu Chi", "pastelillo suave con relleno tropical de piña y mango.", "soft pastry with tropical pineapple and mango filling.", "柔软酥皮搭配凤梨与台农芒果馅。", "190 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851110", "Dr. Bear gomita de fresa", "Dr. Bear Strawberry Juice Gummies", "熊博士草莓果汁软糖", "candy", "Gomitas", "Hsu Fu Chi", "gomitas pequeñas con sabor de jugo de fresa.", "small gummies flavored with strawberry juice.", "小包装草莓果汁软糖。", "20 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851120", "Dr. Bear gomitas de frutas", "Dr. Bear Assorted Fruit Gummies", "熊博士缤纷果汁软糖", "candy", "Gomitas", "Hsu Fu Chi", "mezcla de gomitas suaves con distintos sabores frutales.", "soft gummies in assorted fruit flavors.", "多种水果口味的柔软果汁软糖。", "20 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851122", "Dr. Bear ositos de fruta", "Dr. Bear Mixed Fruit Gummy Bears", "熊博士综合水果熊仔软糖", "candy", "Gomitas", "Hsu Fu Chi", "ositos de goma masticables con mezcla de frutas.", "chewy gummy bears with mixed fruit flavors.", "综合水果味熊仔软糖，柔韧有嚼劲。", "60 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851124", "Dr. Bear gomitas de cola", "Dr. Bear Cola Gummies", "熊博士可乐味软糖", "candy", "Gomitas", "Hsu Fu Chi", "gomitas masticables con sabor clásico de cola.", "chewy gummies with classic cola flavor.", "经典可乐味软糖。", "60 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851160", "Dr. Bear gomita de mango pelable", "Dr. Bear Peelable Mango Gummies", "熊博士芒果剥皮软糖", "candy", "Gomitas", "Hsu Fu Chi", "gomita de mango pelable con centro tierno.", "peelable mango gummy with a tender center.", "可剥皮芒果软糖，内芯柔软。", "60 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851180", "Dr. Bear paletas de frutas", "Dr. Bear Assorted Fruit Lollipops", "熊博士综合果汁大棒糖", "candy", "Paletas", "Hsu Fu Chi", "surtido de paletas con sabores de jugo de fruta.", "assorted lollipops with fruit-juice flavors.", "综合果汁口味大棒糖。", "142.5 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851192", "Hsu Fu Chi gomitas de jugo surtidas", "Hsu Fu Chi Assorted Juice Gummies", "徐福记混合果汁橡皮糖", "candy", "Gomitas", "Hsu Fu Chi", "bolsa surtida de gomitas frutales suaves.", "assorted bag of soft fruit gummies.", "混合水果口味软糖袋装。", "230 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851210", "Hsu Fu Chi gomita de mango a granel", "Hsu Fu Chi Bulk Peelable Mango Gummies", "徐福记芒果剥皮软糖（散装）", "candy", "Gomitas", "Hsu Fu Chi", "formato a granel de gomitas pelables de mango.", "bulk-format peelable mango gummies.", "散装可剥皮芒果软糖。", "1.5 kg", "https://www.hsufuchifoods.com/"),
+    _snack_item("851220", "Hsu Fu Chi gomita rellena de uva", "Hsu Fu Chi Crystal Grape Filled Gummies", "徐福记水晶葡萄爆浆软糖", "candy", "Gomitas", "Hsu Fu Chi", "gomitas de uva con centro líquido y frutal.", "grape gummies with a juicy liquid center.", "水晶葡萄味爆浆夹心软糖。", "1.5 kg", "https://www.hsufuchifoods.com/"),
+    _snack_item("851230", "Hsu Fu Chi gomita rellena de durazno", "Hsu Fu Chi White Peach Filled Gummies", "徐福记白桃爆浆软糖", "candy", "Gomitas", "Hsu Fu Chi", "gomitas de durazno blanco con centro jugoso.", "white peach gummies with a juicy center.", "白桃味爆浆夹心软糖。", "1.5 kg", "https://www.hsufuchifoods.com/"),
+    _snack_item("851430", "Hsu Fu Chi palitos de chocolate con animales", "Hsu Fu Chi Chocolate Animal Biscuit Sticks", "徐福记巧克力动物棒", "cookies", "Galletas", "Hsu Fu Chi", "palitos de galleta con chocolate en formato para compartir.", "chocolate biscuit sticks in a share-size format.", "巧克力动物造型饼干棒。", "3 kg", "https://www.hsufuchifoods.com/"),
+    _snack_item("851510", "Hsu Fu Chi malvavisco relleno de durazno", "Hsu Fu Chi Peach Filled Marshmallows", "徐福记蜜桃夹心棉花糖", "candy", "Malvavisco", "Hsu Fu Chi", "malvaviscos suaves con relleno de durazno.", "soft marshmallows with peach filling.", "柔软棉花糖搭配蜜桃夹心。", "64 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851800", "Hsu Fu Chi gelatina de maracuyá y té verde", "Hsu Fu Chi Passion Fruit Green Tea Jelly", "徐福记百香果绿茶吸吸冻", "candy", "Gelatina", "Hsu Fu Chi", "gelatina bebible con maracuyá y té verde.", "drinkable jelly with passion fruit and green tea.", "百香果绿茶味可吸果冻。", "150 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("851820", "Hsu Fu Chi gelatina de coco", "Hsu Fu Chi Coconut Milk Jelly", "徐福记生椰味吸吸冻", "candy", "Gelatina", "Hsu Fu Chi", "gelatina bebible cremosa con sabor de coco.", "creamy drinkable jelly with coconut flavor.", "生椰味可吸果冻，口感柔滑。", "120 g", "https://www.hsufuchifoods.com/"),
+    _snack_item("806170", "Dali Garden pan francés sabor leche", "Dali Garden Milk French Soft Bread", "达利园香奶味法式软面包", "bakery", "Pan", "Dali Garden", "panecillos suaves con aroma dulce de leche.", "soft bread rolls with sweet milk aroma.", "香奶味法式软面包，柔软香甜。", "200 g", "https://www.daliyuan.com/"),
+    _snack_item("806160", "Dali Garden pan francés sabor naranja", "Dali Garden Orange French Soft Bread", "达利园香橙味法式软面包", "bakery", "Pan", "Dali Garden", "panecillos suaves con notas dulces de naranja.", "soft bread rolls with sweet orange notes.", "香橙味法式软面包，柔软清香。", "200 g", "https://www.daliyuan.com/"),
+    _snack_item("061010", "Ranli pastel de chocolate", "Ranli Chocolate Cake", "然利金山角巧克力蛋糕", "bakery", "Pastel", "Ranli", "pastel suave de chocolate en presentación a granel.", "soft chocolate cake in a bulk format.", "巧克力味金山角蛋糕，散装销售。", "2 kg", "https://www.google.com/search?q=Ranli+chocolate+cake"),
+    _snack_item("061020", "Ranli pastel de cebada verde", "Ranli Barley Leaf Cake", "然利金山角大麦若叶蛋糕", "bakery", "Pastel", "Ranli", "pastel suave con sabor de cebada verde.", "soft cake flavored with young barley leaf.", "大麦若叶风味金山角蛋糕。", "2 kg", "https://www.google.com/search?q=Ranli+barley+leaf+cake"),
+    _snack_item("061030", "Ranli pastel red velvet", "Ranli Red Velvet Cake", "然利金山角红丝绒蛋糕", "bakery", "Pastel", "Ranli", "pastel rojo aterciopelado en presentación a granel.", "red velvet cake in a bulk format.", "红丝绒金山角蛋糕，散装销售。", "2 kg", "https://www.google.com/search?q=Ranli+red+velvet+cake"),
+    _snack_item("061050", "Ranli pastel piel de tigre", "Ranli Tiger Skin Cake", "然利虎皮蛋糕", "bakery", "Pastel", "Ranli", "bizcocho enrollado con cubierta tipo piel de tigre.", "rolled sponge cake with a tiger-skin patterned top.", "虎皮纹蛋糕卷，口感柔软。", "2 kg", "https://www.google.com/search?q=Ranli+tiger+skin+cake"),
+    _snack_item("061060", "Ranli pan de leche en capas", "Ranli Layered Milk Bread", "然利千层牛乳面包", "bakery", "Pan", "Ranli", "pan suave en capas con sabor de leche.", "soft layered bread with a milky flavor.", "千层牛乳面包，奶香柔软。", "2 kg", "https://www.google.com/search?q=Ranli+milk+bread"),
+    _snack_item("061080", "Ranli rollo suizo", "Ranli Swiss Roll Cake", "然利瑞士卷蛋糕", "bakery", "Pastel", "Ranli", "rollo de bizcocho suave con relleno cremoso.", "soft sponge roll with a creamy filling.", "柔软瑞士卷搭配奶油夹心。", "2 kg", "https://www.google.com/search?q=Ranli+swiss+roll"),
+    _snack_item("854190", "Want Want gomita QQ de uva", "Want Want QQ Grape Gummies", "旺旺QQ巨峰葡萄味软糖", "candy", "Gomitas", "Want Want", "gomitas francesas suaves con sabor de uva Kyoho.", "soft French-style gummies with Kyoho grape flavor.", "巨峰葡萄味法式软糖。", "70 g", "https://www.want-want.com/"),
+    _snack_item("854200", "Want Want gomita QQ de cereza", "Want Want QQ Cherry Gummies", "旺旺QQ智利车厘子味软糖", "candy", "Gomitas", "Want Want", "gomitas francesas suaves con sabor de cereza chilena.", "soft French-style gummies with Chilean cherry flavor.", "智利车厘子味法式软糖。", "70 g", "https://www.want-want.com/"),
+    _snack_item("854210", "Want Want gomita QQ de durazno", "Want Want QQ Peach Gummies", "旺旺QQ阳山水蜜桃味软糖", "candy", "Gomitas", "Want Want", "gomitas francesas suaves con sabor de durazno de Yangshan.", "soft French-style gummies with Yangshan peach flavor.", "阳山水蜜桃味法式软糖。", "70 g", "https://www.want-want.com/"),
+])
+
+
 # Wholesale packing taken from the three supplied price lists: how many retail
 # units travel inside one case, the size of each unit, and the price of that case.
 # (units, unit_size, case_price, unit_noun)
@@ -605,6 +667,7 @@ CATALOG_PACKS = {
     "811815": (6, "105 g", 354, "bowls"),
     "811816": (6, "105 g", 354, "bowls"),
     "811814": (6, "100 g", 354, "bowls"),
+    "811611": (6, "105 g", 420, "bowls"),
     "634210": (30, "104 g", 507, "bolsas", 5),
     "634220": (30, "106 g", 507, "bolsas", 5),
     "634240": (30, "98 g", 507, "bolsas", 6),
@@ -622,6 +685,38 @@ CATALOG_PACKS = {
     "802160": (22, "70 g", 770, "bolsas"),
     "854170": (12, "70 g", 456, "bolsas"),
     "854180": (12, "70 g", 456, "bolsas"),
+    "880700": (120, "70 g", 4985.20, "cajas", 10),
+    "880701": (120, "51 g", 4985.20, "cajas", 10),
+    "807331": (24, "96 g", 1080, "bolsas"),
+    "807341": (24, "96 g", 1008, "bolsas"),
+    "807810": (24, "141 g", 1320, "bolsas", 12),
+    "164397": (20, "190 g", 1440, "cajas"),
+    "164398": (20, "190 g", 1500, "cajas"),
+    "851110": (120, "20 g", 960, "bolsas", 20),
+    "851120": (120, "20 g", 840, "bolsas", 20),
+    "851122": (60, "60 g", 1320, "bolsas", 10),
+    "851124": (60, "60 g", 1380, "bolsas", 10),
+    "851160": (60, "60 g", 1200, "bolsas", 10),
+    "851180": (12, "142.5 g", 1320, "bolsas"),
+    "851192": (20, "230 g", 1700, "bolsas"),
+    "851210": (4, "1.5 kg", 1360, "bolsas"),
+    "851220": (4, "1.5 kg", 1280, "bolsas"),
+    "851230": (4, "1.5 kg", 1160, "bolsas"),
+    "851430": (1, "3 kg", 900, "bolsas"),
+    "851510": (20, "64 g", 700, "bolsas"),
+    "851800": (40, "150 g", 1100, "bolsas"),
+    "851820": (40, "120 g", 1100, "bolsas"),
+    "806170": (15, "200 g", 825, "bolsas"),
+    "806160": (15, "200 g", 825, "bolsas"),
+    "061010": (1, "2 kg", 600, "cajas"),
+    "061020": (1, "2 kg", 600, "cajas"),
+    "061030": (1, "2 kg", 600, "cajas"),
+    "061050": (1, "2 kg", 600, "cajas"),
+    "061060": (1, "2 kg", 600, "cajas"),
+    "061080": (1, "2 kg", 600, "cajas"),
+    "854190": (40, "70 g", 880, "bolsas", 10),
+    "854200": (40, "70 g", 880, "bolsas", 10),
+    "854210": (40, "70 g", 880, "bolsas", 10),
 }
 
 
@@ -799,6 +894,28 @@ def _refresco(sku, name, category, image, description, units, unit_size, case_pr
     return product
 
 
+def _mx26_drink(
+    sku, name_es, name_en, name_zh, category, brand,
+    description_es, description_en, description_zh,
+    units, unit_size, case_price, unit_noun="botellas", inner=None,
+):
+    """Create a multilingual beverage row from CATALAGO ACTUALIZADO MX26."""
+    product = _refresco(
+        sku, name_es, category, sku, description_es,
+        units, unit_size, case_price, unit_noun, inner=inner,
+    )
+    product.update(
+        name_es=name_es,
+        name_en=name_en,
+        name_zh=name_zh,
+        description_es=description_es,
+        description_en=description_en,
+        description_zh=description_zh,
+        brand=brand,
+    )
+    return product
+
+
 # Promotions printed in the source catalog (买十送一 / 买五送二).
 BUY_10_GET_1 = "promo.buy10get1"
 BUY_5_GET_2 = "promo.buy5get2"
@@ -924,6 +1041,73 @@ REFRESCOS_PRODUCTS = [
         24, "300 ml", 1225),
 ]
 
+REFRESCOS_PRODUCTS.extend([
+    _mx26_drink("832120", "Master Kong té negro helado", "Master Kong Iced Black Tea", "康师傅冰红茶", "te", "Master Kong",
+        "Té negro frío con un toque cítrico y dulzor equilibrado.", "Chilled black tea with a citrus note and balanced sweetness.", "清爽冰红茶，带柑橘香气与适度甜味。", 15, "500 ml", 285),
+    _mx26_drink("832180", "Master Kong bebida de ciruela ácida", "Master Kong Sour Plum Drink", "康师傅酸梅汤", "te", "Master Kong",
+        "Bebida tradicional de ciruela ahumada, agridulce y refrescante.", "Traditional smoked-plum drink, tangy, sweet and refreshing.", "传统酸梅汤，酸甜清爽并带淡淡烟熏风味。", 15, "500 ml", 285),
+    _mx26_drink("832150", "Master Kong té verde", "Master Kong Green Tea", "康师傅绿茶", "te", "Master Kong",
+        "Té verde listo para beber, ligero y refrescante.", "Light, refreshing ready-to-drink green tea.", "清淡爽口的即饮绿茶。", 15, "500 ml", 285),
+    _mx26_drink("832130", "Master Kong té de jazmín con miel", "Master Kong Jasmine Honey Tea", "康师傅茉莉蜜茶", "te", "Master Kong",
+        "Té de jazmín floral suavemente endulzado con miel.", "Floral jasmine tea gently sweetened with honey.", "茉莉花茶融合蜂蜜甜香。", 15, "500 ml", 285),
+    _mx26_drink("831180", "Chi Forest soda de manzana verde", "Chi Forest Green Apple Sparkling Water", "元气森林青苹果气泡水", "agua_gas", "Chi Forest",
+        "Agua con gas de manzana verde, fresca y afrutada.", "Crisp, fruity green-apple sparkling water.", "清脆果香的青苹果气泡水。", 15, "480 ml", 435),
+    _mx26_drink("831270", "Chi Forest soda de durazno blanco", "Chi Forest White Peach Sparkling Water", "元气森林白桃气泡水", "agua_gas", "Chi Forest",
+        "Agua con gas de durazno blanco en botella.", "White-peach sparkling water in a bottle.", "瓶装白桃气泡水。", 15, "480 ml", 435),
+    _mx26_drink("831230", "Chi Forest soda de uva negra · lata", "Chi Forest Black Grape Sparkling Water · Can", "元气森林夏黑葡萄气泡水（罐装）", "agua_gas", "Chi Forest",
+        "Soda de uva negra en lata, ligera y burbujeante.", "Light, bubbly black-grape sparkling water in a can.", "清爽起泡的夏黑葡萄罐装气泡水。", 24, "330 ml", 473, "latas", inner=6),
+    _mx26_drink("831250", "Chi Forest soda de naranja · lata", "Chi Forest Orange Sparkling Water · Can", "元气森林橙味气泡水（罐装）", "agua_gas", "Chi Forest",
+        "Soda de naranja en lata con un perfil cítrico brillante.", "Canned orange sparkling water with a bright citrus profile.", "清新明亮的橙味罐装气泡水。", 24, "330 ml", 473, "latas", inner=6),
+    _mx26_drink("831290", "Chi Forest soda de fresa · lata", "Chi Forest Strawberry Sparkling Water · Can", "元气森林草莓气泡水（罐装）", "agua_gas", "Chi Forest",
+        "Soda de fresa en lata, aromática y refrescante.", "Fragrant, refreshing strawberry sparkling water in a can.", "芳香清爽的草莓罐装气泡水。", 24, "330 ml", 473, "latas", inner=6),
+    _mx26_drink("831310", "Alienergy electrolitos de limón", "Alienergy Lime Electrolyte Drink", "外星人青柠电解质水", "electrolitos", "Alienergy",
+        "Bebida con electrolitos sabor limón para hidratarse fría.", "Lime electrolyte drink made for cold refreshment.", "青柠味电解质水，冰镇饮用更清爽。", 15, "500 ml", 495),
+    _mx26_drink("831320", "Alienergy electrolitos de durazno blanco", "Alienergy White Peach Electrolyte Drink", "外星人白桃电解质水", "electrolitos", "Alienergy",
+        "Bebida con electrolitos de durazno blanco, ligera y afrutada.", "Light, fruity white-peach electrolyte drink.", "轻盈果香的白桃味电解质水。", 15, "500 ml", 495),
+    _mx26_drink("833110", "Coconut Palm leche de coco", "Coconut Palm Coconut Milk Drink", "椰树牌椰汁", "jugos_lacteos", "Coconut Palm",
+        "La clásica bebida cremosa de leche de coco en lata.", "Classic creamy coconut-milk drink in a can.", "经典椰树牌罐装椰汁。", 24, "245 ml", 480, "latas", inner=6),
+    _mx26_drink("833720", "Kirin Afternoon Tea · té con leche", "Kirin Afternoon Tea Milk Tea", "麒麟午后红茶奶茶", "te", "Kirin",
+        "Té negro con leche de textura suave y sabor equilibrado.", "Smooth black milk tea with a balanced flavor.", "口感顺滑、风味平衡的红茶奶茶。", 24, "500 ml", 840),
+    _mx26_drink("836110", "Mizone durazno", "Mizone Peach Vitamin Drink", "脉动桃子味", "electrolitos", "Mizone",
+        "Bebida vitaminada sabor durazno, ligera y refrescante.", "Light, refreshing peach-flavored vitamin drink.", "清爽轻盈的桃子味维生素饮料。", 15, "600 ml", 420),
+    _mx26_drink("831830", "Bebida de espino sin azúcar", "Sugar-Free Hawthorn Drink", "无糖山楂饮料", "otros", "Shan Zha Shu Xia",
+        "Bebida agridulce de espino, sin azúcar.", "Tangy-sweet hawthorn drink with no sugar.", "酸甜清爽的无糖山楂饮料。", 15, "350 ml", 600),
+    _mx26_drink("834520", "Yogurt bebible de fresa", "Strawberry Yogurt Drink", "草莓味乳酸菌饮料", "jugos_lacteos", "Shui Lian Wan",
+        "Bebida de yogurt de fresa, cremosa y afrutada.", "Creamy, fruity strawberry yogurt drink.", "香甜顺滑的草莓味乳酸菌饮料。", 20, "280 ml", 760),
+    _mx26_drink("834530", "Yogurt bebible de mango", "Mango Yogurt Drink", "芒果味乳酸菌饮料", "jugos_lacteos", "Shui Lian Wan",
+        "Bebida de yogurt de mango, cremosa y tropical.", "Creamy, tropical mango yogurt drink.", "浓郁顺滑的芒果味乳酸菌饮料。", 20, "280 ml", 760),
+    _mx26_drink("837210", "Arctic Ocean soda de naranja · vidrio", "Arctic Ocean Orange Soda · Glass Bottle", "北冰洋橙汁汽水（玻璃瓶）", "agua_gas", "Arctic Ocean",
+        "Soda china clásica de naranja en botella de vidrio.", "Classic Chinese orange soda in a glass bottle.", "经典北冰洋玻璃瓶橙汁汽水。", 12, "248 ml", 384),
+    _mx26_drink("871110", "Arctic Ocean soda de naranja · lata", "Arctic Ocean Orange Soda · Can", "北冰洋橙汁汽水（罐装）", "agua_gas", "Arctic Ocean",
+        "La soda clásica de naranja en presentación de lata.", "The classic orange soda in a can.", "经典北冰洋罐装橙汁汽水。", 24, "11 oz", 600, "latas"),
+    _mx26_drink("880170", "Youngwoo bebida de aloe", "Youngwoo Aloe Drink", "Youngwoo 芦荟饮料", "jugos_lacteos", "Youngwoo",
+        "Bebida coreana de aloe, dulce y refrescante.", "Sweet, refreshing Korean aloe drink.", "清甜爽口的韩国芦荟饮料。", 20, "500 ml", 760),
+    _mx26_drink("880210", "Leche de coco con plátano", "Banana Coconut Milk Drink", "香蕉味椰奶饮料", "jugos_lacteos", "Coconut Palm",
+        "Bebida cremosa de coco y plátano.", "Creamy coconut and banana drink.", "香浓顺滑的香蕉味椰奶饮料。", 24, "290 ml", 980, "latas", inner=6),
+    _mx26_drink("880220", "Leche de coco con mango", "Mango Coconut Milk Drink", "芒果味椰奶饮料", "jugos_lacteos", "Coconut Palm",
+        "Bebida cremosa de coco y mango.", "Creamy coconut and mango drink.", "香浓顺滑的芒果味椰奶饮料。", 24, "290 ml", 980, "latas", inner=6),
+    _mx26_drink("880230", "Leche de coco con fresa", "Strawberry Coconut Milk Drink", "草莓味椰奶饮料", "jugos_lacteos", "Coconut Palm",
+        "Bebida cremosa de coco y fresa.", "Creamy coconut and strawberry drink.", "香浓顺滑的草莓味椰奶饮料。", 24, "290 ml", 980, "latas", inner=6),
+    _mx26_drink("880330", "Binggrae leche de plátano", "Binggrae Banana Flavored Milk", "宾格瑞香蕉牛奶", "jugos_lacteos", "Binggrae",
+        "La bebida láctea coreana clásica con sabor a plátano.", "The classic Korean banana-flavored milk drink.", "经典韩国宾格瑞香蕉牛奶。", 24, "200 ml", 720, "botellas", inner=6),
+    _mx26_drink("880340", "Binggrae leche de fresa", "Binggrae Strawberry Flavored Milk", "宾格瑞草莓牛奶", "jugos_lacteos", "Binggrae",
+        "Bebida láctea coreana suave con sabor a fresa.", "Smooth Korean strawberry-flavored milk drink.", "顺滑香甜的韩国草莓牛奶。", 24, "200 ml", 720, "botellas", inner=6),
+    _mx26_drink("880360", "Binggrae leche de taro", "Binggrae Taro Flavored Milk", "宾格瑞香芋牛奶", "jugos_lacteos", "Binggrae",
+        "Bebida láctea coreana cremosa con sabor a taro.", "Creamy Korean taro-flavored milk drink.", "香浓顺滑的韩国香芋牛奶。", 24, "200 ml", 720, "botellas", inner=6),
+    _mx26_drink("880370", "Binggrae leche de café", "Binggrae Coffee Flavored Milk", "宾格瑞咖啡牛奶", "jugos_lacteos", "Binggrae",
+        "Bebida láctea coreana con café, suave y dulce.", "Smooth, sweet Korean coffee-flavored milk drink.", "顺滑香甜的韩国咖啡牛奶。", 24, "200 ml", 720, "botellas", inner=6),
+    _mx26_drink("831430", "Ramune naranja", "Ramune Orange", "哈达波子汽水橙子味", "agua_gas", "Ramune",
+        "Soda japonesa Ramune sabor naranja con botella de canica.", "Orange Ramune soda in the classic marble bottle.", "经典弹珠瓶橙子味波子汽水。", 30, "200 ml", 1050),
+    _mx26_drink("831490", "Ramune yuzu", "Ramune Yuzu", "哈达波子汽水柚子味", "agua_gas", "Ramune",
+        "Soda japonesa Ramune con el perfil cítrico del yuzu.", "Ramune soda with a bright yuzu-citrus profile.", "清新柚子风味的弹珠汽水。", 30, "200 ml", 1050),
+    _mx26_drink("880601", "Tomomasu soda de durazno blanco", "Tomomasu White Peach Soda", "友桝白桃汽水", "agua_gas", "Tomomasu",
+        "Soda artesanal japonesa de durazno blanco.", "Japanese craft white-peach soda.", "日本友桝白桃风味汽水。", 24, "300 ml", 1200),
+    _mx26_drink("837110", "Red Bull China", "Red Bull China", "红牛维生素功能饮料", "otros", "Red Bull",
+        "Bebida energética Red Bull en su presentación china.", "Red Bull energy drink in its Chinese-market can.", "中国版红牛维生素功能饮料。", 24, "245 ml", 840, "latas"),
+    _mx26_drink("A72103", "Want Want Hot Kid leche", "Want Want Hot Kid Milk Drink", "旺旺旺仔牛奶", "jugos_lacteos", "Want Want",
+        "Bebida láctea dulce Want Want en lata.", "Sweet Want Want milk drink in a can.", "经典旺旺旺仔牛奶罐装饮品。", 24, "245 ml", 750, "latas"),
+])
+
 for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
     brand_by_prefix = {
         "833130": "Coconut Palm", "833210": "Wong Lo Kat", "194280": "Vita",
@@ -931,7 +1115,9 @@ for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
         "837410": "MASAN", "837412": "MASAN", "837520": "J WAY", "837510": "J WAY",
         "880910": "Haitai", "831390": "Ramune", "831410": "Ramune",
     }
-    if refresco_product["sku"].startswith("831") and refresco_product["sku"] not in brand_by_prefix:
+    if refresco_product.get("brand"):
+        brand = refresco_product["brand"]
+    elif refresco_product["sku"].startswith("831") and refresco_product["sku"] not in brand_by_prefix:
         brand = "Chi Forest"
     elif refresco_product["sku"].startswith("832"):
         brand = "Master Kong"
@@ -961,6 +1147,12 @@ BRANDS = [
     {"name": "Master Kong", "kind": "noodles"},
     {"name": "Lay's", "kind": "snacks"},
     {"name": "Want Want", "kind": "snacks"},
+    {"name": "Pocky", "kind": "snacks"},
+    {"name": "KitKat", "kind": "snacks"},
+    {"name": "Hsu Fu Chi", "kind": "snacks"},
+    {"name": "Dali Garden", "kind": "snacks"},
+    {"name": "Ranli", "kind": "snacks"},
+    {"name": "Maiduowei", "kind": "snacks"},
     {"name": "Chi Forest", "kind": "drinks"},
     {"name": "Vita", "kind": "drinks"},
     {"name": "Binggrae", "kind": "drinks"},
@@ -976,6 +1168,12 @@ BRANDS = [
     {"name": "Ramune", "kind": "drinks"},
     {"name": "Tomomasu", "kind": "drinks"},
     {"name": "Shan Zha Shu Xia", "kind": "drinks"},
+    {"name": "Alienergy", "kind": "drinks"},
+    {"name": "Kirin", "kind": "drinks"},
+    {"name": "Mizone", "kind": "drinks"},
+    {"name": "Arctic Ocean", "kind": "drinks"},
+    {"name": "Youngwoo", "kind": "drinks"},
+    {"name": "Red Bull", "kind": "drinks"},
 ]
 
 # The featured story cards mirror catalog pricing so one product never shows two prices.
@@ -1029,7 +1227,10 @@ def carousel_catalog(catalog_products: list[dict]) -> list[dict]:
     lead = [product_by_id[product_id] for product_id in lead_ids if product_id in product_by_id]
     lead_set = set(lead_ids)
     remainder = [product for product in catalog_products if str(product["id"]) not in lead_set]
-    category_order = {"soups": 0, "bowls": 1, "tteokbokki": 2, "sauces": 3, "chips": 4}
+    category_order = {
+        "soups": 0, "bowls": 1, "tteokbokki": 2, "sauces": 3,
+        "cookies": 4, "candy": 5, "bakery": 6, "chips": 7,
+    }
     remainder.sort(
         key=lambda product: (
             category_order.get(product.get("category", ""), 4),
@@ -1042,6 +1243,17 @@ def carousel_catalog(catalog_products: list[dict]) -> list[dict]:
 @app.get("/")
 def index():
     catalog_products = current_catalog()
+    department_counts = {
+        "noodles": sum(
+            product.get("category") in {"soups", "bowls", "tteokbokki", "sauces"}
+            for product in catalog_products
+        ),
+        "snacks": sum(
+            product.get("category") in {"chips", "cookies", "candy", "bakery"}
+            for product in catalog_products
+        ),
+        "drinks": len(REFRESCOS_PRODUCTS),
+    }
     return render_template(
         "index.html",
         products=PRODUCTS,
@@ -1051,6 +1263,7 @@ def index():
         refrescos_products=REFRESCOS_PRODUCTS,
         refrescos_categories=REFRESCOS_CATEGORIES,
         brands=BRANDS,
+        department_counts=department_counts,
     )
 
 
