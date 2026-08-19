@@ -1139,43 +1139,6 @@ for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
     apply_intl_names(refresco_product)
 
 
-BRANDS = [
-    {"name": "Buldak", "kind": "noodles"},
-    {"name": "Samyang", "kind": "noodles"},
-    {"name": "MEP", "kind": "noodles"},
-    {"name": "Tangle", "kind": "noodles"},
-    {"name": "Master Kong", "kind": "noodles"},
-    {"name": "Lay's", "kind": "snacks"},
-    {"name": "Want Want", "kind": "snacks"},
-    {"name": "Pocky", "kind": "snacks"},
-    {"name": "KitKat", "kind": "snacks"},
-    {"name": "Hsu Fu Chi", "kind": "snacks"},
-    {"name": "Dali Garden", "kind": "snacks"},
-    {"name": "Ranli", "kind": "snacks"},
-    {"name": "Maiduowei", "kind": "snacks"},
-    {"name": "Chi Forest", "kind": "drinks"},
-    {"name": "Vita", "kind": "drinks"},
-    {"name": "Binggrae", "kind": "drinks"},
-    {"name": "Coconut Palm", "kind": "drinks"},
-    {"name": "Wong Lo Kat", "kind": "drinks"},
-    {"name": "Shui Lian Wan", "kind": "drinks"},
-    {"name": "MASAN", "kind": "drinks"},
-    {"name": "Taisun", "kind": "drinks"},
-    {"name": "J WAY", "kind": "drinks"},
-    {"name": "Dongpeng", "kind": "drinks"},
-    {"name": "Haitai", "kind": "drinks"},
-    {"name": "Yogo Vera", "kind": "drinks"},
-    {"name": "Ramune", "kind": "drinks"},
-    {"name": "Tomomasu", "kind": "drinks"},
-    {"name": "Shan Zha Shu Xia", "kind": "drinks"},
-    {"name": "Alienergy", "kind": "drinks"},
-    {"name": "Kirin", "kind": "drinks"},
-    {"name": "Mizone", "kind": "drinks"},
-    {"name": "Arctic Ocean", "kind": "drinks"},
-    {"name": "Youngwoo", "kind": "drinks"},
-    {"name": "Red Bull", "kind": "drinks"},
-]
-
 # The featured story cards mirror catalog pricing so one product never shows two prices.
 _CATALOG_BY_ID = {p["id"]: p for p in CATALOG_PRODUCTS}
 for featured in PRODUCTS:
@@ -1262,7 +1225,6 @@ def index():
         catalog_categories=CATALOG_CATEGORIES,
         refrescos_products=REFRESCOS_PRODUCTS,
         refrescos_categories=REFRESCOS_CATEGORIES,
-        brands=BRANDS,
         department_counts=department_counts,
     )
 

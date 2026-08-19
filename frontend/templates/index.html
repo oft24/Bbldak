@@ -15,8 +15,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=24">
-    <script defer src="/js/i18n.js?v=11"></script>
+    <link rel="stylesheet" href="/css/style.css?v=25">
+    <script defer src="/js/i18n.js?v=12"></script>
     <script defer src="/js/app.js?v=27"></script>
   </head>
   <body>
@@ -42,7 +42,6 @@
         <a href="#catalog" data-i18n="nav.soups" data-view-toggle="shop" data-department-filter="noodles">Sopas</a>
         <a href="#catalog" data-i18n="nav.chips" data-view-toggle="shop" data-department-filter="snacks">Papas</a>
         <a href="#refrescos" class="nav-refrescos" data-i18n="nav.refrescos" data-view-toggle="refrescos">Refrescos</a>
-        <a href="#brands" data-i18n="nav.brands" data-view-toggle="shop">Marcas</a>
       </nav>
       <div class="header-actions">
         <button class="pill pill--soft header-search" type="button" data-open-search>
@@ -201,24 +200,6 @@
                   <span data-catalog-detail-label="{{ item.id }}">Ver descripción</span><span aria-hidden="true">↓</span>
                 </button>
               </div>
-            </article>
-          {% endfor %}
-        </div>
-      </section>
-
-      <section class="brands-section section-pad" id="brands" aria-labelledby="brands-title">
-        <div class="brands-heading reveal">
-          <div>
-            <div class="section-index" data-i18n="brands.index">Marcas</div>
-            <h2 id="brands-title" data-i18n-html="brands.title">Lo que vendemos.<br><span>Una selección de Asia.</span></h2>
-          </div>
-          <p data-i18n="brands.copy">Las marcas se conservan con su nombre comercial; los productos y descripciones cambian entre español, inglés y chino.</p>
-        </div>
-        <div class="brands-grid reveal">
-          {% for brand in brands %}
-            <article class="brand-card brand-card--{{ brand.kind }}">
-              <span data-i18n="brands.kind.{{ brand.kind }}">{{ brand.kind }}</span>
-              <strong>{{ brand.name }}</strong>
             </article>
           {% endfor %}
         </div>
