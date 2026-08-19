@@ -24,9 +24,9 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=21', response.data)
-        self.assertIn(b'js/i18n.js?v=10', response.data)
-        self.assertIn(b'js/app.js?v=25', response.data)
+        self.assertIn(b'css/style.css?v=24', response.data)
+        self.assertIn(b'js/i18n.js?v=11', response.data)
+        self.assertIn(b'js/app.js?v=27', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
         self.assertIn(b'data-catalog-image="811920"', response.data)
         self.assertIn(b'data-catalog-name="634210"', response.data)
@@ -41,6 +41,7 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(response.data.count(b'data-card-product="'), 83)
         self.assertEqual(response.data.count(b'data-select-product="'), 83)
         self.assertEqual(response.data.count(b'data-search-product="'), 83)
+        self.assertEqual(response.data.count(b'/assets/refrescos/cutouts/'), 71)
         self.assertLess(response.data.index(b'data-card-product="811120"'), response.data.index(b'data-card-product="811140"'))
         self.assertLess(response.data.index(b'data-card-product="811140"'), response.data.index(b'data-card-product="811150"'))
         self.assertLess(response.data.index(b'data-card-product="811650"'), response.data.index(b'data-card-product="811910"'))
@@ -168,6 +169,13 @@ class ShowroomTests(unittest.TestCase):
                 self.assertGreater(len(image_response.get_data()), 4000, item["sku"])
             finally:
                 image_response.close()
+            cutout_path = item["image"].split("?")[0].replace("/refrescos/", "/refrescos/cutouts/")
+            cutout_response = self.client.get(cutout_path)
+            try:
+                self.assertEqual(cutout_response.status_code, 200, item["sku"])
+                self.assertGreater(len(cutout_response.get_data()), 4000, item["sku"])
+            finally:
+                cutout_response.close()
 
     def test_checkout_rejects_sold_out_product(self):
         response = self.client.post(

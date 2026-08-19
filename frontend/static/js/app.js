@@ -1245,7 +1245,9 @@
       requestAnimationFrame(() => refrescoDom.info?.classList.add("is-changing"));
 
       if (refrescoDom.sku) refrescoDom.sku.textContent = product.sku;
-      if (refrescoDom.category) refrescoDom.category.textContent = product.category_label || t("refrescos.type");
+      if (refrescoDom.category) refrescoDom.category.textContent = baseProduct.category
+        ? t(`refrescos.filter.${baseProduct.category}`)
+        : product.category_label || t("refrescos.type");
       if (refrescoDom.name) refrescoDom.name.textContent = product.name;
       if (refrescoDom.nameEn) refrescoDom.nameEn.textContent = product.name_en || "";
       if (refrescoDom.nameZh) refrescoDom.nameZh.textContent = product.name_zh || "";
@@ -1265,15 +1267,27 @@
       }
 
       refrescoDom.cards.forEach((card, cardIndex) => {
+        const cardProduct = localizedProduct(drinkProducts[cardIndex]);
         const active = cardIndex === index;
         card.classList.toggle("is-active", active);
         card.setAttribute("aria-pressed", String(active));
+        card.setAttribute("aria-label", t("refrescos.select", { name: cardProduct.name }));
+        const image = card.querySelector("img");
+        if (image) image.alt = cardProduct.name;
       });
       refrescoDom.tabs.forEach((tab, tabIndex) => {
+        const tabProduct = localizedProduct(drinkProducts[tabIndex]);
         const active = tabIndex === index;
+        tab.textContent = tabProduct.name;
         tab.classList.toggle("is-active", active);
         tab.setAttribute("aria-pressed", String(active));
       });
+      const activeTab = refrescoDom.tabs[index];
+      const tabRail = activeTab?.parentElement;
+      if (activeTab && tabRail) {
+        const centeredLeft = activeTab.offsetLeft - (tabRail.clientWidth - activeTab.offsetWidth) / 2;
+        tabRail.scrollTo({ left: centeredLeft, behavior: reducedMotion ? "auto" : "smooth" });
+      }
       updateRefrescoDetailButtons(String(baseProduct.id));
     }
 
@@ -1326,23 +1340,24 @@
         }
 
         const shellWidth = refrescoDom.carousel.clientWidth || 360;
-        const radius = clamp(shellWidth * 0.36, 110, 230);
-        const depth = clamp(shellWidth * 0.32, 100, 200);
+        const compactCarousel = window.innerWidth <= 820;
+        const radius = clamp(shellWidth * (compactCarousel ? 0.58 : 0.52), compactCarousel ? 165 : 260, compactCarousel ? 250 : 450);
+        const depth = clamp(shellWidth * 0.42, compactCarousel ? 145 : 220, compactCarousel ? 240 : 370);
         refrescoDom.cards.forEach((card, index) => {
           const distance = refrescoDistance(index - refrescoState.angle);
           const absoluteDistance = Math.abs(distance);
           const selectedDistance = Math.abs(refrescoDistance(index - refrescoState.selected));
           const isVisible = selectedDistance <= 1;
-          const theta = clamp(distance, -4, 4) * 0.6;
+          const theta = clamp(distance, -4, 4) * 0.52;
           const x = Math.sin(theta) * radius;
           const z = (Math.cos(theta) - 1) * depth;
           const proximity = clamp(1 + z / (depth * 2.6), 0, 1);
-          const scale = 0.66 + proximity * 0.34;
-          const rotationY = distance * -26;
+          const scale = 0.68 + proximity * 0.32;
+          const rotationY = distance * -24;
           const float = reducedMotion ? 0 : Math.sin(performance.now() / 2100 + index * 2.1) * 4 * proximity;
           card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
-          card.style.opacity = isVisible ? String(0.22 + proximity * 0.78) : "0";
-          card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 4).toFixed(2)}px)`;
+          card.style.opacity = isVisible ? String(0.38 + proximity * 0.62) : "0";
+          card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 2.6).toFixed(2)}px)`;
           card.style.zIndex = String(1000 + Math.round(z));
           card.style.pointerEvents = isVisible ? "auto" : "none";
           card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
@@ -1375,7 +1390,7 @@
       const delta = event.clientX - refrescoState.dragStartX;
       refrescoState.moved = Math.max(refrescoState.moved, Math.abs(delta));
       const shellWidth = refrescoDom.carousel.clientWidth || 360;
-      refrescoState.angle = refrescoState.dragStartAngle - delta / clamp(shellWidth * 0.7, 160, 320);
+      refrescoState.angle = refrescoState.dragStartAngle - delta / clamp(shellWidth * 0.72, 180, 380);
       refrescoState.velocity = -(event.clientX - refrescoState.lastX) / 260;
       refrescoState.lastX = event.clientX;
       refrescoNearestSelectionFromAngle();
