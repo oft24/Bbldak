@@ -4,7 +4,7 @@ from pathlib import Path
 from PIL import Image
 
 from app import app
-from backend.app import CATALOG_PRODUCTS
+from backend.app import CATALOG_PRODUCTS, REFRESCOS_PRODUCTS
 
 
 class ShowroomTests(unittest.TestCase):
@@ -28,7 +28,7 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=30', response.data)
+        self.assertIn(b'css/style.css?v=31', response.data)
         self.assertIn(b'js/i18n.js?v=16', response.data)
         self.assertIn(b'js/app.js?v=34', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
@@ -59,6 +59,7 @@ class ShowroomTests(unittest.TestCase):
         self.assertIn(b'data-catalog-spice="811130"', response.data)
         self.assertIn(b'data-catalog-spice="634280"', response.data)
         self.assertEqual(response.data.count(b'/assets/refrescos/cutouts/'), 71)
+        self.assertEqual(response.data.count(b'/assets/mobile-catalog/'), 154)
         self.assertLess(response.data.index(b'data-card-product="811120"'), response.data.index(b'data-card-product="811140"'))
         self.assertLess(response.data.index(b'data-card-product="811140"'), response.data.index(b'data-card-product="811150"'))
         self.assertLess(response.data.index(b'data-card-product="811650"'), response.data.index(b'data-card-product="811910"'))
@@ -300,6 +301,29 @@ class ShowroomTests(unittest.TestCase):
             with Image.open(asset_root / "cutouts" / original_path.name) as cutout:
                 self.assertIn("A", cutout.getbands(), original_path.name)
                 self.assertGreaterEqual(max(cutout.size), 1000, original_path.name)
+
+    def test_mobile_catalog_assets_are_complete_and_lightweight(self):
+        asset_root = Path(__file__).resolve().parents[1] / "frontend" / "assets" / "mobile-catalog"
+        images = sorted(asset_root.glob("*.webp"))
+        expected_names = {f"{item['sku']}.webp" for item in [*CATALOG_PRODUCTS, *REFRESCOS_PRODUCTS]}
+        self.assertEqual({path.name for path in images}, expected_names)
+        self.assertEqual(len(images), 154)
+
+        for image_path in images:
+            self.assertLess(image_path.stat().st_size, 100 * 1024, image_path.name)
+            with Image.open(image_path) as image:
+                image.verify()
+            with Image.open(image_path) as image:
+                self.assertLessEqual(max(image.size), 640, image_path.name)
+
+    def test_phone_catalog_uses_compact_two_column_layout(self):
+        css_path = Path(__file__).resolve().parents[1] / "frontend" / "static" / "css" / "style.css"
+        css = css_path.read_text(encoding="utf-8")
+        phone_rules = css[css.index("@media (max-width: 600px)") : css.index("@media (max-width: 380px)")]
+        self.assertIn("grid-template-columns: repeat(2, minmax(0, 1fr))", phone_rules)
+        self.assertIn(".catalog-card.reveal { opacity: 1; transform: none; transition: none; }", phone_rules)
+        self.assertIn(".catalog-card__body > .intl-names { display: none; }", phone_rules)
+        self.assertIn("content-visibility: auto", css)
 
     def test_checkout_rejects_sold_out_product(self):
         response = self.client.post(

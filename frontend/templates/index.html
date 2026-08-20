@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=30">
+    <link rel="stylesheet" href="/css/style.css?v=31">
     <script defer src="/js/i18n.js?v=16"></script>
     <script defer src="/js/app.js?v=34"></script>
   </head>
@@ -180,7 +180,10 @@
               <div class="catalog-card__visual">
                 <span data-catalog-category="{{ item.category }}">{{ item.category_label }}</span>
                 <span class="catalog-card__brand">{{ item.brand }}</span>
-                <img src="{{ item.image }}" alt="{{ item.name }}, SKU {{ item.sku }}" data-catalog-image="{{ item.id }}" loading="lazy" decoding="async">
+                <picture>
+                  <source media="(max-width: 600px)" srcset="/assets/mobile-catalog/{{ item.sku }}.webp?v=1">
+                  <img src="{{ item.image }}" alt="{{ item.name }}, SKU {{ item.sku }}" data-catalog-image="{{ item.id }}" loading="lazy" decoding="async" fetchpriority="low">
+                </picture>
               </div>
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>
@@ -401,7 +404,10 @@
               <div class="catalog-card__visual">
                 <span>{{ item.category_label }}</span>
                 <span class="catalog-card__brand">{{ item.brand }}</span>
-                <img src="{{ item.image }}" alt="{{ item.name }}, SKU {{ item.sku }}" loading="lazy" decoding="async">
+                <picture>
+                  <source media="(max-width: 600px)" srcset="/assets/mobile-catalog/{{ item.sku }}.webp?v=1">
+                  <img src="{{ item.image }}" alt="{{ item.name }}, SKU {{ item.sku }}" loading="lazy" decoding="async" fetchpriority="low">
+                </picture>
               </div>
               <div class="catalog-card__body">
                 <div class="catalog-card__sku">SKU {{ item.sku }}</div>

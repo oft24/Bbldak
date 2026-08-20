@@ -560,6 +560,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .catalog-card__visual::after { content: ""; position: absolute; z-index: 0; inset: auto 12% 4%; height: 19%; border-radius: 50%; background: rgba(55, 34, 38, .2); filter: blur(20px); }
 .catalog-card__visual > span { position: absolute; top: 15px; left: 15px; z-index: 2; padding: 7px 10px; border-radius: 999px; color: #514649; background: rgba(255, 255, 255, .78); backdrop-filter: blur(8px); font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .catalog-card__visual > .catalog-card__brand { right: 15px; left: auto; max-width: 48%; overflow: hidden; color: #fff; background: rgba(32, 25, 27, .76); text-overflow: ellipsis; white-space: nowrap; }
+.catalog-card__visual picture { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; }
 .catalog-card__visual img { position: relative; z-index: 1; width: 94%; height: 92%; object-fit: contain; filter: drop-shadow(0 22px 24px rgba(0, 0, 0, .23)); transition: transform 430ms var(--ease); }
 .catalog-card:hover .catalog-card__visual img { transform: scale(1.045) rotate(-1deg); }
 .catalog-card__body { flex: 1; padding: 20px 20px 18px; display: flex; flex-direction: column; }
@@ -1121,7 +1122,7 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
   .legal-sections { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 600px) {
   .site-header { gap: 8px; }
   .brand { font-size: 18px; }
   .header-actions { gap: 6px; }
@@ -1136,12 +1137,50 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
   .circle-button { flex: 0 0 38px; width: 38px; height: 38px; }
   .price-row { margin-bottom: 14px; }
   .add-button { min-height: 52px; }
-  .section-pad { padding: 90px 20px; }
+  .section-pad { padding: 82px 12px; }
   .catalog-departments { grid-template-columns: 1fr; margin-top: 38px; }
   .department-card, .department-card--drinks { min-height: 145px; grid-column: auto; }
-  .catalog-grid { grid-template-columns: 1fr; }
-  .catalog-card__visual { height: min(88vw, 360px); }
-  .catalog-card h3 { min-height: 0; }
+  .catalog-heading h2,
+  .refrescos-catalog-heading h2 { font-size: clamp(42px, 14vw, 64px); }
+  .catalog-filters,
+  .refrescos-filters { position: sticky; z-index: 10; top: var(--header-h); margin: 32px -12px 0; padding: 10px 12px; background: #171314; box-shadow: 0 10px 20px rgba(0, 0, 0, .16); }
+  .refrescos-filters { background: #f3ece6; }
+  .catalog-filter,
+  .refrescos-filter { min-height: 38px; padding-inline: 14px; font-size: 10px; }
+  .catalog-grid,
+  .refrescos-catalog .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+  .catalog-card { border-radius: 16px; box-shadow: 0 8px 22px rgba(0, 0, 0, .16); }
+  .catalog-card.reveal { opacity: 1; transform: none; transition: none; }
+  .catalog-card__visual { height: clamp(132px, 43vw, 205px); }
+  .catalog-card__visual::after { inset: auto 15% 5%; filter: blur(10px); }
+  .catalog-card__visual > span { top: 8px; left: 8px; max-width: 56%; padding: 4px 6px; font-size: 6px; letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; }
+  .catalog-card__visual > .catalog-card__brand { right: 8px; left: auto; max-width: 40%; }
+  .catalog-card__visual img { width: 96%; height: 92%; filter: drop-shadow(0 8px 9px rgba(0, 0, 0, .18)); }
+  .catalog-card__body { padding: 12px 10px 10px; }
+  .catalog-card__sku { font-size: 7px; letter-spacing: .1em; }
+  .catalog-card h3 { min-height: 2.15em; margin-top: 7px; display: -webkit-box; overflow: hidden; font-size: clamp(15px, 4.7vw, 20px); line-height: 1.07; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+  .catalog-card__body > .intl-names { display: none; }
+  .catalog-card__body > .pack-line { min-height: 2.5em; margin-top: 8px; display: -webkit-box; overflow: hidden; font-size: 8px; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .catalog-card__heat,
+  .catalog-card__sweetness { margin-top: 8px; grid-template-columns: 40px 1fr; gap: 5px; }
+  .catalog-card__heat small,
+  .catalog-card__sweetness small { overflow: hidden; font-size: 7px; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+  .catalog-card__calories { margin-top: 8px !important; display: grid; gap: 2px; }
+  .catalog-card__calories strong { font-size: 10px; }
+  .catalog-card__calories small { font-size: 7px; }
+  .catalog-card__footer { min-height: 0; margin-top: 9px; padding-top: 8px; }
+  .catalog-card__footer strong,
+  .catalog-card__footer a { font-size: 8px; }
+  .refrescos-catalog .catalog-card__footer { display: none; }
+  .catalog-card__actions { margin-top: auto; padding-top: 11px; flex-direction: column; align-items: stretch; gap: 8px; }
+  .catalog-card__actions .catalog-card__price { font-size: 16px; }
+  .catalog-card__actions .unit-price { display: block; margin-top: 2px; font-size: 7px; line-height: 1.2; }
+  .catalog-card__buy { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 5px; }
+  .catalog-stepper { min-width: 0; height: 36px; justify-content: space-between; }
+  .catalog-stepper button { width: 25px; height: 34px; }
+  .catalog-stepper output { min-width: 12px; }
+  .catalog-card__actions .catalog-add { min-width: 0; width: 100%; height: 36px; padding: 0 5px; font-size: 9px; }
+  .catalog-card__detail { margin-top: 10px; padding-top: 10px; font-size: 8px; }
   .stat-row { justify-content: space-between; gap: 12px; }
   .stat-row { flex-wrap: wrap; }
   .stat-row > div { min-width: 42%; }
@@ -1201,7 +1240,7 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
 .is-mobile-device .search-dialog,
 .is-mobile-device .flavors { backdrop-filter: none; }
 .is-mobile-device .catalog-card,
-.is-mobile-device .refrescos-catalog .catalog-card { content-visibility: auto; contain-intrinsic-size: 420px 680px; }
+.is-mobile-device .refrescos-catalog .catalog-card { content-visibility: auto; contain: layout paint style; contain-intrinsic-size: 280px 520px; }
 .is-mobile-device .catalog-card__visual > span { backdrop-filter: none; background: rgba(255, 255, 255, .94); }
 .is-mobile-device .product-pack,
 .is-mobile-device .refrescos-carousel-shell .product-pack { will-change: auto; transition: none; }
