@@ -77,16 +77,28 @@
     price: document.querySelector("[data-price]"),
     unitPrice: document.querySelector("[data-unit-price]"),
     weight: document.querySelector("[data-weight]"),
+    heroHeat: document.querySelector("[data-hero-heat]"),
     heatFill: document.querySelector("[data-heat-fill]"),
     heatLabel: document.querySelector("[data-heat-label]"),
+    heroSweetness: document.querySelector("[data-hero-sweetness]"),
+    sweetnessFill: document.querySelector("[data-sweetness-fill]"),
+    sweetnessLabel: document.querySelector("[data-sweetness-label]"),
+    heroKcal: document.querySelector("[data-hero-kcal]"),
+    heroKcalBasis: document.querySelector("[data-hero-kcal-basis]"),
     quantity: document.querySelector("[data-quantity]"),
     addSelected: document.querySelector("[data-add-selected]"),
     storyTitle: document.querySelector("[data-story-title]"),
     storySection: document.querySelector("[data-story-section]"),
     storyCopy: document.querySelector("[data-story-copy]"),
     storyImage: document.querySelector("[data-story-image]"),
+    storyHeatStat: document.querySelector("[data-story-heat-stat]"),
+    storyHeatStatLabel: document.querySelector("[data-story-heat-stat-label]"),
+    storySweetnessStat: document.querySelector("[data-story-sweetness-stat]"),
+    storySweetness: document.querySelector("[data-story-sweetness]"),
+    storyCookStat: document.querySelector("[data-story-cook-stat]"),
     shu: document.querySelector("[data-shu]"),
     kcal: document.querySelector("[data-kcal]"),
+    storyKcalBasis: document.querySelector("[data-story-kcal-basis]"),
     cookTime: document.querySelector("[data-cook-time]"),
     storyWeight: document.querySelector("[data-story-weight]"),
     storyNote: document.querySelector("[data-story-note]"),
@@ -147,6 +159,8 @@
     catalogStatuses: [...document.querySelectorAll("[data-catalog-status]")],
     catalogMetas: [...document.querySelectorAll("[data-catalog-meta]")],
     catalogHeats: [...document.querySelectorAll("[data-catalog-heat]")],
+    catalogSweetnesses: [...document.querySelectorAll("[data-catalog-sweetness], [data-refresco-catalog-sweetness]")],
+    catalogCalories: [...document.querySelectorAll("[data-catalog-calories], [data-refresco-catalog-calories]")],
   };
 
   const state = {
@@ -213,7 +227,9 @@
       || product.description
       || "";
     const heat_label = product[`heat_label_${state.language}`] || product.heat_label || "";
-    return { ...product, ...(translated || {}), name, description, heat_label };
+    const sweetness_label = product[`sweetness_label_${state.language}`] || product.sweetness_label || "";
+    const kcal_basis = product[`kcal_basis_${state.language}`] || product.kcal_basis || "";
+    return { ...product, ...(translated || {}), name, description, heat_label, sweetness_label, kcal_basis };
   }
 
   function escapeHtml(value) {
@@ -321,6 +337,20 @@
     element.closest("div")?.classList.toggle("is-unavailable", !available);
   }
 
+  function storyStatsFor(product) {
+    return {
+      hasHeat: product.heat_applicable === true,
+      heat: product.shu || product.heat_label,
+      heatLabel: product.shu ? "Scoville" : t("hero.heat"),
+      hasSweetness: product.sweetness_applicable === true,
+      sweetness: `${product.sweetness_level}/5`,
+      hasCookTime: product.cook_time_applicable === true && Boolean(product.cook_time),
+      cookTime: product.cook_time,
+      kcal: product.kcal,
+      kcalBasis: product.kcal_basis,
+    };
+  }
+
   function updateCatalogDetailButtons() {
     dom.catalogDetailButtons.forEach((button) => {
       const active = button.dataset.catalogDetail === state.detailProductId;
@@ -338,6 +368,7 @@
     if (!baseProduct) return;
     const product = localizedProduct(baseProduct);
     const detail = productDetail(product);
+    const storyStats = storyStatsFor(product);
     const nameEnding = state.language === "zh" ? "。" : ".";
     const title = Array.isArray(product.story_title)
       ? product.story_title
@@ -362,9 +393,15 @@
       : state.language === "en"
         ? `${product.name} product pack`
         : `Empaque de ${product.name}`;
-    setStoryStat(dom.shu, product.shu);
-    setStoryStat(dom.kcal, product.kcal);
-    setStoryStat(dom.cookTime, product.cook_time);
+    dom.storyHeatStat.hidden = !storyStats.hasHeat;
+    dom.storySweetnessStat.hidden = !storyStats.hasSweetness;
+    dom.storyCookStat.hidden = !storyStats.hasCookTime;
+    if (storyStats.hasHeat) setStoryStat(dom.shu, storyStats.heat);
+    if (storyStats.hasSweetness) setStoryStat(dom.storySweetness, storyStats.sweetness);
+    dom.storyHeatStatLabel.textContent = storyStats.heatLabel;
+    setStoryStat(dom.kcal, storyStats.kcal);
+    dom.storyKcalBasis.textContent = storyStats.kcalBasis;
+    if (storyStats.hasCookTime) setStoryStat(dom.cookTime, storyStats.cookTime);
     setStoryStat(dom.storyWeight, translateWeight(product.weight).split(" · ")[0]);
     dom.storyNote.innerHTML = escapeHtml(product.story_note || detail.note || product.name).replace("\n", "<br>");
     dom.nutritionSource.href = product.nutrition_source_url || product.source_url || "#";
@@ -440,6 +477,23 @@
       const text = element.querySelector("small");
       if (text) text.textContent = label;
       element.setAttribute("aria-label", `${t("hero.heat")}: ${label}`);
+    });
+    dom.catalogSweetnesses.forEach((element) => {
+      const id = element.dataset.catalogSweetness || element.dataset.refrescoCatalogSweetness;
+      const product = localizedProduct(productById.get(id));
+      if (!product) return;
+      const text = element.querySelector("small");
+      if (text) text.textContent = product.sweetness_label;
+      element.setAttribute("aria-label", product.sweetness_label);
+    });
+    dom.catalogCalories.forEach((element) => {
+      const id = element.dataset.catalogCalories || element.dataset.refrescoCatalogCalories;
+      const product = localizedProduct(productById.get(id));
+      if (!product) return;
+      const value = element.querySelector("strong");
+      const basis = element.querySelector("small");
+      if (value) value.textContent = `${product.kcal} kcal`;
+      if (basis) basis.textContent = product.kcal_basis;
     });
     dom.catalogStatuses.forEach((element) => {
       const product = productById.get(element.dataset.catalogStatus);
@@ -557,12 +611,24 @@
     dom.number.textContent = product.number;
     dom.sku.textContent = product.sku;
     dom.name.textContent = product.name;
-    dom.description.textContent = product.description || detail.description || "";
+    dom.description.textContent = detail.description || product.description || "";
     dom.price.textContent = product.price_label;
     if (dom.unitPrice) dom.unitPrice.textContent = product.unit_price_label || "";
     dom.weight.textContent = packLabel(product);
-    dom.heatFill.style.width = `${product.heat || 0}%`;
-    dom.heatLabel.textContent = product.heat_label || "—";
+    const hasHeat = product.heat_applicable === true;
+    const hasSweetness = product.sweetness_applicable === true;
+    dom.heroHeat.hidden = !hasHeat;
+    dom.heroSweetness.hidden = !hasSweetness;
+    if (hasHeat) {
+      dom.heatFill.style.width = `${product.heat || 0}%`;
+      dom.heatLabel.textContent = product.heat_label;
+    }
+    if (hasSweetness) {
+      dom.sweetnessFill.style.width = `${product.sweetness || 0}%`;
+      dom.sweetnessLabel.textContent = product.sweetness_label;
+    }
+    dom.heroKcal.textContent = product.kcal;
+    dom.heroKcalBasis.textContent = product.kcal_basis;
     dom.addSelected.disabled = product.is_available === false;
     const addLabel = dom.addSelected.querySelector("[data-i18n]");
     if (addLabel) addLabel.textContent = t(product.is_available === false ? "catalog.soldOut" : "wholesale.addCase");
@@ -1300,6 +1366,9 @@
       price: document.querySelector("[data-refresco-price]"),
       unitPrice: document.querySelector("[data-refresco-unit-price]"),
       promo: document.querySelector("[data-refresco-promo]"),
+      sweetness: document.querySelector("[data-refresco-sweetness]"),
+      kcal: document.querySelector("[data-refresco-kcal]"),
+      kcalBasis: document.querySelector("[data-refresco-kcal-basis]"),
       quantity: document.querySelector("[data-refresco-quantity]"),
       addSelected: document.querySelector("[data-refresco-add-selected]"),
       detailButtons: [...document.querySelectorAll("[data-refresco-detail]")],
@@ -1352,6 +1421,16 @@
       if (refrescoDom.promo) {
         refrescoDom.promo.textContent = product.promo ? t(product.promo) : "";
         refrescoDom.promo.hidden = !product.promo;
+      }
+      if (refrescoDom.kcal) refrescoDom.kcal.textContent = product.kcal;
+      if (refrescoDom.kcalBasis) refrescoDom.kcalBasis.textContent = product.kcal_basis;
+      if (refrescoDom.sweetness) {
+        refrescoDom.sweetness.hidden = product.sweetness_applicable !== true;
+        refrescoDom.sweetness.setAttribute("aria-label", product.sweetness_label || "");
+        const fill = refrescoDom.sweetness.querySelector("i");
+        const label = refrescoDom.sweetness.querySelector("small");
+        if (fill) fill.style.setProperty("--sweetness", `${product.sweetness}%`);
+        if (label) label.textContent = product.sweetness_label || "";
       }
       if (refrescoDom.addSelected) {
         refrescoDom.addSelected.disabled = product.is_available === false;

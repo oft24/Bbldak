@@ -12,6 +12,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 html { scroll-behavior: smooth; }
 
@@ -342,14 +343,17 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   text-wrap: balance;
 }
 
-.specs { display: flex; align-items: flex-start; gap: clamp(24px, 3vw, 44px); margin-top: 22px; }
+.specs { display: flex; flex-wrap: wrap; align-items: flex-start; gap: clamp(18px, 2.4vw, 36px); margin-top: 22px; }
 .spec { display: flex; flex-direction: column; gap: 9px; }
-.spec--heat { width: min(190px, 15vw); }
+.spec--heat,
+.spec--sweetness { width: min(160px, 13vw); }
 .spec__label { opacity: .5; font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
 .spec strong { font-size: 12px; }
+.spec small { color: var(--soft); font-size: 9px; }
 
 .heat-track { position: relative; width: 100%; height: 3px; overflow: hidden; border-radius: 99px; background: color-mix(in srgb, var(--ink) 14%, transparent); }
 .heat-fill { display: block; width: 40%; height: 100%; border-radius: inherit; background: var(--accent); transition: width 650ms var(--ease), background-color 800ms var(--ease); }
+.sweetness-fill { background: linear-gradient(90deg, #f0a53a, #df657f); }
 
 .carousel-shell {
   position: absolute;
@@ -562,10 +566,21 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .catalog-card__sku { color: #9d2441; font-size: 9px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
 .catalog-card h3 { min-height: 2.25em; margin: 9px 0 0; font-size: clamp(18px, 1.6vw, 25px); line-height: 1.08; letter-spacing: -.04em; }
 .catalog-card__body > p { margin: 10px 0 0; color: #7d7174; font-size: 11px; }
-.catalog-card__heat { margin-top: 13px; display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 9px; }
-.catalog-card__heat > span { height: 3px; overflow: hidden; border-radius: 99px; background: #e2d7d9; }
-.catalog-card__heat i { display: block; width: var(--heat); height: 100%; border-radius: inherit; background: #b3123f; }
-.catalog-card__heat small { color: #75696c; font-size: 9px; font-weight: 700; }
+.catalog-card__heat,
+.catalog-card__sweetness { margin-top: 13px; display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 9px; }
+.catalog-card__heat > span,
+.catalog-card__sweetness > span { height: 3px; overflow: hidden; border-radius: 99px; background: #e2d7d9; }
+.catalog-card__heat i,
+.catalog-card__sweetness i { display: block; height: 100%; border-radius: inherit; }
+.catalog-card__heat i { width: var(--heat); background: #b3123f; }
+.catalog-card__sweetness i { width: var(--sweetness); background: linear-gradient(90deg, #f0a53a, #df657f); }
+.catalog-card__heat small,
+.catalog-card__sweetness small { color: #75696c; font-size: 9px; font-weight: 700; }
+.catalog-card__sweetness + .catalog-card__footer { margin-top: 13px; }
+.refrescos-info .catalog-card__sweetness { max-width: 310px; margin-top: 18px; }
+.catalog-card__calories { margin-top: 12px !important; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: #392e31 !important; }
+.catalog-card__calories strong { font-size: 11px; }
+.catalog-card__calories small { color: #887b7e; font-size: 9px; }
 .catalog-card__footer { min-height: 44px; margin-top: 18px; padding-top: 14px; display: flex; align-items: start; justify-content: flex-start; gap: 12px; border-top: 1px solid #e6dcde; }
 .catalog-card__footer strong, .catalog-card__footer a { font-size: 9px; line-height: 1.35; }
 .catalog-card__footer strong { color: #42724d; }
@@ -607,7 +622,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .story-copy .nutrition-note { max-width: 620px; margin-top: 24px; font-size: 11px; line-height: 1.6; }
 .nutrition-note a { color: var(--detail-ink); font-weight: 750; text-underline-offset: 3px; }
 
-.stat-row { display: flex; gap: clamp(25px, 4vw, 58px); margin-top: 42px; }
+.stat-row { display: flex; flex-wrap: wrap; gap: clamp(22px, 3vw, 46px); margin-top: 42px; }
 .stat-row div { display: flex; flex-direction: column; gap: 6px; }
 .stat-row strong { font-size: clamp(26px, 2.4vw, 38px); letter-spacing: -.05em; }
 .stat-row span { color: color-mix(in srgb, var(--detail-ink) 58%, transparent); font-size: 11px; }
@@ -1051,7 +1066,8 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
   .hero h1 { font-size: clamp(44px, 13vw, 68px); }
   .hero-copy__content > p { max-width: 420px; margin-top: 12px; }
   .specs { margin-top: 14px; }
-  .spec--heat { width: min(45vw, 190px); }
+  .spec--heat,
+  .spec--sweetness { width: min(42vw, 170px); }
   .carousel-shell { inset: 340px 0 290px; }
   .product-pack { top: 50%; width: min(88vw, 520px); height: min(80vw, 470px); margin: 0; }
   .drag-hint { bottom: -2%; }

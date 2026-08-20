@@ -15,9 +15,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=28">
-    <script defer src="/js/i18n.js?v=14"></script>
-    <script defer src="/js/app.js?v=30"></script>
+    <link rel="stylesheet" href="/css/style.css?v=30">
+    <script defer src="/js/i18n.js?v=16"></script>
+    <script defer src="/js/app.js?v=34"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -72,10 +72,20 @@
             <p data-description>Salsa de pollo picante con leche, mantequilla, mozzarella y pimienta negra.</p>
           </div>
           <div class="specs">
-            <div class="spec spec--heat">
+            <div class="spec spec--heat" data-hero-heat>
               <span class="spec__label" data-i18n="hero.heat">Picor</span>
               <span class="heat-track"><span class="heat-fill" data-heat-fill></span></span>
               <strong data-heat-label>Picor cremoso · 2/5</strong>
+            </div>
+            <div class="spec spec--sweetness" data-hero-sweetness>
+              <span class="spec__label" data-i18n="story.sweetness">Dulzura</span>
+              <span class="heat-track sweetness-track"><span class="heat-fill sweetness-fill" data-sweetness-fill></span></span>
+              <strong data-sweetness-label>Dulzura percibida · 1/5</strong>
+            </div>
+            <div class="spec" data-hero-calories>
+              <span class="spec__label" data-i18n="story.calories">Calorías</span>
+              <strong><span data-hero-kcal>550</span> kcal</strong>
+              <small data-hero-kcal-basis>por paquete</small>
             </div>
             <div class="spec">
               <span class="spec__label" data-i18n="refrescos.case">Caja de mayoreo</span>
@@ -180,10 +190,21 @@
                   {% if item.name_zh %}<span lang="zh-CN">{{ item.name_zh }}</span>{% endif %}
                 </p>
                 <p class="pack-line" data-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
-                <div class="catalog-card__heat" data-catalog-heat="{{ item.id }}"{% if item.spice_level %} data-catalog-spice="{{ item.id }}"{% endif %} aria-label="Picor: {{ item.heat_label_es }}">
-                  <span aria-hidden="true"><i style="--heat: {{ item.heat }}%"></i></span>
-                  <small>{{ item.heat_label_es }}</small>
-                </div>
+                {% if item.heat_applicable %}
+                  <div class="catalog-card__heat" data-catalog-heat="{{ item.id }}"{% if item.spice_level %} data-catalog-spice="{{ item.id }}"{% endif %} aria-label="Picor: {{ item.heat_label_es }}">
+                    <span aria-hidden="true"><i style="--heat: {{ item.heat }}%"></i></span>
+                    <small>{{ item.heat_label_es }}</small>
+                  </div>
+                {% endif %}
+                {% if item.sweetness_applicable %}
+                  <div class="catalog-card__sweetness" data-catalog-sweetness="{{ item.id }}" aria-label="{{ item.sweetness_label_es }}">
+                    <span aria-hidden="true"><i style="--sweetness: {{ item.sweetness }}%"></i></span>
+                    <small>{{ item.sweetness_label_es }}</small>
+                  </div>
+                {% endif %}
+                <p class="catalog-card__calories" data-catalog-calories="{{ item.id }}">
+                  <strong>{{ item.kcal }} kcal</strong><small>{{ item.kcal_basis_es }}</small>
+                </p>
                 <div class="catalog-card__footer">
                   <strong class="{% if item.status.startswith('Agotado') %}is-sold-out{% endif %}" data-catalog-status="{{ item.id }}">{{ item.status }}</strong>
                 </div>
@@ -216,12 +237,13 @@
             <h2 id="story-title" data-story-title tabindex="-1">Cremosa.<br>Picante.<br>Muy Carbonara.</h2>
             <p data-story-copy>La bolsa rosa mezcla la salsa Buldak con un polvo de queso y crema. Primero llega la mozzarella y la mantequilla; después aparecen el chile, el ajo y la pimienta negra.</p>
             <div class="stat-row">
-              <div><strong data-shu>2,600</strong><span>Scoville</span></div>
-              <div><strong data-cook-time>5 min</strong><span data-i18n="story.cook">Cocción</span></div>
-              <div><strong data-kcal>550</strong><span>kcal</span></div>
+              <div data-story-heat-stat><strong data-shu>2,600</strong><span data-story-heat-stat-label>Scoville</span></div>
+              <div data-story-sweetness-stat><strong data-story-sweetness>1/5</strong><span data-i18n="story.sweetness">Dulzura</span></div>
+              <div data-story-cook-stat><strong data-cook-time>5 min</strong><span data-i18n="story.cook">Cocción</span></div>
+              <div><strong data-kcal>550</strong><span><span>kcal</span> · <span data-story-kcal-basis>por paquete</span></span></div>
               <div><strong data-story-weight>130 g</strong><span data-i18n="story.portion">Porción</span></div>
             </div>
-            <p class="nutrition-note"><span data-i18n="story.nutrition">Valores por paquete. La información puede cambiar por mercado; confirma siempre la etiqueta de tu bolsa.</span> <a data-nutrition-source href="https://www.samyangfoods.com/eng/brand/view.do?seq=399" target="_blank" rel="noopener" data-i18n="story.source">Fuente del producto</a>.</p>
+            <p class="nutrition-note"><span data-i18n="story.nutrition">Valores del fabricante cuando están publicados; ≈ indica una estimación por categoría y tamaño. Confirma siempre la etiqueta.</span> <a data-nutrition-source href="https://www.samyangfoods.com/eng/brand/view.do?seq=399" target="_blank" rel="noopener" data-i18n="story.source">Fuente nutricional</a>.</p>
           </div>
           <div class="story-visual reveal" aria-hidden="true">
             <span class="story-ring story-ring--one"></span>
@@ -292,6 +314,10 @@
             </p>
             <p data-refresco-description>{{ refrescos_products[0].description }}</p>
             <p class="promo-tag" data-refresco-promo hidden></p>
+            <div class="catalog-card__sweetness" data-refresco-sweetness aria-label="{{ refrescos_products[0].sweetness_label_es }}">
+              <span aria-hidden="true"><i style="--sweetness: {{ refrescos_products[0].sweetness }}%"></i></span>
+              <small>{{ refrescos_products[0].sweetness_label_es }}</small>
+            </div>
             <div class="specs">
               <div class="spec">
                 <span class="spec__label" data-i18n="hero.presentation">Presentación</span>
@@ -300,6 +326,11 @@
               <div class="spec">
                 <span class="spec__label" data-i18n="refrescos.case">Caja de mayoreo</span>
                 <strong data-refresco-case>{{ refrescos_products[0].pack_label }}</strong>
+              </div>
+              <div class="spec">
+                <span class="spec__label" data-i18n="story.calories">Calorías</span>
+                <strong><span data-refresco-kcal>{{ refrescos_products[0].kcal }}</span> kcal</strong>
+                <small data-refresco-kcal-basis>{{ refrescos_products[0].kcal_basis_es }}</small>
               </div>
             </div>
             <div class="price-row">
@@ -381,6 +412,15 @@
                 </p>
                 <p class="pack-line" data-refresco-catalog-meta="{{ item.id }}">{{ item.pack_label }}</p>
                 {% if item.promo %}<p class="promo-tag promo-tag--card" data-i18n="{{ item.promo }}">Promoción</p>{% endif %}
+                {% if item.sweetness_applicable %}
+                  <div class="catalog-card__sweetness" data-refresco-catalog-sweetness="{{ item.id }}" aria-label="{{ item.sweetness_label_es }}">
+                    <span aria-hidden="true"><i style="--sweetness: {{ item.sweetness }}%"></i></span>
+                    <small>{{ item.sweetness_label_es }}</small>
+                  </div>
+                {% endif %}
+                <p class="catalog-card__calories" data-refresco-catalog-calories="{{ item.id }}">
+                  <strong>{{ item.kcal }} kcal</strong><small>{{ item.kcal_basis_es }}</small>
+                </p>
                 <div class="catalog-card__footer">
                   <strong>{{ item.description }}</strong>
                 </div>

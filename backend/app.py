@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from pathlib import Path
+import re
 from secrets import token_hex
 
 from flask import Flask, jsonify, render_template, request, send_from_directory
@@ -889,14 +890,264 @@ HEAT_WORDS = {
 
 
 def apply_heat(product):
-    """Attach a visible, localized heat level to every catalog product."""
-    level = HEAT_LEVELS.get(str(product["sku"]), 0)
+    """Attach heat data and state whether the metric belongs in the UI."""
+    sku = str(product["sku"])
+    level = HEAT_LEVELS.get(sku, CATALOG_SPICE_LEVELS.get(sku, 0))
     product["heat_level"] = level
     product["heat"] = level * 20
     product["heat_label_es"] = f"{HEAT_WORDS['es'][level]} · {level}/5"
     product["heat_label_en"] = f"{HEAT_WORDS['en'][level]} · {level}/5"
     product["heat_label_zh"] = f"{HEAT_WORDS['zh'][level]} · {level}/5"
     product["heat_label"] = product["heat_label_es"]
+    product["heat_applicable"] = level > 0
+    return product
+
+
+# Sensory sweetness, not grams of sugar. Category defaults cover products that
+# are inherently sweet; savory products only receive a meter when their flavor
+# profile has an identifiable sweet note.
+SWEETNESS_CATEGORY_LEVELS = {
+    "cookies": 4,
+    "candy": 5,
+    "bakery": 3,
+    "te": 2,
+    "agua_gas": 2,
+    "jugos_lacteos": 4,
+    "electrolitos": 2,
+    "otros": 3,
+    "boba": 4,
+}
+
+SWEETNESS_LEVELS = {
+    "811140": 1, "811130": 2, "811270": 2, "811320": 3,
+    "811340": 2, "811616": 3, "811622": 1, "811640": 2,
+    "811650": 2, "811710": 1, "811815": 2,
+    "802110": 1, "802420": 1, "802440": 1, "802160": 1,
+    "807331": 3,
+    "831830": 1,
+}
+
+SWEETNESS_LABELS = {
+    "es": "Dulzura percibida",
+    "en": "Perceived sweetness",
+    "zh": "感知甜度",
+}
+
+# Exact facts used when a manufacturer source supports the value. Remaining
+# products receive a visibly marked category-and-package estimate below.
+VERIFIED_STORY_FACTS = {
+    "811140": {
+        "shu": "2,600", "kcal": "550", "kcal_value": 550,
+        "kcal_estimated": False, "cook_time": "5 min", "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/top-12-combos-to-eat-with-buldak-carbonara/",
+    },
+    "811120": {
+        "shu": "4,404", "kcal": "530", "kcal_value": 530,
+        "kcal_estimated": False, "cook_time": "5 min", "facts_verified": True,
+        "nutrition_source_url": "https://www.samyangfoods.com/eng/brand/view.do?seq=245",
+    },
+    "811150": {
+        "shu": "≈2,323", "kcal": "590", "kcal_value": 590,
+        "kcal_estimated": False, "cook_time": "5 min 30 s", "facts_verified": True,
+        "nutrition_source_url": "https://samyangamerica.com/buldak/quattro-cheese",
+    },
+    "811200": {
+        "shu": "2,323",
+        "kcal": "550",
+        "kcal_value": 550,
+        "kcal_estimated": False,
+        "cook_time": "5 min",
+        "nutrition_source_url": "https://www.samyangfoods.com/eng/brand/view.do?seq=299",
+        "facts_verified": True,
+        "facts_sources": [
+            "https://www.samyangfoods.com/kor/publicity/press/view.do?pageIndex=1&pageUnit=10&seq=655",
+            "https://www.samyangfoods.com/eng/brand/view.do?seq=299",
+            "https://buldak.com/us/product/buldak-ramen-cheese/",
+        ],
+    },
+    "811430": {
+        "kcal": "280", "kcal_value": 280, "kcal_estimated": False,
+        "cook_time": "4 min", "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/5-places-to-visit-in-korea-for-local-buldak-ramen-experience/",
+    },
+    "811622": {
+        "kcal": "470", "kcal_value": 470, "kcal_estimated": False,
+        "cook_time": "4 min", "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/top-12-combos-to-eat-with-buldak-carbonara/",
+    },
+    "811624": {
+        "kcal": "440", "kcal_value": 440, "kcal_estimated": False,
+        "cook_time": "4 min", "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/5-places-to-visit-in-korea-for-local-buldak-ramen-experience/",
+    },
+    "811612": {
+        "kcal": "440", "kcal_value": 440, "kcal_estimated": False,
+        "cook_time": "4 min", "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/5-places-to-visit-in-korea-for-local-buldak-ramen-experience/",
+    },
+    "811611": {
+        "kcal": "440", "kcal_value": 440, "kcal_estimated": False,
+        "cook_time": "4 min", "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/5-places-to-visit-in-korea-for-local-buldak-ramen-experience/",
+    },
+    "811710": {
+        "kcal": "450", "kcal_value": 450, "kcal_estimated": False,
+        "cook_time": "2 min 30 s", "facts_verified": True,
+        "nutrition_source_url": "https://wordpress.buldak.com/us/blog/the-best-way-to-enjoy-buldak-tteokbokki/",
+    },
+    "811720": {
+        "kcal": "450", "kcal_value": 450, "kcal_estimated": False,
+        "cook_time": "2 min 30 s", "facts_verified": True,
+        "nutrition_source_url": "https://wordpress.buldak.com/us/blog/the-best-way-to-enjoy-buldak-tteokbokki/",
+    },
+    "811910": {
+        "kcal": "160", "kcal_value": 160, "kcal_estimated": False,
+        "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/buldak-potato-chip-guide/",
+        "kcal_basis_es": "por porción", "kcal_basis_en": "per serving", "kcal_basis_zh": "每份",
+    },
+    "811920": {
+        "kcal": "160", "kcal_value": 160, "kcal_estimated": False,
+        "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/buldak-potato-chip-guide/",
+        "kcal_basis_es": "por porción", "kcal_basis_en": "per serving", "kcal_basis_zh": "每份",
+    },
+    "811300": {
+        "kcal": "15", "kcal_value": 15, "kcal_estimated": False,
+        "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/buldak-sauce-10-best-food-hacks/",
+        "kcal_basis_es": "por 6 g", "kcal_basis_en": "per 6 g", "kcal_basis_zh": "每 6 克",
+    },
+    "811280": {
+        "kcal": "10", "kcal_value": 10, "kcal_estimated": False,
+        "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/buldak-sauce-10-best-food-hacks/",
+        "kcal_basis_es": "por 6 g", "kcal_basis_en": "per 6 g", "kcal_basis_zh": "每 6 克",
+    },
+    "811290": {
+        "kcal": "10", "kcal_value": 10, "kcal_estimated": False,
+        "facts_verified": True,
+        "nutrition_source_url": "https://buldak.com/us/blog/buldak-sauce-10-best-food-hacks/",
+        "kcal_basis_es": "por sobre de 6 g", "kcal_basis_en": "per 6 g stick", "kcal_basis_zh": "每 6 克条装",
+    },
+}
+
+
+CALORIE_DENSITY_KCAL_PER_GRAM = {
+    "soups": 3.85,
+    "bowls": 3.85,
+    "tteokbokki": 2.52,
+    "chips": 5.40,
+    "cookies": 4.80,
+    "candy": 3.55,
+    "bakery": 3.80,
+    "sauces": 2.20,
+}
+
+DRINK_CALORIES_PER_100_ML = {
+    "te": 32,
+    "agua_gas": 38,
+    "jugos_lacteos": 55,
+    "electrolitos": 20,
+    "otros": 35,
+    "boba": 130,
+}
+
+
+def _unit_amount(value):
+    match = re.search(r"([0-9]+(?:\.[0-9]+)?)\s*(kg|g|ml|l)\b", str(value), re.I)
+    if not match:
+        return 100.0, "g"
+    amount = float(match.group(1))
+    unit = match.group(2).lower()
+    if unit in {"kg", "l"}:
+        amount *= 1000
+        unit = "g" if unit == "kg" else "ml"
+    return amount, unit
+
+
+def _rounded_kcal(value):
+    return max(0, int(5 * round(float(value) / 5)))
+
+
+def apply_catalog_facts(product):
+    """Provide relevant cooking and calorie facts for every catalog food."""
+    category = product.get("category", "")
+    amount, _unit = _unit_amount(product.get("unit_size") or product.get("weight"))
+    density = CALORIE_DENSITY_KCAL_PER_GRAM.get(category, 3.5)
+    bulk = amount > 500
+    basis_amount = 100 if bulk else amount
+    estimated_kcal = _rounded_kcal(density * basis_amount)
+    product.update(
+        kcal=f"≈{estimated_kcal}",
+        kcal_value=estimated_kcal,
+        kcal_estimated=True,
+        kcal_basis_es="por 100 g" if bulk else "por paquete",
+        kcal_basis_en="per 100 g" if bulk else "per pack",
+        kcal_basis_zh="每 100 克" if bulk else "每包",
+        requires_cooking=category in {"soups", "bowls", "tteokbokki"},
+        cook_time_applicable=category in {"soups", "bowls", "tteokbokki"},
+        facts_verified=False,
+        nutrition_source_url="https://fdc.nal.usda.gov/",
+    )
+    if category == "soups":
+        product["cook_time"] = "4 min" if product.get("brand") == "Master Kong" else "5 min"
+    elif category == "bowls":
+        product["cook_time"] = "4 min"
+    elif category == "tteokbokki":
+        product["cook_time"] = "2 min 30 s"
+    else:
+        product["cook_time"] = None
+    product.update(VERIFIED_STORY_FACTS.get(str(product["sku"]), {}))
+    product.setdefault("kcal_basis_es", "por paquete")
+    product.setdefault("kcal_basis_en", "per pack")
+    product.setdefault("kcal_basis_zh", "每包")
+    product["kcal_basis"] = product["kcal_basis_es"]
+    return product
+
+
+def apply_drink_facts(product):
+    """Estimate calories by container, preserving zero-sugar logic and basis."""
+    amount, unit = _unit_amount(product.get("unit_size") or product.get("weight"))
+    zero_sugar = any(
+        phrase in (product.get("description_es") or "").lower()
+        for phrase in ("cero azúcar", "sin azúcar")
+    )
+    density = 0 if zero_sugar else DRINK_CALORIES_PER_100_ML.get(product.get("category"), 35)
+    bulk = amount > 750
+    if product.get("category") == "boba" or unit == "g":
+        value = density * amount / 100
+        basis = ("por kit", "per kit", "每份套装")
+    elif bulk:
+        value = density
+        basis = ("por 100 ml", "per 100 ml", "每 100 毫升")
+    else:
+        value = density * amount / 100
+        basis = ("por envase", "per container", "每瓶/罐")
+    kcal = _rounded_kcal(value)
+    product.update(
+        kcal=f"≈{kcal}", kcal_value=kcal, kcal_estimated=True,
+        kcal_basis_es=basis[0], kcal_basis_en=basis[1], kcal_basis_zh=basis[2],
+        kcal_basis=basis[0], requires_cooking=False, cook_time=None,
+        cook_time_applicable=False, facts_verified=False,
+        nutrition_source_url="https://fdc.nal.usda.gov/",
+    )
+    return product
+
+
+def apply_sweetness(product):
+    """Attach a localized sweetness meter only when the product tastes sweet."""
+    level = SWEETNESS_LEVELS.get(
+        str(product["sku"]),
+        SWEETNESS_CATEGORY_LEVELS.get(product.get("category"), 0),
+    )
+    product["sweetness_level"] = level
+    product["sweetness"] = level * 20
+    product["sweetness_label_es"] = f"{SWEETNESS_LABELS['es']} · {level}/5"
+    product["sweetness_label_en"] = f"{SWEETNESS_LABELS['en']} · {level}/5"
+    product["sweetness_label_zh"] = f"{SWEETNESS_LABELS['zh']} · {level}/5"
+    product["sweetness_label"] = product["sweetness_label_es"]
+    product["sweetness_applicable"] = level > 0
     return product
 
 
@@ -919,6 +1170,8 @@ for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
         catalog_product["spice_level"] = spice_level
     apply_intl_names(catalog_product)
     apply_heat(catalog_product)
+    apply_sweetness(catalog_product)
+    apply_catalog_facts(catalog_product)
     catalog_product["description_verified"] = True
     catalog_product["case"] = catalog_product["pack_label"]
 
@@ -1194,6 +1447,9 @@ for sort_order, refresco_product in enumerate(REFRESCOS_PRODUCTS, start=1):
         brand=brand,
     )
     apply_intl_names(refresco_product)
+    apply_heat(refresco_product)
+    apply_sweetness(refresco_product)
+    apply_drink_facts(refresco_product)
 
 
 # The featured story cards mirror catalog pricing so one product never shows two prices.
@@ -1202,7 +1458,14 @@ for featured in PRODUCTS:
     source = _CATALOG_BY_ID.get(featured["id"])
     if source:
         for field in ("price", "price_label", "unit_price_label", "pack_label", "pack_short",
-                      "units_per_case", "unit_size", "unit_noun", "inner_packs", "promo"):
+                      "units_per_case", "unit_size", "unit_noun", "inner_packs", "promo",
+                      "heat_level", "heat", "heat_label", "heat_label_es", "heat_label_en",
+                      "heat_label_zh", "heat_applicable", "sweetness_level", "sweetness", "sweetness_label",
+                      "sweetness_label_es", "sweetness_label_en", "sweetness_label_zh",
+                      "sweetness_applicable", "cook_time_applicable",
+                      "kcal", "kcal_value", "kcal_estimated", "kcal_basis", "kcal_basis_es",
+                      "kcal_basis_en", "kcal_basis_zh", "requires_cooking", "facts_verified",
+                      "nutrition_source_url"):
             featured[field] = source[field]
         featured["weight"] = source["pack_label"]
     apply_intl_names(featured)
@@ -1230,6 +1493,13 @@ def current_catalog() -> list[dict]:
             "description", "description_es", "description_en", "description_zh",
             "source_url", "description_verified", "heat_level", "heat", "heat_label",
             "heat_label_es", "heat_label_en", "heat_label_zh",
+            "heat_applicable",
+            "sweetness_level", "sweetness", "sweetness_label", "sweetness_label_es",
+            "sweetness_label_en", "sweetness_label_zh", "sweetness_applicable",
+            "shu", "kcal", "cook_time", "nutrition_source_url", "facts_verified",
+            "facts_sources",
+            "kcal_value", "kcal_estimated", "kcal_basis", "kcal_basis_es",
+            "kcal_basis_en", "kcal_basis_zh", "requires_cooking", "cook_time_applicable",
         ):
             if field in local:
                 product[field] = local[field]

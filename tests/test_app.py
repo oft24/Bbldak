@@ -4,6 +4,7 @@ from pathlib import Path
 from PIL import Image
 
 from app import app
+from backend.app import CATALOG_PRODUCTS
 
 
 class ShowroomTests(unittest.TestCase):
@@ -27,9 +28,9 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=28', response.data)
-        self.assertIn(b'js/i18n.js?v=14', response.data)
-        self.assertIn(b'js/app.js?v=30', response.data)
+        self.assertIn(b'css/style.css?v=30', response.data)
+        self.assertIn(b'js/i18n.js?v=16', response.data)
+        self.assertIn(b'js/app.js?v=34', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
         self.assertIn(b'data-catalog-image="811920"', response.data)
         self.assertIn(b'data-catalog-name="634210"', response.data)
@@ -40,7 +41,15 @@ class ShowroomTests(unittest.TestCase):
         self.assertIn(b'data-department-filter="snacks"', response.data)
         self.assertEqual(response.data.count(b'data-catalog-detail="'), 83)
         self.assertEqual(response.data.count(b'data-catalog-quantity="'), 83)
-        self.assertEqual(response.data.count(b'data-catalog-heat="'), 83)
+        self.assertEqual(response.data.count(b'data-catalog-heat="'), 44)
+        self.assertNotIn(b'data-catalog-heat="061020"', response.data)
+        self.assertIn(b'data-catalog-sweetness="061020"', response.data)
+        self.assertGreater(response.data.count(b'data-catalog-sweetness="'), 32)
+        self.assertEqual(response.data.count(b'data-refresco-catalog-sweetness="'), 71)
+        self.assertEqual(response.data.count(b'data-catalog-calories="'), 83)
+        self.assertEqual(response.data.count(b'data-refresco-catalog-calories="'), 71)
+        self.assertIn(b'data-catalog-sweetness="811320"', response.data)
+        self.assertIn(b'data-catalog-sweetness="807810"', response.data)
         self.assertEqual(response.data.count(b'data-card="'), 83)
         self.assertEqual(response.data.count(b'data-select="'), 83)
         self.assertEqual(response.data.count(b'data-card-product="'), 83)
@@ -57,6 +66,8 @@ class ShowroomTests(unittest.TestCase):
         self.assertIn(b'data-whatsapp-quote', response.data)
         self.assertIn(b'Cotizar por WhatsApp', response.data)
         self.assertIn(b'data-story-section', response.data)
+        self.assertIn(b'data-story-sweetness-stat', response.data)
+        self.assertIn(b'data-story-kcal-basis', response.data)
         self.assertIn(b'Tu carrito', response.data)
         self.assertIn(b"T\xc3\xa9rminos y condiciones", response.data)
         self.assertIn(b"prepared-carbonara.jpg?v=3", response.data)
@@ -74,10 +85,13 @@ class ShowroomTests(unittest.TestCase):
 
     def test_whatsapp_quote_targets_requested_number(self):
         response = self.client.get("/js/app.js")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'const WHATSAPP_NUMBER = "5229723373"', response.data)
-        self.assertIn(b"https://wa.me/${WHATSAPP_NUMBER}", response.data)
-        self.assertIn(b"buildWhatsAppMessage", response.data)
+        try:
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'const WHATSAPP_NUMBER = "5229723373"', response.data)
+            self.assertIn(b"https://wa.me/${WHATSAPP_NUMBER}", response.data)
+            self.assertIn(b"buildWhatsAppMessage", response.data)
+        finally:
+            response.close()
 
     def test_products_have_complete_selected_flavor_content(self):
         response = self.client.get("/api/products")
@@ -88,6 +102,17 @@ class ShowroomTests(unittest.TestCase):
             self.assertTrue(product["prepared_image"].startswith("/assets/prepared-"))
             self.assertGreater(product["price"], 1)
             self.assertTrue(product["price_label"].startswith("$"))
+
+    def test_all_legacy_buldak_descriptions_have_three_localized_profiles(self):
+        i18n_path = Path(__file__).resolve().parents[1] / "frontend" / "static" / "js" / "i18n.js"
+        i18n_source = i18n_path.read_text(encoding="utf-8")
+        profile_skus = [
+            item["sku"] for item in CATALOG_PRODUCTS
+            if "disponible por caja cerrada" in item["description_es"].lower()
+        ]
+        self.assertEqual(len(profile_skus), 22)
+        for sku in profile_skus:
+            self.assertGreaterEqual(i18n_source.count(f'"{sku}": {{'), 3, sku)
 
     def test_catalog_has_all_references_and_images(self):
         response = self.client.get("/api/catalog")
@@ -101,6 +126,12 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(next(item["category"] for item in catalog if item["sku"] == "807331"), "cookies")
         self.assertEqual(next(item["category"] for item in catalog if item["sku"] == "851120"), "candy")
         self.assertEqual(next(item["category"] for item in catalog if item["sku"] == "061010"), "bakery")
+        cheese = next(item for item in catalog if item["sku"] == "811200")
+        self.assertEqual(cheese["shu"], "2,323")
+        self.assertEqual(cheese["kcal"], "550")
+        self.assertEqual(cheese["cook_time"], "5 min")
+        self.assertTrue(cheese["facts_verified"])
+        self.assertEqual(len(cheese["facts_sources"]), 3)
         for item in catalog:
             self.assertGreater(item["price"], 1, item["sku"])
             self.assertTrue(item["price_label"].startswith("$"), item["sku"])
@@ -112,15 +143,33 @@ class ShowroomTests(unittest.TestCase):
             self.assertTrue(item["description_verified"], item["sku"])
             self.assertIn(item["heat_level"], range(6), item["sku"])
             self.assertEqual(item["heat"], item["heat_level"] * 20, item["sku"])
+            self.assertEqual(item["heat_applicable"], item["heat_level"] > 0, item["sku"])
             self.assertTrue(item["heat_label_es"].endswith("/5"), item["sku"])
             self.assertTrue(item["heat_label_en"].endswith("/5"), item["sku"])
             self.assertTrue(item["heat_label_zh"].endswith("/5"), item["sku"])
+            self.assertIn(item["sweetness_level"], range(6), item["sku"])
+            self.assertEqual(item["sweetness"], item["sweetness_level"] * 20, item["sku"])
+            self.assertEqual(item["sweetness_applicable"], item["sweetness_level"] > 0, item["sku"])
+            if item["sweetness_level"]:
+                self.assertTrue(item["sweetness_label_es"].endswith("/5"), item["sku"])
+                self.assertTrue(item["sweetness_label_en"].endswith("/5"), item["sku"])
+                self.assertTrue(item["sweetness_label_zh"].endswith("/5"), item["sku"])
             self.assertTrue(item["name_es"], item["sku"])
             self.assertTrue(item["name_en"], item["sku"])
             self.assertTrue(item["name_zh"], item["sku"])
             self.assertTrue(item["description_es"], item["sku"])
             self.assertTrue(item["description_en"], item["sku"])
             self.assertTrue(item["description_zh"], item["sku"])
+            self.assertTrue(item["kcal"], item["sku"])
+            self.assertGreaterEqual(item["kcal_value"], 0, item["sku"])
+            self.assertIsInstance(item["kcal_estimated"], bool, item["sku"])
+            self.assertTrue(item["kcal_basis_es"], item["sku"])
+            self.assertTrue(item["kcal_basis_en"], item["sku"])
+            self.assertTrue(item["kcal_basis_zh"], item["sku"])
+            self.assertTrue(item["nutrition_source_url"].startswith("https://"), item["sku"])
+            self.assertEqual(item["cook_time_applicable"], item["requires_cooking"], item["sku"])
+            if item["cook_time_applicable"]:
+                self.assertTrue(item["cook_time"], item["sku"])
             image_response = self.client.get(item["image"].split("?")[0])
             try:
                 self.assertEqual(image_response.status_code, 200, item["sku"])
@@ -135,6 +184,15 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(len(spicy_items), 37)
         for item in spicy_items:
             self.assertIn(item["spice_level"], range(1, 6), item["sku"])
+
+        ranli_cake = next(item for item in catalog if item["sku"] == "061020")
+        self.assertEqual(ranli_cake["heat_level"], 0)
+        self.assertEqual(ranli_cake["sweetness_level"], 3)
+        self.assertEqual(ranli_cake["kcal"], "≈380")
+        self.assertEqual(ranli_cake["kcal_basis_es"], "por 100 g")
+        self.assertFalse(ranli_cake["requires_cooking"])
+        self.assertFalse(ranli_cake["heat_applicable"])
+        self.assertTrue(ranli_cake["sweetness_applicable"])
 
     def test_checkout_accepts_catalog_products_at_case_price(self):
         invalid = self.client.post("/api/checkout", json={"cart": []})
@@ -184,6 +242,13 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(next(item["name_zh"] for item in drinks if item["sku"] == "832120"), "康师傅冰红茶")
         self.assertEqual(next(item["brand"] for item in drinks if item["sku"] == "837110"), "Red Bull")
         for item in drinks:
+            self.assertEqual(item["heat_level"], 0, item["sku"])
+            self.assertFalse(item["heat_applicable"], item["sku"])
+            self.assertIn(item["sweetness_level"], range(1, 6), item["sku"])
+            self.assertEqual(item["sweetness"], item["sweetness_level"] * 20, item["sku"])
+            self.assertTrue(item["sweetness_label_es"].endswith("/5"), item["sku"])
+            self.assertTrue(item["sweetness_label_en"].endswith("/5"), item["sku"])
+            self.assertTrue(item["sweetness_label_zh"].endswith("/5"), item["sku"])
             self.assertTrue(item["image"].startswith("/assets/refrescos/"), item["sku"])
             self.assertIn(item["sku"], item["image"])
             self.assertGreater(item["price"], 1, item["sku"])
@@ -195,6 +260,14 @@ class ShowroomTests(unittest.TestCase):
             self.assertTrue(item["description_es"], item["sku"])
             self.assertTrue(item["description_en"], item["sku"])
             self.assertTrue(item["description_zh"], item["sku"])
+            self.assertTrue(item["kcal"], item["sku"])
+            self.assertGreaterEqual(item["kcal_value"], 0, item["sku"])
+            self.assertTrue(item["kcal_basis_es"], item["sku"])
+            self.assertTrue(item["kcal_basis_en"], item["sku"])
+            self.assertTrue(item["kcal_basis_zh"], item["sku"])
+            self.assertTrue(item["nutrition_source_url"].startswith("https://"), item["sku"])
+            self.assertFalse(item["requires_cooking"], item["sku"])
+            self.assertFalse(item["cook_time_applicable"], item["sku"])
             image_response = self.client.get(item["image"].split("?")[0])
             try:
                 self.assertEqual(image_response.status_code, 200, item["sku"])
