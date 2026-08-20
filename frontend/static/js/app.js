@@ -11,7 +11,9 @@
   const catalogProducts = payload.catalog;
   const carouselProducts = payload.carousel || catalogProducts;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mobileMode = window.matchMedia("(max-width: 820px), (pointer: coarse)").matches;
   const root = document.documentElement;
+  root.classList.toggle("is-mobile-device", mobileMode);
   const catalogThemes = Object.freeze({
     "811140": { bgA: "#f5d9e1", bgB: "#fff8f4", glow: "#ffc1d2", ink: "#2b171e", accent: "#b3123f" },
     "811130": { bgA: "#e9f3f5", bgB: "#fff7f8", glow: "#f6cadb", ink: "#251b20", accent: "#cf527b" },
@@ -144,7 +146,7 @@
     catalogImages: [...document.querySelectorAll("[data-catalog-image]")],
     catalogStatuses: [...document.querySelectorAll("[data-catalog-status]")],
     catalogMetas: [...document.querySelectorAll("[data-catalog-meta]")],
-    catalogSpiceLabels: [...document.querySelectorAll("[data-catalog-spice-label]")],
+    catalogHeats: [...document.querySelectorAll("[data-catalog-heat]")],
   };
 
   const state = {
@@ -210,7 +212,8 @@
       || product[`description_${state.language}`]
       || product.description
       || "";
-    return { ...product, ...(translated || {}), name, description };
+    const heat_label = product[`heat_label_${state.language}`] || product.heat_label || "";
+    return { ...product, ...(translated || {}), name, description, heat_label };
   }
 
   function escapeHtml(value) {
@@ -431,13 +434,12 @@
     dom.catalogMetas.forEach((element) => {
       element.textContent = packLabel(productById.get(element.dataset.catalogMeta));
     });
-    dom.catalogSpiceLabels.forEach((element) => {
-      const level = Number(element.dataset.spiceLevel);
-      element.textContent = t("catalog.spiceLevel", { level });
-      element.closest("[data-catalog-spice]")?.setAttribute(
-        "aria-label",
-        t("catalog.spiceLevelLong", { level })
-      );
+    dom.catalogHeats.forEach((element) => {
+      const product = localizedProduct(productById.get(element.dataset.catalogHeat));
+      const label = product.heat_label || t("catalog.notSpicy");
+      const text = element.querySelector("small");
+      if (text) text.textContent = label;
+      element.setAttribute("aria-label", `${t("hero.heat")}: ${label}`);
     });
     dom.catalogStatuses.forEach((element) => {
       const product = productById.get(element.dataset.catalogStatus);
@@ -517,6 +519,17 @@
 
   function carouselDistance(value) {
     return modulo(value + products.length / 2, products.length) - products.length / 2;
+  }
+
+  let carouselFrame = 0;
+  let carouselInView = true;
+  let carouselPrepared = false;
+  let lastCarouselCandidates = new Set();
+
+  function queueCarouselDraw() {
+    if (!carouselFrame && carouselInView && !document.hidden) {
+      carouselFrame = requestAnimationFrame(drawCarousel);
+    }
   }
 
   function cycleTo(index) {
@@ -601,6 +614,7 @@
     }
     dom.lines.forEach((line, lineIndex) => line.classList.toggle("is-active", lineIndex === index));
     if (syncDetail) renderStoryById(baseProduct.id);
+    queueCarouselDraw();
   }
 
   function goTo(index, options = {}) {
@@ -608,6 +622,7 @@
     state.target = cycleTo(normalized);
     state.velocity += carouselDistance(normalized - state.selected) * 0.015;
     setTheme(normalized);
+    queueCarouselDraw();
     if (options.scrollTop) {
       if (dom.refrescosView && state.currentView !== "shop") setView("shop");
       document.querySelector("#top").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
@@ -618,7 +633,8 @@
     goTo(state.selected + direction);
   }
 
-  function drawCarousel() {
+  function drawCarousel(frameTime = performance.now()) {
+    carouselFrame = 0;
     if (!state.dragging) {
       const delta = state.target - state.angle;
       state.velocity += delta * 0.038;
@@ -630,11 +646,33 @@
       }
     }
 
+    if (!carouselPrepared) {
+      dom.cards.forEach((card) => {
+        card.style.opacity = "0";
+        card.style.pointerEvents = "none";
+        card.tabIndex = -1;
+        card.setAttribute("aria-hidden", "true");
+      });
+      carouselPrepared = true;
+    }
+
     const radius = clamp(window.innerWidth * 0.29, 260, 445);
     const depth = clamp(window.innerWidth * 0.25, 230, 390);
-    state.lookX += (state.lookTargetX - state.lookX) * 0.09;
-    state.lookY += (state.lookTargetY - state.lookY) * 0.09;
-    dom.cards.forEach((card, index) => {
+    if (!mobileMode) {
+      state.lookX += (state.lookTargetX - state.lookX) * 0.18;
+      state.lookY += (state.lookTargetY - state.lookY) * 0.18;
+    }
+    const candidates = new Set([-2, -1, 0, 1, 2].map((offset) => modulo(state.selected + offset, products.length)));
+    lastCarouselCandidates.forEach((index) => {
+      if (candidates.has(index)) return;
+      const card = dom.cards[index];
+      card.style.opacity = "0";
+      card.style.pointerEvents = "none";
+      card.tabIndex = -1;
+      card.setAttribute("aria-hidden", "true");
+    });
+    candidates.forEach((index) => {
+      const card = dom.cards[index];
       const distance = carouselDistance(index - state.angle);
       const absoluteDistance = Math.abs(distance);
       const selectedDistance = Math.abs(carouselDistance(index - state.selected));
@@ -647,7 +685,7 @@
       const lookStrength = Math.pow(proximity, 8);
       const rotationY = distance * -24 + state.lookX * 14 * lookStrength;
       const rotationX = state.lookY * -8.5 * lookStrength;
-      const float = reducedMotion ? 0 : Math.sin(performance.now() / 2100 + index * 2.1) * 5 * proximity;
+      const float = reducedMotion || mobileMode ? 0 : Math.sin(frameTime / 2100 + index * 2.1) * 3 * proximity;
       card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) rotateX(${rotationX.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
       card.style.opacity = isVisible ? String(0.22 + proximity * 0.78) : "0";
       card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 5).toFixed(2)}px)`;
@@ -656,8 +694,13 @@
       card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
       card.setAttribute("aria-hidden", String(!isVisible));
     });
+    lastCarouselCandidates = candidates;
 
-    requestAnimationFrame(drawCarousel);
+    const carouselMoving = state.dragging
+      || Math.abs(state.target - state.angle) > 0.0008
+      || Math.abs(state.velocity) > 0.0008
+      || (!mobileMode && (Math.abs(state.lookTargetX - state.lookX) > 0.002 || Math.abs(state.lookTargetY - state.lookY) > 0.002));
+    if (carouselMoving) queueCarouselDraw();
   }
 
   function nearestSelectionFromAngle() {
@@ -675,6 +718,7 @@
     state.velocity = 0;
     dom.carousel.classList.add("is-dragging");
     dom.carousel.setPointerCapture?.(event.pointerId);
+    queueCarouselDraw();
   }
 
   function onPointerMove(event) {
@@ -683,6 +727,7 @@
       state.lookTargetY = clamp((event.clientY / window.innerHeight) * 2 - 1, -1, 1);
       state.lookX += (state.lookTargetX - state.lookX) * 0.68;
       state.lookY += (state.lookTargetY - state.lookY) * 0.68;
+      queueCarouselDraw();
     }
 
     if (!state.dragging) return;
@@ -692,6 +737,7 @@
     state.velocity = -(event.clientX - state.lastX) / 310;
     state.lastX = event.clientX;
     nearestSelectionFromAngle();
+    queueCarouselDraw();
   }
 
   function onPointerUp(event) {
@@ -1362,18 +1408,31 @@
       );
     }
 
+    let refrescoFrame = 0;
+    let refrescoInView = false;
+    let refrescoPrepared = false;
+    let lastRefrescoCandidates = new Set();
+
+    function queueRefrescoDraw() {
+      if (!refrescoFrame && refrescoInView && !document.hidden) {
+        refrescoFrame = requestAnimationFrame(drawRefrescoCarousel);
+      }
+    }
+
     function goToRefresco(index) {
       const normalized = modulo(index, drinkProducts.length);
       refrescoState.target = refrescoCycleTo(normalized);
       refrescoState.velocity += refrescoDistance(normalized - refrescoState.selected) * 0.015;
       setRefrescoTheme(normalized);
+      queueRefrescoDraw();
     }
 
     function stepRefresco(direction) {
       goToRefresco(refrescoState.selected + direction);
     }
 
-    function drawRefrescoCarousel() {
+    function drawRefrescoCarousel(frameTime = performance.now()) {
+      refrescoFrame = 0;
       if (refrescoDom.carousel) {
         if (!refrescoState.dragging) {
           const delta = refrescoState.target - refrescoState.angle;
@@ -1386,11 +1445,31 @@
           }
         }
 
+        if (!refrescoPrepared) {
+          refrescoDom.cards.forEach((card) => {
+            card.style.opacity = "0";
+            card.style.pointerEvents = "none";
+            card.tabIndex = -1;
+            card.setAttribute("aria-hidden", "true");
+          });
+          refrescoPrepared = true;
+        }
+
         const shellWidth = refrescoDom.carousel.clientWidth || 360;
         const compactCarousel = window.innerWidth <= 820;
         const radius = clamp(shellWidth * (compactCarousel ? 0.58 : 0.52), compactCarousel ? 165 : 260, compactCarousel ? 250 : 450);
         const depth = clamp(shellWidth * 0.42, compactCarousel ? 145 : 220, compactCarousel ? 240 : 370);
-        refrescoDom.cards.forEach((card, index) => {
+        const candidates = new Set([-2, -1, 0, 1, 2].map((offset) => modulo(refrescoState.selected + offset, drinkProducts.length)));
+        lastRefrescoCandidates.forEach((index) => {
+          if (candidates.has(index)) return;
+          const card = refrescoDom.cards[index];
+          card.style.opacity = "0";
+          card.style.pointerEvents = "none";
+          card.tabIndex = -1;
+          card.setAttribute("aria-hidden", "true");
+        });
+        candidates.forEach((index) => {
+          const card = refrescoDom.cards[index];
           const distance = refrescoDistance(index - refrescoState.angle);
           const absoluteDistance = Math.abs(distance);
           const selectedDistance = Math.abs(refrescoDistance(index - refrescoState.selected));
@@ -1401,7 +1480,7 @@
           const proximity = clamp(1 + z / (depth * 2.6), 0, 1);
           const scale = 0.68 + proximity * 0.32;
           const rotationY = distance * -24;
-          const float = reducedMotion ? 0 : Math.sin(performance.now() / 2100 + index * 2.1) * 4 * proximity;
+          const float = reducedMotion || mobileMode ? 0 : Math.sin(frameTime / 2100 + index * 2.1) * 3 * proximity;
           card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
           card.style.opacity = isVisible ? String(0.38 + proximity * 0.62) : "0";
           card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 2.6).toFixed(2)}px)`;
@@ -1410,9 +1489,12 @@
           card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
           card.setAttribute("aria-hidden", String(!isVisible));
         });
+        lastRefrescoCandidates = candidates;
       }
-
-      requestAnimationFrame(drawRefrescoCarousel);
+      const refrescoMoving = refrescoState.dragging
+        || Math.abs(refrescoState.target - refrescoState.angle) > 0.0008
+        || Math.abs(refrescoState.velocity) > 0.0008;
+      if (refrescoMoving) queueRefrescoDraw();
     }
 
     function refrescoNearestSelectionFromAngle() {
@@ -1430,6 +1512,7 @@
       refrescoState.velocity = 0;
       refrescoDom.carousel.classList.add("is-dragging");
       refrescoDom.carousel.setPointerCapture?.(event.pointerId);
+      queueRefrescoDraw();
     }
 
     function onRefrescoPointerMove(event) {
@@ -1441,6 +1524,7 @@
       refrescoState.velocity = -(event.clientX - refrescoState.lastX) / 260;
       refrescoState.lastX = event.clientX;
       refrescoNearestSelectionFromAngle();
+      queueRefrescoDraw();
     }
 
     function onRefrescoPointerUp(event) {
@@ -1482,7 +1566,11 @@
 
     setRefrescoTheme(0);
     refreshRefrescos = () => setRefrescoTheme(refrescoState.selected);
-    requestAnimationFrame(drawRefrescoCarousel);
+    const refrescoVisibility = new IntersectionObserver((entries) => {
+      refrescoInView = entries.some((entry) => entry.isIntersecting);
+      if (refrescoInView) queueRefrescoDraw();
+    }, { rootMargin: "160px 0px" });
+    refrescoVisibility.observe(refrescoDom.carousel);
 
     const refrescoCatalogDom = {
       filters: [...document.querySelectorAll("[data-refresco-catalog-filter]")],
@@ -1540,11 +1628,23 @@
   }, { threshold: 0.12 });
   document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
 
+  const carouselVisibility = new IntersectionObserver((entries) => {
+    carouselInView = entries.some((entry) => entry.isIntersecting);
+    if (carouselInView) queueCarouselDraw();
+  }, { rootMargin: "120px 0px" });
+  carouselVisibility.observe(dom.carousel);
+
   window.addEventListener("scroll", updateHeader, { passive: true });
-  window.addEventListener("resize", updateHeader);
+  window.addEventListener("resize", () => {
+    updateHeader();
+    queueCarouselDraw();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) queueCarouselDraw();
+  });
 
   applyLanguage(state.language, { persist: false });
   setCatalogFilter("all");
   updateHeader();
-  requestAnimationFrame(drawCarousel);
+  queueCarouselDraw();
 })();

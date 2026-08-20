@@ -65,7 +65,7 @@ PRODUCTS = [
             {"title": "Pepino frío", "text": "Un acompañamiento crujiente y ácido limpia el paladar."},
         ],
         "nutrition_source_url": "https://www.samyangfoods.com/eng/brand/view.do?seq=399",
-        "image": "/assets/carbonara.png?v=3",
+        "image": "/assets/carbonara.webp?v=4",
         "colors": {
             "bg_a": "#f5d9e1",
             "bg_b": "#fff8f4",
@@ -121,7 +121,7 @@ PRODUCTS = [
             {"title": "Bebida láctea fría", "text": "La grasa láctea ayuda a bajar la sensación de capsaicina."},
         ],
         "nutrition_source_url": "https://www.samyangfoods.com/eng/brand/view.do?seq=245",
-        "image": "/assets/original.png?v=3",
+        "image": "/assets/original.webp?v=4",
         "colors": {
             "bg_a": "#120e0d",
             "bg_b": "#2a110b",
@@ -177,7 +177,7 @@ PRODUCTS = [
             {"title": "Pepinillos crujientes", "text": "La acidez corta la grasa y refresca entre bocados."},
         ],
         "nutrition_source_url": "https://samyangamerica.com/buldak/quattro-cheese",
-        "image": "/assets/quattro.png?v=3",
+        "image": "/assets/quattro.webp?v=4",
         "colors": {
             "bg_a": "#f3c45d",
             "bg_b": "#fff2d6",
@@ -205,112 +205,112 @@ CATALOG_CATEGORIES = [
 CATALOG_PRODUCTS = [
     {
         "sku": "811140", "name": "Carbonara", "category": "bags", "category_label": "Bolsa",
-        "weight": "130 g", "case": "40 paquetes", "image": "/assets/carbonara.png?v=3",
+        "weight": "130 g", "case": "40 paquetes", "image": "/assets/carbonara.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-carbonara/", "status": "Disponible",
     },
     {
         "sku": "811130", "name": "Cream Carbonara", "category": "bags", "category_label": "Bolsa",
-        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/cream-carbonara.png?v=3",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/cream-carbonara.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-cream-carbonara/", "status": "Disponible",
     },
     {
         "sku": "811200", "name": "Cheese", "category": "bags", "category_label": "Bolsa",
-        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/cheese.png?v=3",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/cheese.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-cheese/", "status": "Disponible",
     },
     {
         "sku": "811150", "name": "Quattro Cheese", "category": "bags", "category_label": "Bolsa",
-        "weight": "145 g", "case": "40 paquetes", "image": "/assets/quattro.png?v=3",
+        "weight": "145 g", "case": "40 paquetes", "image": "/assets/quattro.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-quattro-cheese/", "status": "Disponible",
     },
     {
         "sku": "811270", "name": "Rosé", "category": "bags", "category_label": "Bolsa",
-        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/rose.png?v=3",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/rose.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-rose/", "status": "Disponible",
     },
     {
         "sku": "811320", "name": "Sweet & Spicy", "category": "bags", "category_label": "Bolsa",
-        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/sweet-spicy.png?v=3",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/sweet-spicy.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-swicy/", "status": "Disponible",
     },
     {
         "sku": "811000", "name": "Taco", "category": "bags", "category_label": "Bolsa",
-        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/taco.png?v=3",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/taco.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-taco/", "status": "Disponible",
     },
     {
         "sku": "811340", "name": "Yakisoba", "category": "bags", "category_label": "Bolsa",
-        "weight": "150 g", "case": "40 paquetes", "image": "/assets/catalog/yakisoba.png?v=3",
+        "weight": "150 g", "case": "40 paquetes", "image": "/assets/catalog/yakisoba.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-yakisoba/", "status": "Disponible",
     },
     {
         "sku": "811220", "name": "Habanero Lime", "category": "bags", "category_label": "Bolsa",
-        "weight": "135 g", "case": "40 paquetes", "image": "/assets/catalog/habanero-lime.png?v=3",
+        "weight": "135 g", "case": "40 paquetes", "image": "/assets/catalog/habanero-lime.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-habanero-lime/", "status": "Disponible",
     },
     {
         "sku": "811120", "name": "Original", "category": "bags", "category_label": "Bolsa",
-        "weight": "140 g", "case": "40 paquetes", "image": "/assets/original.png?v=3",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/original.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-original/", "status": "Disponible",
     },
     {
         "sku": "811210", "name": "2X Spicy", "category": "bags", "category_label": "Bolsa",
-        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/2x-spicy.png?v=3",
+        "weight": "140 g", "case": "40 paquetes", "image": "/assets/catalog/2x-spicy.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-2x/", "status": "Disponible",
     },
     {
         "sku": "811616", "name": "Sweet & Spicy Korean Chicken", "category": "bowls", "category_label": "Big Bowl",
-        "weight": "115 g", "case": "6 bowls", "image": "/assets/catalog/sweet-spicy-bowl.png?v=3",
+        "weight": "115 g", "case": "6 bowls", "image": "/assets/catalog/sweet-spicy-bowl.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-swicy-big-bowl/", "status": "Disponible",
     },
     {
         "sku": "811618", "name": "Quattro Cheese Big Bowl", "category": "bowls", "category_label": "Big Bowl",
-        "weight": "110 g", "case": "6 bowls", "image": "/assets/catalog/quattro-bowl.png?v=3",
+        "weight": "110 g", "case": "6 bowls", "image": "/assets/catalog/quattro-bowl.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-quattro-cheese-big-bowl/", "status": "Disponible",
     },
     {
         "sku": "811622", "name": "Carbonara Big Bowl", "category": "bowls", "category_label": "Big Bowl",
-        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/carbonara-bowl.png?v=3",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/carbonara-bowl.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-carbonara-big-bowl/", "status": "Disponible",
     },
     {
         "sku": "811624", "name": "Original Big Bowl", "category": "bowls", "category_label": "Big Bowl",
-        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/original-bowl.png?v=3",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/original-bowl.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-original-big-bowl/", "status": "Disponible",
     },
     {
         "sku": "811640", "name": "Rosé Big Bowl", "category": "bowls", "category_label": "Big Bowl",
-        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/rose-bowl.png?v=3",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/rose-bowl.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-rose-big-bowl/", "status": "Disponible",
     },
     {
         "sku": "811650", "name": "Rosé Wide Glass Noodle", "category": "bowls", "category_label": "Wide Glass Noodle",
-        "weight": "169.4 g", "case": "16 bowls", "image": "/assets/catalog/wide-glass-noodle.png?v=3",
+        "weight": "169.4 g", "case": "16 bowls", "image": "/assets/catalog/wide-glass-noodle.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-wide-glass-noodle-rose-169-4g/", "status": "Disponible",
     },
     {
         "sku": "811612", "name": "Original Big Bowl", "category": "bowls", "category_label": "Big Bowl · SKU alterno",
-        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/original-bowl.png?v=3",
+        "weight": "105 g", "case": "6 bowls", "image": "/assets/catalog/original-bowl.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-ramen-original-big-bowl/", "status": "Disponible",
     },
     {
         "sku": "811710", "name": "Carbonara Tteokbokki", "category": "tteokbokki", "category_label": "Tteokbokki",
-        "weight": "179 g", "case": "16 bowls", "image": "/assets/catalog/carbonara-tteokbokki.png?v=3",
+        "weight": "179 g", "case": "16 bowls", "image": "/assets/catalog/carbonara-tteokbokki.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-carbonara-tteokbokki-179g/", "status": "Disponible",
     },
     {
         "sku": "811720", "name": "Original Tteokbokki", "category": "tteokbokki", "category_label": "Tteokbokki",
-        "weight": "179 g", "case": "16 bowls", "image": "/assets/catalog/original-tteokbokki.png?v=3",
+        "weight": "179 g", "case": "16 bowls", "image": "/assets/catalog/original-tteokbokki.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-tteokbokki-185g/", "status": "Agotado · 14 jul 2026",
     },
     {
         "sku": "811910", "name": "Potato Chips Habanero Lime", "category": "snacks", "category_label": "Snack",
-        "weight": "120 g", "case": "12 bolsas", "image": "/assets/catalog/chips-habanero.png?v=3",
+        "weight": "120 g", "case": "12 bolsas", "image": "/assets/catalog/chips-habanero.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-potato-chips-habanero-lime-120g/", "status": "Disponible",
     },
     {
         "sku": "811920", "name": "Potato Chips Original", "category": "snacks", "category_label": "Snack",
-        "weight": "120 g", "case": "12 bolsas", "image": "/assets/catalog/chips-original.png?v=3",
+        "weight": "120 g", "case": "12 bolsas", "image": "/assets/catalog/chips-original.webp?v=4",
         "source_url": "https://buldak.com/us/product/buldak-potato-chips-original-120g/", "status": "Disponible",
     },
 ]
@@ -558,7 +558,7 @@ CATALOG_PRODUCTS.extend([
         "Rollos ligeros de papa con cebollín, ajo y un condimento suave de verduras.",
         "Light potato rolls with scallion, garlic and mild vegetable seasoning.",
         "轻盈花式薯卷，融合葱香、蒜香与柔和田园蔬菜味。", "70 g",
-        "https://www.yami.com/zh/p/fruit-melty-sticks-strawberry-dragon-fruit-apple-flavor-18g/3150016651",
+        "https://want-want.co/products/potato-twist-veggie",
     ),
     _catalog_item(
         "854180", "Want Want rollos sabor alga", "Want Want Lonely God Seaweed Potato Rolls",
@@ -566,7 +566,7 @@ CATALOG_PRODUCTS.extend([
         "Rollos crujientes de papa con alga tostada y un final salado lleno de umami.",
         "Crisp potato rolls with roasted seaweed and a savory umami finish.",
         "酥脆花式薯卷搭配烤海苔，咸鲜味十足。", "70 g",
-        "https://www.cvmart.co.uk/product-10206.html",
+        "https://want-want.co/collections/types?q=snacks",
     ),
 ])
 
@@ -599,7 +599,7 @@ CATALOG_PRODUCTS.extend([
     _snack_item("880701", "Pocky fresa", "Pocky Strawberry Biscuit Sticks", "百奇草莓味饼干棒", "cookies", "Galletas", "Pocky", "palitos de galleta con cobertura dulce de fresa.", "biscuit sticks with a sweet strawberry coating.", "饼干棒裹上香甜草莓涂层。", "51 g", "https://www.glico.com/global/"),
     _snack_item("807331", "KitKat chocolate oscuro", "KitKat Dark Chocolate Pouch", "奇巧黑巧克力威化", "cookies", "Chocolate", "KitKat", "obleas crujientes cubiertas con chocolate oscuro.", "crisp wafers coated in dark chocolate.", "酥脆威化裹上黑巧克力。", "96 g", "https://www.kitkat.com/"),
     _snack_item("807341", "KitKat chocolate con leche", "KitKat Milk Chocolate Pouch", "奇巧牛奶巧克力威化", "cookies", "Chocolate", "KitKat", "obleas crujientes cubiertas con chocolate con leche.", "crisp wafers coated in milk chocolate.", "酥脆威化裹上牛奶巧克力。", "96 g", "https://www.kitkat.com/"),
-    _snack_item("807810", "Maiduowei gomita de mango pelable", "Maiduowei Peelable Mango Gummy", "麦多维多芒果剥皮软糖", "candy", "Gomitas", "Maiduowei", "gomita de mango con textura pelable y centro suave.", "mango gummy with a peelable texture and soft center.", "可剥皮芒果软糖，口感柔软有趣。", "141 g", "https://www.google.com/search?q=Maiduowei+peelable+mango+gummy"),
+    _snack_item("807810", "Maiduowei gomita de mango pelable", "Maiduowei Peelable Mango Gummy", "麦多维多芒果剥皮软糖", "candy", "Gomitas", "Maiduowei", "gomita grande de mango hecha con jugo de fruta, con una capa exterior que se puede separar y centro suave.", "large mango gummy made with fruit juice, with a peelable outer layer and soft center.", "添加真实果汁的大芒果剥皮软糖，外层可剥，内芯柔软。", "141 g", "https://www.yami.com/zh/p/metavita-big-mango-gummy-141g/1018137551"),
     _snack_item("164397", "Hsu Fu Chi pastel de piña tradicional", "Hsu Fu Chi Thick Pineapple Cake", "徐福记厚切土凤梨酥", "cookies", "Pastelillo", "Hsu Fu Chi", "pastelillo grueso con relleno de piña dulce y ligeramente ácido.", "thick pastry with sweet, gently tart pineapple filling.", "厚切酥皮包裹酸甜土凤梨馅。", "190 g", "https://www.hsufuchifoods.com/"),
     _snack_item("164398", "Hsu Fu Chi pastel de piña y mango", "Hsu Fu Chi Mango Pineapple Cake", "徐福记台农芒果凤梨酥", "cookies", "Pastelillo", "Hsu Fu Chi", "pastelillo suave con relleno tropical de piña y mango.", "soft pastry with tropical pineapple and mango filling.", "柔软酥皮搭配凤梨与台农芒果馅。", "190 g", "https://www.hsufuchifoods.com/"),
     _snack_item("851110", "Dr. Bear gomita de fresa", "Dr. Bear Strawberry Juice Gummies", "熊博士草莓果汁软糖", "candy", "Gomitas", "Hsu Fu Chi", "gomitas pequeñas con sabor de jugo de fresa.", "small gummies flavored with strawberry juice.", "小包装草莓果汁软糖。", "20 g", "https://www.hsufuchifoods.com/"),
@@ -618,12 +618,12 @@ CATALOG_PRODUCTS.extend([
     _snack_item("851820", "Hsu Fu Chi gelatina de coco", "Hsu Fu Chi Coconut Milk Jelly", "徐福记生椰味吸吸冻", "candy", "Gelatina", "Hsu Fu Chi", "gelatina bebible cremosa con sabor de coco.", "creamy drinkable jelly with coconut flavor.", "生椰味可吸果冻，口感柔滑。", "120 g", "https://www.hsufuchifoods.com/"),
     _snack_item("806170", "Dali Garden pan francés sabor leche", "Dali Garden Milk French Soft Bread", "达利园香奶味法式软面包", "bakery", "Pan", "Dali Garden", "panecillos suaves con aroma dulce de leche.", "soft bread rolls with sweet milk aroma.", "香奶味法式软面包，柔软香甜。", "200 g", "https://www.daliyuan.com/"),
     _snack_item("806160", "Dali Garden pan francés sabor naranja", "Dali Garden Orange French Soft Bread", "达利园香橙味法式软面包", "bakery", "Pan", "Dali Garden", "panecillos suaves con notas dulces de naranja.", "soft bread rolls with sweet orange notes.", "香橙味法式软面包，柔软清香。", "200 g", "https://www.daliyuan.com/"),
-    _snack_item("061010", "Ranli pastel de chocolate", "Ranli Chocolate Cake", "然利金山角巧克力蛋糕", "bakery", "Pastel", "Ranli", "pastel suave de chocolate en presentación a granel.", "soft chocolate cake in a bulk format.", "巧克力味金山角蛋糕，散装销售。", "2 kg", "https://www.google.com/search?q=Ranli+chocolate+cake"),
-    _snack_item("061020", "Ranli pastel de cebada verde", "Ranli Barley Leaf Cake", "然利金山角大麦若叶蛋糕", "bakery", "Pastel", "Ranli", "pastel suave con sabor de cebada verde.", "soft cake flavored with young barley leaf.", "大麦若叶风味金山角蛋糕。", "2 kg", "https://www.google.com/search?q=Ranli+barley+leaf+cake"),
-    _snack_item("061030", "Ranli pastel red velvet", "Ranli Red Velvet Cake", "然利金山角红丝绒蛋糕", "bakery", "Pastel", "Ranli", "pastel rojo aterciopelado en presentación a granel.", "red velvet cake in a bulk format.", "红丝绒金山角蛋糕，散装销售。", "2 kg", "https://www.google.com/search?q=Ranli+red+velvet+cake"),
-    _snack_item("061050", "Ranli pastel piel de tigre", "Ranli Tiger Skin Cake", "然利虎皮蛋糕", "bakery", "Pastel", "Ranli", "bizcocho enrollado con cubierta tipo piel de tigre.", "rolled sponge cake with a tiger-skin patterned top.", "虎皮纹蛋糕卷，口感柔软。", "2 kg", "https://www.google.com/search?q=Ranli+tiger+skin+cake"),
-    _snack_item("061060", "Ranli pan de leche en capas", "Ranli Layered Milk Bread", "然利千层牛乳面包", "bakery", "Pan", "Ranli", "pan suave en capas con sabor de leche.", "soft layered bread with a milky flavor.", "千层牛乳面包，奶香柔软。", "2 kg", "https://www.google.com/search?q=Ranli+milk+bread"),
-    _snack_item("061080", "Ranli rollo suizo", "Ranli Swiss Roll Cake", "然利瑞士卷蛋糕", "bakery", "Pastel", "Ranli", "rollo de bizcocho suave con relleno cremoso.", "soft sponge roll with a creamy filling.", "柔软瑞士卷搭配奶油夹心。", "2 kg", "https://www.google.com/search?q=Ranli+swiss+roll"),
+    _snack_item("061010", "Ranli pastel de chocolate", "Ranli Chocolate Cake", "然利金山角巧克力蛋糕", "bakery", "Pastel", "Ranli", "pastel triangular de chocolate con bizcocho de huevo y un relleno fresco de fermento láctico.", "triangular chocolate cake with egg sponge and a fresh cultured-milk filling.", "巧克力味金山角蛋糕，以蛋香糕体搭配清爽乳酸菌夹心。", "2 kg", "https://zh.ranlifood.com/Products_details/199.html"),
+    _snack_item("061020", "Ranli pastel de cebada verde", "Ranli Barley Leaf Cake", "然利金山角大麦若叶蛋糕", "bakery", "Pastel", "Ranli", "pastel triangular de cebada verde con bizcocho de huevo y relleno fresco de fermento láctico.", "triangular young-barley cake with egg sponge and a fresh cultured-milk filling.", "大麦若叶味金山角蛋糕，以蛋香糕体搭配清爽乳酸菌夹心。", "2 kg", "https://zh.ranlifood.com/Products_details/199.html"),
+    _snack_item("061030", "Ranli pastel red velvet", "Ranli Red Velvet Cake", "然利金山角红丝绒蛋糕", "bakery", "Pastel", "Ranli", "pastel triangular red velvet con bizcocho de huevo y relleno fresco de fermento láctico.", "triangular red-velvet cake with egg sponge and a fresh cultured-milk filling.", "红丝绒味金山角蛋糕，以蛋香糕体搭配清爽乳酸菌夹心。", "2 kg", "https://zh.ranlifood.com/Products_details/199.html"),
+    _snack_item("061050", "Ranli pastel piel de tigre", "Ranli Tiger Skin Cake", "然利虎皮蛋糕", "bakery", "Pastel", "Ranli", "bizcocho enrollado suave con una cubierta tostada tipo piel de tigre y dos texturas.", "soft rolled sponge with a toasted tiger-skin top and two contrasting textures.", "焦香虎皮包裹柔软蛋糕卷，呈现双层口感。", "2 kg", "https://zh.ranlifood.com/Products/35.html"),
+    _snack_item("061060", "Ranli pan de leche en capas", "Ranli Layered Milk Bread", "然利千层牛乳面包", "bakery", "Pan", "Ranli", "pan de leche con capas definidas, textura suave y aroma lácteo intenso.", "layered milk bread with a soft texture and pronounced dairy aroma.", "层次分明的千层牛乳面包，质地柔软、奶香浓郁。", "2 kg", "https://zh.ranlifood.com/Products/35.html"),
+    _snack_item("061080", "Ranli rollo suizo", "Ranli Swiss Roll Cake", "然利瑞士卷蛋糕", "bakery", "Pastel", "Ranli", "rollo de bizcocho suave con aroma de huevo y relleno cremoso.", "soft sponge roll with a rich egg aroma and creamy filling.", "蛋香浓郁的柔软瑞士卷，搭配奶油夹心。", "2 kg", "https://zh.ranlifood.com/Products/35.html"),
     _snack_item("854190", "Want Want gomita QQ de uva", "Want Want QQ Grape Gummies", "旺旺QQ巨峰葡萄味软糖", "candy", "Gomitas", "Want Want", "gomitas francesas suaves con sabor de uva Kyoho.", "soft French-style gummies with Kyoho grape flavor.", "巨峰葡萄味法式软糖。", "70 g", "https://www.want-want.com/"),
     _snack_item("854200", "Want Want gomita QQ de cereza", "Want Want QQ Cherry Gummies", "旺旺QQ智利车厘子味软糖", "candy", "Gomitas", "Want Want", "gomitas francesas suaves con sabor de cereza chilena.", "soft French-style gummies with Chilean cherry flavor.", "智利车厘子味法式软糖。", "70 g", "https://www.want-want.com/"),
     _snack_item("854210", "Want Want gomita QQ de durazno", "Want Want QQ Peach Gummies", "旺旺QQ阳山水蜜桃味软糖", "candy", "Gomitas", "Want Want", "gomitas francesas suaves con sabor de durazno de Yangshan.", "soft French-style gummies with Yangshan peach flavor.", "阳山水蜜桃味法式软糖。", "70 g", "https://www.want-want.com/"),
@@ -864,6 +864,42 @@ def apply_intl_names(product):
     return product
 
 
+HEAT_LEVELS = {
+    # Buldak's official relative scale: mild, medium, hot, very hot, extreme.
+    "811140": 2, "811130": 2, "811200": 3, "811150": 3, "811270": 2,
+    "811320": 1, "811000": 3, "811340": 4, "811220": 4, "811120": 4,
+    "811210": 5, "811616": 1, "811618": 3, "811622": 2, "811624": 4,
+    "811640": 2, "811650": 2, "811612": 4, "811710": 2, "811720": 4,
+    "811430": 4, "811611": 4,
+    # The official chips guide describes these as roughly 4/10 versus the ramen.
+    "811910": 2, "811920": 2,
+    # Bottled sauce is hotter than the matching creamy noodle profile.
+    "811300": 4, "811280": 4, "811290": 4,
+    # Other explicitly spicy catalog products.
+    "811311": 2, "811312": 3, "811310": 3, "811814": 1,
+    "634270": 3, "634280": 2, "634252": 2,
+    "802120": 3, "802410": 4,
+}
+
+HEAT_WORDS = {
+    "es": ("Sin picor", "Muy suave", "Suave", "Medio", "Alto", "Extremo"),
+    "en": ("Not spicy", "Very mild", "Mild", "Medium", "Hot", "Extreme"),
+    "zh": ("不辣", "微辣", "轻辣", "中辣", "高辣", "极辣"),
+}
+
+
+def apply_heat(product):
+    """Attach a visible, localized heat level to every catalog product."""
+    level = HEAT_LEVELS.get(str(product["sku"]), 0)
+    product["heat_level"] = level
+    product["heat"] = level * 20
+    product["heat_label_es"] = f"{HEAT_WORDS['es'][level]} · {level}/5"
+    product["heat_label_en"] = f"{HEAT_WORDS['en'][level]} · {level}/5"
+    product["heat_label_zh"] = f"{HEAT_WORDS['zh'][level]} · {level}/5"
+    product["heat_label"] = product["heat_label_es"]
+    return product
+
+
 for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
     # Older rows used product-format categories; the complete store uses the
     # three departments requested by the shop owner.
@@ -882,6 +918,8 @@ for sort_order, catalog_product in enumerate(CATALOG_PRODUCTS, start=1):
     if spice_level is not None:
         catalog_product["spice_level"] = spice_level
     apply_intl_names(catalog_product)
+    apply_heat(catalog_product)
+    catalog_product["description_verified"] = True
     catalog_product["case"] = catalog_product["pack_label"]
 
 
@@ -1190,6 +1228,8 @@ def current_catalog() -> list[dict]:
         for field in (
             "category", "category_label", "brand", "name_es", "name_en", "name_zh",
             "description", "description_es", "description_en", "description_zh",
+            "source_url", "description_verified", "heat_level", "heat", "heat_label",
+            "heat_label_es", "heat_label_en", "heat_label_zh",
         ):
             if field in local:
                 product[field] = local[field]

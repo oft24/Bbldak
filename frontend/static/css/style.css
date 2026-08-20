@@ -302,6 +302,16 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   width: min(32vw, 400px);
 }
 
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -26px -76px -30px -24px;
+  border-radius: 28px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--bg-a) 98%, transparent) 0 64%, transparent 100%);
+  pointer-events: none;
+}
+
 .eyebrow,
 .section-index {
   margin: 0;
@@ -552,11 +562,10 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .catalog-card__sku { color: #9d2441; font-size: 9px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
 .catalog-card h3 { min-height: 2.25em; margin: 9px 0 0; font-size: clamp(18px, 1.6vw, 25px); line-height: 1.08; letter-spacing: -.04em; }
 .catalog-card__body > p { margin: 10px 0 0; color: #7d7174; font-size: 11px; }
-.catalog-card__spice { margin-top: 13px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #8f263f; }
-.catalog-card__spice-label { font-size: 9px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-.catalog-card__spice-meter { display: inline-flex; align-items: center; gap: 4px; }
-.catalog-card__spice-meter i { width: 13px; height: 4px; border-radius: 99px; background: #e1d5d7; }
-.catalog-card__spice-meter i.is-active { background: linear-gradient(90deg, #f48a35, #b3123f); box-shadow: 0 1px 5px rgba(179, 18, 63, .22); }
+.catalog-card__heat { margin-top: 13px; display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 9px; }
+.catalog-card__heat > span { height: 3px; overflow: hidden; border-radius: 99px; background: #e2d7d9; }
+.catalog-card__heat i { display: block; width: var(--heat); height: 100%; border-radius: inherit; background: #b3123f; }
+.catalog-card__heat small { color: #75696c; font-size: 9px; font-weight: 700; }
 .catalog-card__footer { min-height: 44px; margin-top: 18px; padding-top: 14px; display: flex; align-items: start; justify-content: flex-start; gap: 12px; border-top: 1px solid #e6dcde; }
 .catalog-card__footer strong, .catalog-card__footer a { font-size: 9px; line-height: 1.35; }
 .catalog-card__footer strong { color: #42724d; }
@@ -1004,7 +1013,7 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
 
 @media (max-width: 1100px) {
   .hero-copy { width: 31vw; }
-  .carousel-shell { right: 23%; left: 26%; }
+  .carousel-shell { right: 18%; left: 36%; }
   .purchase-card { width: 26vw; }
   .story-grid { grid-template-columns: .9fr 1.1fr; gap: 40px; }
   .story-visual { min-height: 500px; }
@@ -1037,6 +1046,7 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
   .header-search { display: none; }
   .hero { min-height: 960px; }
   .hero-copy { top: 105px; left: 20px; width: calc(100% - 40px); }
+  .hero-copy::before { display: none; }
   .hero-copy__content { min-height: 140px; }
   .hero h1 { font-size: clamp(44px, 13vw, 68px); }
   .hero-copy__content > p { max-width: 420px; margin-top: 12px; }
@@ -1162,3 +1172,27 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* Phones receive a deliberately lighter rendering path. */
+.is-mobile-device .ambient__noise,
+.is-mobile-device .orb,
+.is-mobile-device .story-ring--two { display: none; }
+.is-mobile-device .ambient__glow { opacity: .5; filter: none; }
+.is-mobile-device .carousel-glow { filter: none; opacity: .72; }
+.is-mobile-device .site-header.is-scrolled,
+.is-mobile-device .primary-nav,
+.is-mobile-device dialog::backdrop,
+.is-mobile-device .search-dialog,
+.is-mobile-device .flavors { backdrop-filter: none; }
+.is-mobile-device .catalog-card,
+.is-mobile-device .refrescos-catalog .catalog-card { content-visibility: auto; contain-intrinsic-size: 420px 680px; }
+.is-mobile-device .catalog-card__visual > span { backdrop-filter: none; background: rgba(255, 255, 255, .94); }
+.is-mobile-device .product-pack,
+.is-mobile-device .refrescos-carousel-shell .product-pack { will-change: auto; transition: none; }
+.is-mobile-device .product-pack img,
+.is-mobile-device .story-visual img,
+.is-mobile-device .catalog-card__visual img,
+.is-mobile-device .refrescos-carousel-shell .product-pack img { filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .18)); }
+.is-mobile-device .catalog-card:hover,
+.is-mobile-device .catalog-card:hover .catalog-card__visual img { transform: none; box-shadow: none; }
+.is-mobile-device .reveal { transition-duration: 320ms; }
