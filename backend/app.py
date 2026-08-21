@@ -1478,9 +1478,9 @@ repository = ProductRepository()
 def current_catalog() -> list[dict]:
     """Merge editable Supabase rows with the complete catalog shipped in code.
 
-    This lets the production database continue controlling availability and
-    product imagery while newly catalogued SKUs appear immediately, even before
-    a database migration is applied.
+    This lets the production database continue controlling availability while
+    the versioned site remains the source of truth for optimized local imagery
+    and newly catalogued SKUs.
     """
     stored = repository.list_products(CATALOG_PRODUCTS)
     stored_by_sku = {str(product["sku"]): product for product in stored}
@@ -1489,7 +1489,7 @@ def current_catalog() -> list[dict]:
         product = {**local, **stored_by_sku.get(str(local["sku"]), {})}
         # Department, brand and translated copy are versioned with the site.
         for field in (
-            "category", "category_label", "brand", "name_es", "name_en", "name_zh",
+            "category", "category_label", "brand", "image", "name_es", "name_en", "name_zh",
             "description", "description_es", "description_en", "description_zh",
             "source_url", "description_verified", "heat_level", "heat", "heat_label",
             "heat_label_es", "heat_label_en", "heat_label_zh",

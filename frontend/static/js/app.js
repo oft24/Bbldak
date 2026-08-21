@@ -9,11 +9,54 @@
   const payload = JSON.parse(productData.textContent);
   const featuredProducts = payload.featured;
   const catalogProducts = payload.catalog;
-  const carouselProducts = payload.carousel || catalogProducts;
+  const catalogById = new Map(catalogProducts.map((product) => [String(product.id), product]));
+  const carouselProducts = (payload.carousel_ids || [])
+    .map((id) => catalogById.get(String(id)))
+    .filter(Boolean);
+  if (!carouselProducts.length) carouselProducts.push(...catalogProducts);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const mobileMode = window.matchMedia("(max-width: 820px), (pointer: coarse)").matches;
   const root = document.documentElement;
   root.classList.toggle("is-mobile-device", mobileMode);
+
+  function revealLoadedImage(image) {
+    image.classList.add("is-loaded");
+  }
+
+  function activateDeferredImage(image) {
+    const sourceUrl = image.dataset.deferredSrc;
+    if (!sourceUrl) return;
+    image.closest("picture")?.querySelectorAll("source[data-deferred-srcset]").forEach((source) => {
+      source.srcset = source.dataset.deferredSrcset;
+      delete source.dataset.deferredSrcset;
+    });
+    image.addEventListener("load", () => revealLoadedImage(image), { once: true });
+    image.src = sourceUrl;
+    delete image.dataset.deferredSrc;
+    if (image.complete) revealLoadedImage(image);
+  }
+
+  function activateCarouselImage(card, priority = "low") {
+    const image = card?.querySelector("img[data-carousel-src]");
+    if (!image) return;
+    image.fetchPriority = priority;
+    image.src = image.dataset.carouselSrc;
+    delete image.dataset.carouselSrc;
+  }
+
+  const deferredImages = [...document.querySelectorAll("img[data-deferred-src]")];
+  if ("IntersectionObserver" in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        activateDeferredImage(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: "520px 0px" });
+    deferredImages.forEach((image) => imageObserver.observe(image));
+  } else {
+    deferredImages.forEach(activateDeferredImage);
+  }
   const catalogThemes = Object.freeze({
     "811140": { bgA: "#f5d9e1", bgB: "#fff8f4", glow: "#ffc1d2", ink: "#2b171e", accent: "#b3123f" },
     "811130": { bgA: "#e9f3f5", bgB: "#fff7f8", glow: "#f6cadb", ink: "#251b20", accent: "#cf527b" },
@@ -127,7 +170,8 @@
     checkoutButton: document.querySelector("[data-open-checkout]"),
     searchDialog: document.querySelector("[data-search-dialog]"),
     searchInput: document.querySelector("[data-search-input]"),
-    searchResults: [...document.querySelectorAll("[data-search-result]")],
+    searchResultsContainer: document.querySelector("[data-search-results]"),
+    searchResults: [],
     noResults: document.querySelector("[data-no-results]"),
     checkoutDialog: document.querySelector("[data-checkout-dialog]"),
     checkoutForm: document.querySelector("[data-checkout-form]"),
@@ -412,7 +456,8 @@
     state.detailProductId = String(product.id);
     document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
     updateCatalogDetailButtons();
-    updateHeader();
+    invalidateHeaderMetrics();
+    queueHeaderUpdate();
   }
 
   function showProductDetail(id) {
@@ -429,7 +474,7 @@
     if (output) output.textContent = String(next);
   }
 
-  function applyLanguage(language, { persist = true } = {}) {
+  function applyLanguage(language, { persist = true, initial = false } = {}) {
     state.language = ["es", "en", "zh"].includes(language) ? language : "es";
     root.lang = state.language === "zh" ? "zh-CN" : state.language;
     dom.language.value = state.language;
@@ -439,6 +484,14 @@
       } catch {
         // A blocked storage API should not prevent translation.
       }
+    }
+
+    // The server already renders the default Spanish interface. Avoid rewriting
+    // thousands of off-screen catalog nodes before the first meaningful paint.
+    if (initial && state.language === "es") {
+      document.title = `dangoko — ${products[state.selected].name}`;
+      renderCart({ animate: false });
+      return;
     }
 
     document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -559,7 +612,7 @@
     });
     refreshRefrescos?.();
 
-    setTheme(state.selected, { syncDetail: false });
+    setTheme(state.selected, { syncDetail: false, centerTab: false });
     renderStoryById(state.detailProductId);
     renderCart({ animate: false });
     filterSearch(dom.searchInput.value);
@@ -592,11 +645,12 @@
     return rounded + carouselDistance(index - current);
   }
 
-  function setTheme(index, { syncDetail = true } = {}) {
+  function setTheme(index, { syncDetail = true, centerTab = true } = {}) {
     const baseProduct = products[index];
     const product = localizedProduct(baseProduct);
     const detail = productDetail(product);
     const theme = storyThemeFor(product);
+    const previousIndex = state.selected;
     state.selected = index;
     root.style.setProperty("--bg-a", theme.bgA);
     root.style.setProperty("--bg-b", theme.bgB);
@@ -662,23 +716,20 @@
     }
     document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
 
-    dom.cards.forEach((card, cardIndex) => {
+    new Set([previousIndex, index]).forEach((cardIndex) => {
       const active = cardIndex === index;
-      card.classList.toggle("is-active", active);
-      card.setAttribute("aria-pressed", String(active));
-    });
-    dom.tabs.forEach((tab, tabIndex) => {
-      const active = tabIndex === index;
-      tab.classList.toggle("is-active", active);
-      tab.setAttribute("aria-pressed", String(active));
+      dom.cards[cardIndex]?.classList.toggle("is-active", active);
+      dom.cards[cardIndex]?.setAttribute("aria-pressed", String(active));
+      dom.tabs[cardIndex]?.classList.toggle("is-active", active);
+      dom.tabs[cardIndex]?.setAttribute("aria-pressed", String(active));
+      dom.lines[cardIndex]?.classList.toggle("is-active", active);
     });
     const activeTab = dom.tabs[index];
-    if (activeTab) {
+    if (activeTab && centerTab) {
       const tabRail = activeTab.parentElement;
       const left = activeTab.offsetLeft - (tabRail.clientWidth - activeTab.offsetWidth) / 2;
       tabRail.scrollTo({ left, behavior: reducedMotion ? "auto" : "smooth" });
     }
-    dom.lines.forEach((line, lineIndex) => line.classList.toggle("is-active", lineIndex === index));
     if (syncDetail) renderStoryById(baseProduct.id);
     queueCarouselDraw();
   }
@@ -713,12 +764,6 @@
     }
 
     if (!carouselPrepared) {
-      dom.cards.forEach((card) => {
-        card.style.opacity = "0";
-        card.style.pointerEvents = "none";
-        card.tabIndex = -1;
-        card.setAttribute("aria-hidden", "true");
-      });
       carouselPrepared = true;
     }
 
@@ -743,6 +788,7 @@
       const absoluteDistance = Math.abs(distance);
       const selectedDistance = Math.abs(carouselDistance(index - state.selected));
       const isVisible = selectedDistance <= 1;
+      if (isVisible) activateCarouselImage(card, index === state.selected ? "high" : "low");
       const theta = clamp(distance, -4, 4) * 0.52;
       const x = Math.sin(theta) * radius;
       const z = (Math.cos(theta) - 1) * depth;
@@ -974,6 +1020,7 @@
   function openCart() {
     if (dom.searchDialog.open) dom.searchDialog.close();
     state.lastCartFocus = document.activeElement;
+    dom.cartDrawer.inert = false;
     dom.cartDrawer.classList.add("is-open");
     dom.cartScrim.classList.add("is-open");
     dom.cartDrawer.setAttribute("aria-hidden", "false");
@@ -985,6 +1032,7 @@
     dom.cartDrawer.classList.remove("is-open");
     dom.cartScrim.classList.remove("is-open");
     dom.cartDrawer.setAttribute("aria-hidden", "true");
+    dom.cartDrawer.inert = true;
     if (!dom.searchDialog.open && !dom.checkoutDialog.open && !dom.legalDialog.open) document.body.classList.remove("is-locked");
     if (restoreFocus) state.lastCartFocus?.focus?.();
   }
@@ -1011,19 +1059,28 @@
 
   function filterSearch(query) {
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    let visible = 0;
-    dom.searchResults.forEach((result, index) => {
-      const product = localizedProduct(products[index]);
+    const matches = [];
+    products.forEach((baseProduct, index) => {
+      const product = localizedProduct(baseProduct);
       const detail = productDetail(product);
-      const haystack = [result.dataset.keywords, product.name, product.tagline, product.description, product.story, detail.description]
+      const haystack = [product.name, product.name_en, product.name_zh, product.category, product.category_label,
+        product.tagline, product.description, product.story, detail.description]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
-      const matches = terms.length === 0 || terms.every((term) => haystack.includes(term));
-      result.hidden = !matches;
-      if (matches) visible += 1;
+      const isMatch = terms.length === 0 || terms.every((term) => haystack.includes(term));
+      if (isMatch) matches.push({ product, index });
     });
-    dom.noResults.hidden = visible > 0;
+    dom.searchResultsContainer.innerHTML = matches.slice(0, 12).map(({ product, index }) => `
+      <button class="search-result" type="button" data-search-result="${index}" data-search-product="${escapeHtml(product.id)}">
+        <img src="/assets/mobile-catalog/${encodeURIComponent(product.sku)}.webp?v=1" alt="" loading="lazy" decoding="async">
+        <span><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.heat_label && product.heat_label !== "—"
+          ? `${product.heat_label} · ${product.price_label}`
+          : `${t(`category.${product.category}`)} · ${product.price_label}`)}</small></span>
+        <b aria-hidden="true">↗</b>
+      </button>`).join("");
+    dom.searchResults = [...dom.searchResultsContainer.querySelectorAll("[data-search-result]")];
+    dom.noResults.hidden = matches.length > 0;
   }
 
   function selectSearchResult(index) {
@@ -1069,6 +1126,7 @@
       const grouped = departments[category];
       card.hidden = category !== "all" && card.dataset.category !== category && !grouped?.has(card.dataset.category);
     });
+    invalidateHeaderMetrics();
   }
 
   function closeCheckout() {
@@ -1171,7 +1229,36 @@
     } else {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
-    updateHeader();
+    invalidateHeaderMetrics();
+    queueHeaderUpdate();
+  }
+
+  const headerSections = {
+    catalog: document.querySelector("#catalog"),
+    story: document.querySelector("#story"),
+    ritual: document.querySelector("#ritual"),
+    prepared: document.querySelector("#prepared"),
+    footer: document.querySelector(".site-footer"),
+  };
+  let headerMetrics = null;
+
+  function invalidateHeaderMetrics() {
+    headerMetrics = null;
+  }
+
+  function measureHeaderSections() {
+    const ritualVisible = !headerSections.ritual.hidden;
+    const preparedVisible = !headerSections.prepared.hidden;
+    headerMetrics = {
+      catalogTop: headerSections.catalog.offsetTop,
+      storyTop: headerSections.story.offsetTop,
+      ritualTop: headerSections.ritual.offsetTop,
+      preparedTop: headerSections.prepared.offsetTop,
+      footerTop: headerSections.footer.offsetTop,
+      ritualVisible,
+      preparedVisible,
+    };
+    return headerMetrics;
   }
 
   function updateHeader() {
@@ -1182,23 +1269,21 @@
       dom.header.classList.add("force-dark");
       return;
     }
-    const catalog = document.querySelector("#catalog");
-    const story = document.querySelector("#story");
-    const ritual = document.querySelector("#ritual");
-    const prepared = document.querySelector("#prepared");
-    const footer = document.querySelector(".site-footer");
+    if (!headerMetrics && y <= 20) {
+      dom.header.classList.remove("force-dark", "force-light");
+      return;
+    }
+    const metrics = headerMetrics || measureHeaderSections();
     const headerLine = y + 45;
-    const ritualVisible = !ritual.hidden;
-    const preparedVisible = !prepared.hidden;
-    const storyEnd = ritualVisible ? ritual.offsetTop : preparedVisible ? prepared.offsetTop : footer.offsetTop;
-    const ritualEnd = preparedVisible ? prepared.offsetTop : footer.offsetTop;
-    const overCatalog = headerLine >= catalog.offsetTop && headerLine < story.offsetTop;
-    const overStory = headerLine >= story.offsetTop && headerLine < storyEnd;
-    const overRitual = ritualVisible && headerLine >= ritual.offsetTop && headerLine < ritualEnd;
-    const overPrepared = preparedVisible && headerLine >= prepared.offsetTop && headerLine < footer.offsetTop;
-    const overFooter = headerLine >= footer.offsetTop;
-    dom.header.classList.toggle("force-dark", overPrepared || (overStory && !story.classList.contains("is-dark")));
-    dom.header.classList.toggle("force-light", overCatalog || overFooter || overRitual || (overStory && story.classList.contains("is-dark")));
+    const storyEnd = metrics.ritualVisible ? metrics.ritualTop : metrics.preparedVisible ? metrics.preparedTop : metrics.footerTop;
+    const ritualEnd = metrics.preparedVisible ? metrics.preparedTop : metrics.footerTop;
+    const overCatalog = headerLine >= metrics.catalogTop && headerLine < metrics.storyTop;
+    const overStory = headerLine >= metrics.storyTop && headerLine < storyEnd;
+    const overRitual = metrics.ritualVisible && headerLine >= metrics.ritualTop && headerLine < ritualEnd;
+    const overPrepared = metrics.preparedVisible && headerLine >= metrics.preparedTop && headerLine < metrics.footerTop;
+    const overFooter = headerLine >= metrics.footerTop;
+    dom.header.classList.toggle("force-dark", overPrepared || (overStory && !headerSections.story.classList.contains("is-dark")));
+    dom.header.classList.toggle("force-light", overCatalog || overFooter || overRitual || (overStory && headerSections.story.classList.contains("is-dark")));
   }
 
   dom.carousel.addEventListener("pointerdown", onPointerDown);
@@ -1279,7 +1364,10 @@
     filterSearch(button.dataset.suggestion);
     dom.searchInput.focus();
   }));
-  dom.searchResults.forEach((result) => result.addEventListener("click", () => selectSearchResult(Number(result.dataset.searchResult))));
+  dom.searchResultsContainer.addEventListener("click", (event) => {
+    const result = event.target.closest("[data-search-result]");
+    if (result) selectSearchResult(Number(result.dataset.searchResult));
+  });
 
   dom.catalogFilters.forEach((button) => {
     button.addEventListener("click", () => setCatalogFilter(button.dataset.catalogFilter));
@@ -1398,9 +1486,22 @@
       return rounded + refrescoDistance(index - current);
     }
 
-    function setRefrescoTheme(index) {
+    function localizeRefrescoControls() {
+      refrescoDom.cards.forEach((card, cardIndex) => {
+        const cardProduct = localizedProduct(drinkProducts[cardIndex]);
+        card.setAttribute("aria-label", t("refrescos.select", { name: cardProduct.name }));
+        const image = card.querySelector("img");
+        if (image) image.alt = cardProduct.name;
+      });
+      refrescoDom.tabs.forEach((tab, tabIndex) => {
+        tab.textContent = localizedProduct(drinkProducts[tabIndex]).name;
+      });
+    }
+
+    function setRefrescoTheme(index, { centerTab = true, localizeControls = false } = {}) {
       const baseProduct = drinkProducts[index];
       const product = localizedProduct(baseProduct);
+      const previousIndex = refrescoState.selected;
       refrescoState.selected = index;
 
       refrescoDom.info?.classList.remove("is-changing");
@@ -1438,25 +1539,17 @@
         if (label) label.textContent = t(product.is_available === false ? "catalog.soldOut" : "wholesale.addCase");
       }
 
-      refrescoDom.cards.forEach((card, cardIndex) => {
-        const cardProduct = localizedProduct(drinkProducts[cardIndex]);
+      if (localizeControls) localizeRefrescoControls();
+      new Set([previousIndex, index]).forEach((cardIndex) => {
         const active = cardIndex === index;
-        card.classList.toggle("is-active", active);
-        card.setAttribute("aria-pressed", String(active));
-        card.setAttribute("aria-label", t("refrescos.select", { name: cardProduct.name }));
-        const image = card.querySelector("img");
-        if (image) image.alt = cardProduct.name;
-      });
-      refrescoDom.tabs.forEach((tab, tabIndex) => {
-        const tabProduct = localizedProduct(drinkProducts[tabIndex]);
-        const active = tabIndex === index;
-        tab.textContent = tabProduct.name;
-        tab.classList.toggle("is-active", active);
-        tab.setAttribute("aria-pressed", String(active));
+        refrescoDom.cards[cardIndex]?.classList.toggle("is-active", active);
+        refrescoDom.cards[cardIndex]?.setAttribute("aria-pressed", String(active));
+        refrescoDom.tabs[cardIndex]?.classList.toggle("is-active", active);
+        refrescoDom.tabs[cardIndex]?.setAttribute("aria-pressed", String(active));
       });
       const activeTab = refrescoDom.tabs[index];
       const tabRail = activeTab?.parentElement;
-      if (activeTab && tabRail) {
+      if (activeTab && tabRail && centerTab) {
         const centeredLeft = activeTab.offsetLeft - (tabRail.clientWidth - activeTab.offsetWidth) / 2;
         tabRail.scrollTo({ left: centeredLeft, behavior: reducedMotion ? "auto" : "smooth" });
       }
@@ -1525,12 +1618,6 @@
         }
 
         if (!refrescoPrepared) {
-          refrescoDom.cards.forEach((card) => {
-            card.style.opacity = "0";
-            card.style.pointerEvents = "none";
-            card.tabIndex = -1;
-            card.setAttribute("aria-hidden", "true");
-          });
           refrescoPrepared = true;
         }
 
@@ -1553,6 +1640,7 @@
           const absoluteDistance = Math.abs(distance);
           const selectedDistance = Math.abs(refrescoDistance(index - refrescoState.selected));
           const isVisible = selectedDistance <= 1;
+          if (isVisible) activateCarouselImage(card, index === refrescoState.selected ? "high" : "low");
           const theta = clamp(distance, -4, 4) * 0.52;
           const x = Math.sin(theta) * radius;
           const z = (Math.cos(theta) - 1) * depth;
@@ -1643,11 +1731,20 @@
       addToCart(drinkProducts[refrescoState.selected].id, refrescoState.quantity, event.currentTarget);
     });
 
-    setRefrescoTheme(0);
-    refreshRefrescos = () => setRefrescoTheme(refrescoState.selected);
+    let refrescoInitialized = false;
+    refreshRefrescos = () => {
+      if (!refrescoInitialized) return;
+      setRefrescoTheme(refrescoState.selected, { centerTab: false, localizeControls: true });
+    };
     const refrescoVisibility = new IntersectionObserver((entries) => {
       refrescoInView = entries.some((entry) => entry.isIntersecting);
-      if (refrescoInView) queueRefrescoDraw();
+      if (refrescoInView) {
+        if (!refrescoInitialized) {
+          refrescoInitialized = true;
+          setRefrescoTheme(refrescoState.selected, { centerTab: false, localizeControls: true });
+        }
+        queueRefrescoDraw();
+      }
     }, { rootMargin: "160px 0px" });
     refrescoVisibility.observe(refrescoDom.carousel);
 
@@ -1695,7 +1792,6 @@
       button.addEventListener("click", () => changeRefrescoCatalogQuantity(button.dataset.refrescoCatalogQtyPlus, 1));
     });
 
-    setRefrescoCatalogFilter("all");
   }
 
   const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -1713,17 +1809,26 @@
   }, { rootMargin: "120px 0px" });
   carouselVisibility.observe(dom.carousel);
 
-  window.addEventListener("scroll", updateHeader, { passive: true });
+  let headerFrame = 0;
+  function queueHeaderUpdate() {
+    if (headerFrame) return;
+    headerFrame = requestAnimationFrame(() => {
+      headerFrame = 0;
+      updateHeader();
+    });
+  }
+
+  window.addEventListener("scroll", queueHeaderUpdate, { passive: true });
   window.addEventListener("resize", () => {
-    updateHeader();
+    invalidateHeaderMetrics();
+    queueHeaderUpdate();
     queueCarouselDraw();
   });
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) queueCarouselDraw();
   });
 
-  applyLanguage(state.language, { persist: false });
-  setCatalogFilter("all");
+  applyLanguage(state.language, { persist: false, initial: true });
   updateHeader();
   queueCarouselDraw();
 })();

@@ -403,7 +403,11 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   will-change: transform, opacity, filter;
   transform-origin: 50% 50%;
   transition: opacity 220ms ease, filter 220ms ease;
+  opacity: 0;
+  pointer-events: none;
 }
+
+.product-pack.is-active { opacity: 1; pointer-events: auto; }
 
 .product-pack img {
   width: 100%;
@@ -551,7 +555,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .catalog-filter { min-height: 42px; padding: 0 18px; flex: 0 0 auto; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; color: #d8ced0; background: transparent; font-size: 11px; font-weight: 750; cursor: pointer; transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease; }
 .catalog-filter:hover, .catalog-filter.is-active { border-color: #fb775d; color: #171314; background: #fb775d; }
 .catalog-grid { margin-top: 30px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: 14px; }
-.catalog-card { min-width: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: 22px; color: #20191b; background: #f9f5f2; box-shadow: 0 16px 40px rgba(0, 0, 0, .18); transition: transform 360ms var(--ease), box-shadow 360ms var(--ease); }
+.catalog-card { min-width: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: 22px; color: #20191b; background: #f9f5f2; box-shadow: 0 16px 40px rgba(0, 0, 0, .18); content-visibility: auto; contain: layout paint style; contain-intrinsic-size: auto 620px; transition: transform 360ms var(--ease), box-shadow 360ms var(--ease); }
 .catalog-card[hidden] { display: none; }
 .catalog-card:hover { transform: translateY(-7px); box-shadow: 0 28px 70px rgba(0, 0, 0, .28); }
 .catalog-card__visual { position: relative; height: clamp(250px, 24vw, 370px); display: grid; place-items: center; isolation: isolate; overflow: hidden; background: radial-gradient(circle at 50% 42%, #fff 0 34%, #eee5e3 74%, #dfd4d2 100%); }
@@ -567,12 +571,14 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .catalog-card__visual > span { position: absolute; top: 15px; left: 15px; z-index: 2; padding: 7px 10px; border-radius: 999px; color: #514649; background: rgba(255, 255, 255, .78); backdrop-filter: blur(8px); font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .catalog-card__visual > .catalog-card__brand { right: 15px; left: auto; max-width: 48%; overflow: hidden; color: #fff; background: rgba(32, 25, 27, .76); text-overflow: ellipsis; white-space: nowrap; }
 .catalog-card__visual picture { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; }
-.catalog-card__visual img { position: relative; z-index: 1; width: 94%; height: 92%; object-fit: contain; filter: drop-shadow(0 22px 24px rgba(0, 0, 0, .23)); transition: transform 430ms var(--ease); }
+.catalog-card__visual img { position: relative; z-index: 1; width: 94%; height: 92%; object-fit: contain; filter: drop-shadow(0 22px 24px rgba(0, 0, 0, .23)); transition: opacity 180ms ease, transform 430ms var(--ease); }
+.catalog-card__visual img[data-deferred-src] { opacity: 0; }
+.catalog-card__visual img.is-loaded { opacity: 1; }
 .catalog-card:hover .catalog-card__visual img { transform: scale(1.045) rotate(-1deg); }
 .catalog-card__body { flex: 1; padding: 20px 20px 18px; display: flex; flex-direction: column; }
 .catalog-card__sku { color: #9d2441; font-size: 9px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
 .catalog-card h3 { min-height: 2.25em; margin: 9px 0 0; font-size: clamp(18px, 1.6vw, 25px); line-height: 1.08; letter-spacing: -.04em; }
-.catalog-card__body > p { margin: 10px 0 0; color: #7d7174; font-size: 11px; }
+.catalog-card__body > p { margin: 10px 0 0; color: #65595c; font-size: 11px; }
 .catalog-card__heat,
 .catalog-card__sweetness { margin-top: 13px; display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 9px; }
 .catalog-card__heat > span,
@@ -587,7 +593,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .refrescos-info .catalog-card__sweetness { max-width: 310px; margin-top: 18px; }
 .catalog-card__calories { margin-top: 12px !important; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: #392e31 !important; }
 .catalog-card__calories strong { font-size: 11px; }
-.catalog-card__calories small { color: #887b7e; font-size: 9px; }
+.catalog-card__calories small { color: #65595c; font-size: 9px; }
 .catalog-card__footer { min-height: 44px; margin-top: 18px; padding-top: 14px; display: flex; align-items: start; justify-content: flex-start; gap: 12px; border-top: 1px solid #e6dcde; }
 .catalog-card__footer strong, .catalog-card__footer a { font-size: 9px; line-height: 1.35; }
 .catalog-card__footer strong { color: #42724d; }
@@ -737,7 +743,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 
 /* --- Wholesale (case) pricing --- */
 .unit-price { display: block; margin-top: 5px; color: var(--soft); font-size: 11px; font-weight: 650; letter-spacing: 0; }
-.catalog-card__price .unit-price { color: #8a7d80; font-size: 10px; font-weight: 600; }
+.catalog-card__price .unit-price { color: #65595c; font-size: 10px; font-weight: 600; }
 .pack-line { font-variant-numeric: tabular-nums; }
 .promo-tag {
   align-self: flex-start;
@@ -922,10 +928,10 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .site-footer > div:first-child > p { max-width: 300px; color: #8d8184; font-size: 13px; line-height: 1.6; }
 .footer-links { display: flex; gap: clamp(50px, 8vw, 110px); }
 .footer-links > div { min-width: 110px; display: flex; flex-direction: column; gap: 13px; }
-.footer-links span { margin-bottom: 4px; color: #776b6e; font-size: 9px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+.footer-links span { margin-bottom: 4px; color: #aaa0a2; font-size: 9px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
 .footer-links a, .footer-links button { padding: 0; border: 0; color: #eee7e5; background: transparent; text-align: left; font-size: 13px; cursor: pointer; }
 .footer-links a:hover, .footer-links button:hover { color: #fb775d; }
-.disclaimer { grid-column: 1 / -1; align-self: end; margin: 0; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .1); color: #665b5e; font-size: 10px; }
+.disclaimer { grid-column: 1 / -1; align-self: end; margin: 0; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .1); color: #aaa0a2; font-size: 10px; }
 
 dialog { color: inherit; }
 dialog::backdrop { background: rgba(20, 17, 18, .28); backdrop-filter: blur(8px); }
@@ -1246,7 +1252,7 @@ html[lang="zh-CN"] h3 { letter-spacing: -.035em; }
 .is-mobile-device .search-dialog,
 .is-mobile-device .flavors { backdrop-filter: none; }
 .is-mobile-device .catalog-card,
-.is-mobile-device .refrescos-catalog .catalog-card { content-visibility: auto; contain: layout paint style; contain-intrinsic-size: 280px 520px; }
+.is-mobile-device .refrescos-catalog .catalog-card { contain-intrinsic-size: auto 430px; }
 .is-mobile-device .catalog-card__visual > span { backdrop-filter: none; background: rgba(255, 255, 255, .94); }
 .is-mobile-device .product-pack,
 .is-mobile-device .refrescos-carousel-shell .product-pack { will-change: auto; transition: none; }
