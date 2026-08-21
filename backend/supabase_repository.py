@@ -5,7 +5,7 @@ import os
 import time
 from copy import deepcopy
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 
@@ -30,7 +30,12 @@ class ProductRepository:
 
     @property
     def is_configured(self) -> bool:
-        return bool(self.url and self.key)
+        parsed_url = urlparse(self.url)
+        return bool(
+            self.key
+            and parsed_url.scheme in {"http", "https"}
+            and parsed_url.netloc
+        )
 
     def list_products(self, fallback: list[dict]) -> list[dict]:
         now = time.monotonic()
@@ -42,23 +47,25 @@ class ProductRepository:
             self.last_source = "local-fallback"
             return deepcopy(fallback)
 
-        query = urlencode({"select": "*", "order": "sort_order.asc"})
-        request = Request(
-            f"{self.url}/rest/v1/products?{query}",
-            headers={
-                "apikey": self.key,
-                "Authorization": f"Bearer {self.key}",
-                "Accept": "application/json",
-            },
-        )
         try:
+            query = urlencode({"select": "*", "order": "sort_order.asc"})
+            request = Request(
+                f"{self.url}/rest/v1/products?{query}",
+                headers={
+                    "apikey": self.key,
+                    "Authorization": f"Bearer {self.key}",
+                    "Accept": "application/json",
+                },
+            )
             with urlopen(request, timeout=4) as response:
                 rows = json.loads(response.read().decode("utf-8"))
-        except (HTTPError, URLError, TimeoutError, ValueError):
+            if not isinstance(rows, list):
+                raise ValueError("Supabase products response must be a list")
+            products = [self._normalize(row) for row in rows]
+        except (HTTPError, URLError, TimeoutError, ValueError, TypeError, KeyError, OSError):
             self.last_source = "local-fallback"
             return deepcopy(fallback)
 
-        products = [self._normalize(row) for row in rows]
         if not products:
             self.last_source = "local-fallback"
             return deepcopy(fallback)

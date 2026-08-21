@@ -1,10 +1,12 @@
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from PIL import Image
 
 from app import app
 from backend.app import CATALOG_PRODUCTS, REFRESCOS_PRODUCTS
+from backend.supabase_repository import ProductRepository
 
 
 class ShowroomTests(unittest.TestCase):
@@ -83,6 +85,21 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["status"], "ok")
         self.assertEqual(response.get_json()["service"], "dangoko")
+
+    def test_invalid_supabase_configuration_uses_local_fallback(self):
+        fallback = [{"sku": "local-product"}]
+        with patch.dict(
+            "os.environ",
+            {
+                "NEXT_PUBLIC_SUPABASE_URL": "[SENSITIVE]",
+                "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "[SENSITIVE]",
+            },
+        ):
+            repository = ProductRepository()
+
+        self.assertFalse(repository.is_configured)
+        self.assertEqual(repository.list_products(fallback), fallback)
+        self.assertEqual(repository.last_source, "local-fallback")
 
     def test_whatsapp_quote_targets_requested_number(self):
         response = self.client.get("/js/app.js")
