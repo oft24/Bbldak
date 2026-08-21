@@ -4,19 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f5d9e1">
-    <meta name="description" content="BuldakShop: catálogo asiático de sopas, papas y bebidas con precios de mayoreo." data-i18n-meta="meta.description">
-    <meta property="og:title" content="BuldakShop — Catálogo asiático">
+    <meta name="description" content="dangoko: catálogo asiático de sopas, papas y bebidas con precios de mayoreo." data-i18n-meta="meta.description">
+    <meta property="og:title" content="dangoko — Catálogo asiático">
+    <meta property="og:site_name" content="dangokobox.com">
     <meta property="og:description" content="Sopas, fideos, papas y bebidas con precios por caja.">
     <meta property="og:image" content="{{ request.url_root.rstrip('/') }}/og.webp?v=3">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <title>BuldakShop — Catálogo asiático</title>
+    <title>dangoko — Catálogo asiático</title>
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=31">
-    <script defer src="/js/i18n.js?v=16"></script>
+    <link rel="stylesheet" href="/css/style.css?v=32">
+    <script defer src="/js/i18n.js?v=17"></script>
     <script defer src="/js/app.js?v=34"></script>
   </head>
   <body>
@@ -33,7 +34,7 @@
     </div>
 
     <header class="site-header" data-header>
-      <a class="brand" href="#top" aria-label="Inicio de BuldakShop" data-view-toggle="shop">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
+      <a class="brand" href="#top" aria-label="Inicio de dangoko" data-view-toggle="shop">dangoko<span class="brand__dot">.</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
         <span></span><span></span><span></span><span class="sr-only">Abrir menú</span>
       </button>
@@ -295,7 +296,7 @@
       <div data-refrescos-view hidden>
       <div class="refrescos-view-bar reveal">
         <button type="button" class="refrescos-back" data-view-toggle="shop">
-          <span aria-hidden="true">←</span> <span data-i18n="refrescos.back">Volver a BuldakShop</span>
+          <span aria-hidden="true">←</span> <span data-i18n="refrescos.back">Volver a dangoko</span>
         </button>
       </div>
       <section class="refrescos section-pad" id="refrescos" aria-labelledby="refrescos-title" data-refrescos-section>
@@ -304,7 +305,7 @@
             <div class="section-index" data-i18n="refrescos.index">06 — Refrescos</div>
             <h2 id="refrescos-title" data-i18n-html="refrescos.title">Bebidas para acompañar.<br><span>Elige tu refresco.</span></h2>
           </div>
-          <p data-i18n="refrescos.copy">{{ refrescos_products|length }} refrescos del catálogo Bbldak, con precios de mayoreo por caja cerrada.</p>
+          <p data-i18n="refrescos.copy">{{ refrescos_products|length }} refrescos del catálogo dangoko, con precios de mayoreo por caja cerrada.</p>
         </div>
 
         <div class="refrescos-layout">
@@ -457,14 +458,14 @@
 
     <footer class="site-footer">
       <div>
-        <a class="brand brand--footer" href="#top" data-view-toggle="shop">Buldak<span class="brand__shop">Shop</span><span class="brand__dot">.</span></a>
+        <a class="brand brand--footer" href="#top" data-view-toggle="shop">dangoko<span class="brand__dot">.</span></a>
         <p data-i18n="footer.description">Una tienda con la colección del catálogo y una ficha precisa para el sabor seleccionado.</p>
       </div>
       <div class="footer-links">
         <div><span data-i18n="footer.explore">Explorar</span><a href="#catalog" data-i18n="nav.catalog" data-view-toggle="shop">Catálogo</a><a href="#story" data-i18n="nav.info" data-view-toggle="shop">Información</a><a href="#ritual" data-i18n="nav.preparation" data-view-toggle="shop">Preparación</a><a href="#refrescos" data-i18n="nav.refrescos" data-view-toggle="refrescos">Refrescos</a></div>
         <div><span data-i18n="footer.buy">Comprar</span><a href="#catalog" data-i18n="footer.products" data-view-toggle="shop">Todos los productos</a><a href="#prepared" data-i18n="footer.looks" data-view-toggle="shop">Cómo queda</a><button type="button" data-open-cart data-i18n="footer.cart">Tu carrito</button><button type="button" data-open-legal data-i18n="footer.terms">Términos y condiciones</button></div>
       </div>
-      <p class="disclaimer" data-i18n="footer.disclaimer">BuldakShop es un concepto independiente y no está afiliado, patrocinado ni respaldado por Samyang Foods o la marca Buldak.</p>
+      <p class="disclaimer" data-i18n="footer.disclaimer">dangoko es un concepto independiente y no está afiliado, patrocinado ni respaldado por Samyang Foods o la marca Buldak.</p>
     </footer>
 
     <dialog class="search-dialog" data-search-dialog aria-labelledby="search-title">
@@ -542,11 +543,11 @@
       <h2 id="legal-title" data-i18n="legal.title">Términos y condiciones.</h2>
       <p class="legal-updated" data-i18n="legal.updated">Última actualización: 17 de agosto de 2026</p>
       <div class="legal-sections">
-        <section><h3 data-i18n="legal.independentTitle">Sitio independiente</h3><p data-i18n="legal.independentCopy">BuldakShop es un proyecto independiente. No está afiliado, asociado, patrocinado, autorizado ni respaldado por Samyang Foods Co., Ltd. ni por la marca Buldak.</p></section>
+        <section><h3 data-i18n="legal.independentTitle">Sitio independiente</h3><p data-i18n="legal.independentCopy">dangoko es un proyecto independiente. No está afiliado, asociado, patrocinado, autorizado ni respaldado por Samyang Foods Co., Ltd. ni por la marca Buldak.</p></section>
         <section><h3 data-i18n="legal.catalogTitle">Catálogo y precios</h3><p data-i18n="legal.catalogCopy">Los precios mostrados son de mayoreo por caja cerrada y provienen del catálogo vigente del distribuidor. Son informativos, pueden cambiar sin previo aviso y no constituyen una oferta comercial en firme.</p></section>
         <section><h3 data-i18n="legal.orderTitle">Pedidos de demostración</h3><p data-i18n="legal.orderCopy">El checkout actual registra pedidos de prueba y no procesa pagos. Una confirmación no crea una obligación de venta, envío o entrega.</p></section>
         <section><h3 data-i18n="legal.productTitle">Marcas e información de producto</h3><p data-i18n="legal.productCopy">Las marcas, nombres de producto e imágenes pertenecen a sus respectivos titulares. Ingredientes, alérgenos, valores nutricionales, disponibilidad y preparación pueden variar por mercado; siempre prevalece el empaque oficial.</p></section>
-        <section><h3 data-i18n="legal.dataTitle">Datos y responsabilidad</h3><p data-i18n="legal.dataCopy">Los datos ingresados se usan únicamente para procesar la demostración solicitada. BuldakShop no garantiza que el contenido esté libre de errores y no asume responsabilidad por decisiones tomadas sin verificar el empaque o la información oficial del fabricante.</p></section>
+        <section><h3 data-i18n="legal.dataTitle">Datos y responsabilidad</h3><p data-i18n="legal.dataCopy">Los datos ingresados se usan únicamente para procesar la demostración solicitada. dangoko no garantiza que el contenido esté libre de errores y no asume responsabilidad por decisiones tomadas sin verificar el empaque o la información oficial del fabricante.</p></section>
       </div>
       <p class="legal-acceptance" data-i18n="legal.acceptance">Al utilizar este sitio aceptas estos términos y entiendes que se trata de una experiencia de demostración.</p>
     </dialog>
