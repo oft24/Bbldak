@@ -14,7 +14,7 @@ class ShowroomTests(unittest.TestCase):
     def test_homepage_renders(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"BuldakShop", response.data)
+        self.assertIn(b"dangoko", response.data)
         self.assertIn(b"811140", response.data)
         self.assertIn(b"811920", response.data)
         self.assertIn(b"Todos los productos", response.data)
@@ -28,7 +28,7 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=33', response.data)
+        self.assertIn(b'css/style.css?v=34', response.data)
         self.assertIn(b'js/i18n.js?v=17', response.data)
         self.assertIn(b'js/app.js?v=34', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
