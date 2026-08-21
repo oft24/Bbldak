@@ -110,7 +110,8 @@
   }));
   const productById = new Map(products.map((product) => [product.id, product]));
   const initialProductIndex = Math.max(0, products.findIndex((product) => product.id === "811140"));
-  const WHATSAPP_NUMBER = "5229723373";
+  const WHATSAPP_LOCAL_NUMBER = "8129723373";
+  const WHATSAPP_NUMBER = `52${WHATSAPP_LOCAL_NUMBER}`;
   const SHOP_URL = "https://dangokobox.com/";
 
   const drinkProducts = (payload.refrescos || []).map((product, index) => ({
