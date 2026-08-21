@@ -1562,7 +1562,7 @@ def index():
 def health():
     return jsonify(
         status="ok",
-        service="buldakshop",
+        service="dangoko",
         database="supabase" if repository.is_configured else "local-fallback",
         catalog_source=repository.last_source,
     )

@@ -29,8 +29,8 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
         self.assertIn(b'css/style.css?v=34', response.data)
-        self.assertIn(b'js/i18n.js?v=17', response.data)
-        self.assertIn(b'js/app.js?v=34', response.data)
+        self.assertIn(b'js/i18n.js?v=18', response.data)
+        self.assertIn(b'js/app.js?v=35', response.data)
         self.assertIn(b'data-catalog-name="811140"', response.data)
         self.assertIn(b'data-catalog-image="811920"', response.data)
         self.assertIn(b'data-catalog-name="634210"', response.data)
@@ -82,13 +82,14 @@ class ShowroomTests(unittest.TestCase):
         response = self.client.get("/api/health")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["status"], "ok")
-        self.assertEqual(response.get_json()["service"], "buldakshop")
+        self.assertEqual(response.get_json()["service"], "dangoko")
 
     def test_whatsapp_quote_targets_requested_number(self):
         response = self.client.get("/js/app.js")
         try:
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'const WHATSAPP_NUMBER = "5229723373"', response.data)
+            self.assertIn(b'const SHOP_URL = "https://dangokobox.com/"', response.data)
             self.assertIn(b"https://wa.me/${WHATSAPP_NUMBER}", response.data)
             self.assertIn(b"buildWhatsAppMessage", response.data)
         finally:

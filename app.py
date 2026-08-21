@@ -1,4 +1,4 @@
-"""Vercel WSGI entrypoint."""
+"""Production WSGI entrypoint."""
 
 from backend.app import app
 

@@ -52,7 +52,7 @@
   const productById = new Map(products.map((product) => [product.id, product]));
   const initialProductIndex = Math.max(0, products.findIndex((product) => product.id === "811140"));
   const WHATSAPP_NUMBER = "5229723373";
-  const SHOP_URL = "https://buldakshop.vercel.app/";
+  const SHOP_URL = "https://dangokobox.com/";
 
   const drinkProducts = (payload.refrescos || []).map((product, index) => ({
     number: String(index + 1).padStart(2, "0"),
