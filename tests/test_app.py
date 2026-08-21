@@ -30,9 +30,9 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=36', response.data)
+        self.assertIn(b'css/style.css?v=38', response.data)
         self.assertIn(b'js/i18n.js?v=18', response.data)
-        self.assertIn(b'js/app.js?v=38', response.data)
+        self.assertIn(b'js/app.js?v=40', response.data)
         self.assertIn(b'data-server-device="desktop"', response.data)
         self.assertEqual(response.headers["X-Render-Device"], "desktop")
         self.assertIn("Sec-CH-UA-Mobile", response.headers["Accept-CH"])
@@ -389,6 +389,18 @@ class ShowroomTests(unittest.TestCase):
         self.assertIn("content-visibility: auto", css)
         self.assertIn('window.matchMedia("(max-width: 960px)")', js)
         self.assertIn('window.addEventListener("orientationchange", handleViewportChange', js)
+
+    def test_desktop_carousels_use_compositor_friendly_animation(self):
+        js_path = Path(__file__).resolve().parents[1] / "frontend" / "static" / "js" / "app.js"
+        css_path = Path(__file__).resolve().parents[1] / "frontend" / "static" / "css" / "style.css"
+        js = js_path.read_text(encoding="utf-8")
+        css = css_path.read_text(encoding="utf-8")
+        self.assertNotIn("card.style.filter =", js)
+        self.assertIn("Math.pow(0.68, frameScale)", js)
+        self.assertIn("[-1, 0, 1].map", js)
+        self.assertIn('classList.add("is-rendered")', js)
+        self.assertIn("will-change: transform, opacity;", css)
+        self.assertNotIn("will-change: transform, opacity, filter", css)
 
     def test_checkout_rejects_sold_out_product(self):
         response = self.client.post(

@@ -411,21 +411,58 @@
     };
   }
 
-  function updateCatalogDetailButtons() {
-    dom.catalogDetailButtons.forEach((button) => {
-      const active = button.dataset.catalogDetail === state.detailProductId;
-      button.setAttribute("aria-pressed", String(active));
-      button.closest("[data-catalog-card]")?.classList.toggle("is-detail-selected", active);
+  const catalogDetailButtonById = new Map(
+    dom.catalogDetailButtons.map((button) => [button.dataset.catalogDetail, button])
+  );
+  const catalogDetailLabelById = new Map(
+    dom.catalogDetailLabels.map((label) => [label.dataset.catalogDetailLabel, label])
+  );
+
+  function updateCatalogDetailButtons(previousId, activeId) {
+    new Set([previousId, activeId].filter(Boolean)).forEach((id) => {
+      const active = id === activeId;
+      const button = catalogDetailButtonById.get(id);
+      const label = catalogDetailLabelById.get(id);
+      button?.setAttribute("aria-pressed", String(active));
+      button?.closest("[data-catalog-card]")?.classList.toggle("is-detail-selected", active);
+      if (label) label.textContent = t(active ? "catalog.selected" : "catalog.details");
     });
-    dom.catalogDetailLabels.forEach((label) => {
-      const active = label.dataset.catalogDetailLabel === state.detailProductId;
-      label.textContent = t(active ? "catalog.selected" : "catalog.details");
-    });
+  }
+
+  function renderSupplementalSections(product) {
+    const hasDirections = Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length;
+    const hasPreparedServing = Boolean(product.prepared_image && Array.isArray(product.recommendations));
+    dom.ritualSection.hidden = !hasDirections;
+    dom.preparedSection.hidden = !hasPreparedServing;
+
+    if (hasDirections) {
+      dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
+      dom.directionsIntro.textContent = product.directions_intro;
+      dom.directionTitles.forEach((element, directionIndex) => {
+        element.textContent = product.directions[directionIndex].title;
+      });
+      dom.directionTexts.forEach((element, directionIndex) => {
+        element.textContent = product.directions[directionIndex].text;
+      });
+    }
+
+    if (hasPreparedServing) {
+      dom.preparedName.textContent = product.name;
+      if (dom.preparedImage.getAttribute("src") !== product.prepared_image) dom.preparedImage.src = product.prepared_image;
+      dom.preparedImage.alt = product.prepared_alt;
+      dom.pairingTitles.forEach((element, pairingIndex) => {
+        element.textContent = product.recommendations[pairingIndex].title;
+      });
+      dom.pairingTexts.forEach((element, pairingIndex) => {
+        element.textContent = product.recommendations[pairingIndex].text;
+      });
+    }
   }
 
   function renderStoryById(id) {
     const baseProduct = productById.get(String(id));
     if (!baseProduct) return;
+    const previousDetailId = state.detailProductId;
     const product = localizedProduct(baseProduct);
     const detail = productDetail(product);
     const storyStats = storyStatsFor(product);
@@ -465,13 +502,10 @@
     setStoryStat(dom.storyWeight, translateWeight(product.weight).split(" · ")[0]);
     dom.storyNote.innerHTML = escapeHtml(product.story_note || detail.note || product.name).replace("\n", "<br>");
     dom.nutritionSource.href = product.nutrition_source_url || product.source_url || "#";
-    const hasDirections = Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length;
-    const hasPreparedServing = Boolean(product.prepared_image && Array.isArray(product.recommendations));
-    dom.ritualSection.hidden = !hasDirections;
-    dom.preparedSection.hidden = !hasPreparedServing;
+    renderSupplementalSections(product);
     state.detailProductId = String(product.id);
     document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
-    updateCatalogDetailButtons();
+    updateCatalogDetailButtons(previousDetailId, state.detailProductId);
     invalidateHeaderMetrics();
     queueHeaderUpdate();
   }
@@ -647,7 +681,60 @@
   let carouselFrame = 0;
   let carouselInView = true;
   let carouselPrepared = false;
+  let lastCarouselFrameTime = performance.now();
   let lastCarouselCandidates = new Set();
+  let pendingCarouselTheme = null;
+  let pendingStoryProductId = null;
+  let pendingTabIndex = null;
+  let storySyncHandle = 0;
+  let storySyncUsesIdleCallback = false;
+
+  function applyCarouselTheme(theme) {
+    root.style.setProperty("--bg-a", theme.bgA);
+    root.style.setProperty("--bg-b", theme.bgB);
+    root.style.setProperty("--glow", theme.glow);
+    root.style.setProperty("--ink", theme.ink);
+    root.style.setProperty("--accent", theme.accent);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme.bgA);
+  }
+
+  function cancelScheduledStorySync() {
+    if (!storySyncHandle) return;
+    if (storySyncUsesIdleCallback) window.cancelIdleCallback?.(storySyncHandle);
+    else window.clearTimeout(storySyncHandle);
+    storySyncHandle = 0;
+  }
+
+  function schedulePendingStorySync() {
+    if (!pendingStoryProductId) return;
+    const productId = pendingStoryProductId;
+    pendingStoryProductId = null;
+    cancelScheduledStorySync();
+    const render = () => {
+      storySyncHandle = 0;
+      renderStoryById(productId);
+    };
+    storySyncUsesIdleCallback = "requestIdleCallback" in window;
+    storySyncHandle = storySyncUsesIdleCallback
+      ? window.requestIdleCallback(render, { timeout: 500 })
+      : window.setTimeout(render, 32);
+  }
+
+  function flushCarouselSideEffects() {
+    if (pendingCarouselTheme) {
+      applyCarouselTheme(pendingCarouselTheme);
+      pendingCarouselTheme = null;
+    }
+    if (pendingTabIndex !== null) {
+      dom.tabs[pendingTabIndex]?.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "nearest",
+        inline: "center"
+      });
+      pendingTabIndex = null;
+    }
+    schedulePendingStorySync();
+  }
 
   function queueCarouselDraw() {
     if (!carouselFrame && carouselInView && !document.hidden) {
@@ -668,14 +755,7 @@
     const theme = storyThemeFor(product);
     const previousIndex = state.selected;
     state.selected = index;
-    root.style.setProperty("--bg-a", theme.bgA);
-    root.style.setProperty("--bg-b", theme.bgB);
-    root.style.setProperty("--glow", theme.glow);
-    root.style.setProperty("--ink", theme.ink);
-    root.style.setProperty("--accent", theme.accent);
-
-    const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute("content", theme.bgA);
+    pendingCarouselTheme = theme;
 
     dom.productType.textContent = t(`category.${product.category}`);
     dom.number.textContent = product.number;
@@ -703,33 +783,6 @@
     const addLabel = dom.addSelected.querySelector("[data-i18n]");
     if (addLabel) addLabel.textContent = t(product.is_available === false ? "catalog.soldOut" : "wholesale.addCase");
 
-    const hasDirections = Array.isArray(product.directions) && product.directions.length === dom.directionTitles.length;
-    const hasPreparedServing = Boolean(product.prepared_image && Array.isArray(product.recommendations));
-    dom.ritualSection.hidden = !hasDirections;
-    dom.preparedSection.hidden = !hasPreparedServing;
-
-    if (hasDirections) {
-      dom.directionsTitle.innerHTML = product.directions_title.join("<br>");
-      dom.directionsIntro.textContent = product.directions_intro;
-      dom.directionTitles.forEach((element, directionIndex) => {
-        element.textContent = product.directions[directionIndex].title;
-      });
-      dom.directionTexts.forEach((element, directionIndex) => {
-        element.textContent = product.directions[directionIndex].text;
-      });
-    }
-
-    if (hasPreparedServing) {
-      dom.preparedName.textContent = product.name;
-      dom.preparedImage.src = product.prepared_image;
-      dom.preparedImage.alt = product.prepared_alt;
-      dom.pairingTitles.forEach((element, pairingIndex) => {
-        element.textContent = product.recommendations[pairingIndex].title;
-      });
-      dom.pairingTexts.forEach((element, pairingIndex) => {
-        element.textContent = product.recommendations[pairingIndex].text;
-      });
-    }
     document.title = `${t("meta.title").split("—")[0].trim()} — ${product.name}`;
 
     new Set([previousIndex, index]).forEach((cardIndex) => {
@@ -740,14 +793,13 @@
       dom.tabs[cardIndex]?.setAttribute("aria-pressed", String(active));
       dom.lines[cardIndex]?.classList.toggle("is-active", active);
     });
-    const activeTab = dom.tabs[index];
-    if (activeTab && centerTab) {
-      const tabRail = activeTab.parentElement;
-      const left = activeTab.offsetLeft - (tabRail.clientWidth - activeTab.offsetWidth) / 2;
-      tabRail.scrollTo({ left, behavior: reducedMotion ? "auto" : "smooth" });
+    if (centerTab) pendingTabIndex = index;
+    if (syncDetail) {
+      pendingStoryProductId = String(baseProduct.id);
+      cancelScheduledStorySync();
     }
-    if (syncDetail) renderStoryById(baseProduct.id);
     queueCarouselDraw();
+    if (!carouselInView) flushCarouselSideEffects();
   }
 
   function goTo(index, options = {}) {
@@ -768,11 +820,13 @@
 
   function drawCarousel(frameTime = performance.now()) {
     carouselFrame = 0;
+    const frameScale = clamp((frameTime - lastCarouselFrameTime) / 16.667, 0.5, 3);
+    lastCarouselFrameTime = frameTime;
     if (!state.dragging) {
       const delta = state.target - state.angle;
-      state.velocity += delta * 0.038;
-      state.velocity *= 0.84;
-      state.angle += state.velocity;
+      state.velocity += delta * 0.11 * frameScale;
+      state.velocity *= Math.pow(0.68, frameScale);
+      state.angle += state.velocity * frameScale;
       if (Math.abs(delta) < 0.0008 && Math.abs(state.velocity) < 0.0008) {
         state.angle = state.target;
         state.velocity = 0;
@@ -789,10 +843,11 @@
       state.lookX += (state.lookTargetX - state.lookX) * 0.18;
       state.lookY += (state.lookTargetY - state.lookY) * 0.18;
     }
-    const candidates = new Set([-2, -1, 0, 1, 2].map((offset) => modulo(state.selected + offset, products.length)));
+    const candidates = new Set([-1, 0, 1].map((offset) => modulo(state.selected + offset, products.length)));
     lastCarouselCandidates.forEach((index) => {
       if (candidates.has(index)) return;
       const card = dom.cards[index];
+      card.classList.remove("is-rendered");
       card.style.opacity = "0";
       card.style.pointerEvents = "none";
       card.tabIndex = -1;
@@ -800,6 +855,7 @@
     });
     candidates.forEach((index) => {
       const card = dom.cards[index];
+      if (!lastCarouselCandidates.has(index)) card.classList.add("is-rendered");
       const distance = carouselDistance(index - state.angle);
       const absoluteDistance = Math.abs(distance);
       const selectedDistance = Math.abs(carouselDistance(index - state.selected));
@@ -816,11 +872,13 @@
       const float = reducedMotion || mobileMode ? 0 : Math.sin(frameTime / 2100 + index * 2.1) * 3 * proximity;
       card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) rotateX(${rotationX.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
       card.style.opacity = isVisible ? String(0.22 + proximity * 0.78) : "0";
-      card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 5).toFixed(2)}px)`;
       card.style.zIndex = String(1000 + Math.round(z));
-      card.style.pointerEvents = isVisible ? "auto" : "none";
-      card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
-      card.setAttribute("aria-hidden", String(!isVisible));
+      const pointerEvents = isVisible ? "auto" : "none";
+      const tabIndex = absoluteDistance < 0.55 ? 0 : -1;
+      const ariaHidden = String(!isVisible);
+      if (card.style.pointerEvents !== pointerEvents) card.style.pointerEvents = pointerEvents;
+      if (card.tabIndex !== tabIndex) card.tabIndex = tabIndex;
+      if (card.getAttribute("aria-hidden") !== ariaHidden) card.setAttribute("aria-hidden", ariaHidden);
     });
     lastCarouselCandidates = candidates;
 
@@ -829,6 +887,7 @@
       || Math.abs(state.velocity) > 0.0008
       || (!mobileMode && (Math.abs(state.lookTargetX - state.lookX) > 0.002 || Math.abs(state.lookTargetY - state.lookY) > 0.002));
     if (carouselMoving) queueCarouselDraw();
+    else flushCarouselSideEffects();
   }
 
   function nearestSelectionFromAngle() {
@@ -1514,6 +1573,13 @@
       });
     }
 
+    const refrescoDetailButtonById = new Map(
+      refrescoDom.detailButtons.map((button) => [button.dataset.refrescoDetail, button])
+    );
+    const refrescoDetailLabelById = new Map(
+      refrescoDom.detailLabels.map((label) => [label.dataset.refrescoDetailLabel, label])
+    );
+
     function setRefrescoTheme(index, { centerTab = true, localizeControls = false } = {}) {
       const baseProduct = drinkProducts[index];
       const product = localizedProduct(baseProduct);
@@ -1564,23 +1630,23 @@
         refrescoDom.tabs[cardIndex]?.setAttribute("aria-pressed", String(active));
       });
       const activeTab = refrescoDom.tabs[index];
-      const tabRail = activeTab?.parentElement;
-      if (activeTab && tabRail && centerTab) {
-        const centeredLeft = activeTab.offsetLeft - (tabRail.clientWidth - activeTab.offsetWidth) / 2;
-        tabRail.scrollTo({ left: centeredLeft, behavior: reducedMotion ? "auto" : "smooth" });
+      if (activeTab && centerTab) {
+        activeTab.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest", inline: "center" });
       }
-      updateRefrescoDetailButtons(String(baseProduct.id));
+      updateRefrescoDetailButtons(
+        String(drinkProducts[previousIndex]?.id || ""),
+        String(baseProduct.id)
+      );
     }
 
-    function updateRefrescoDetailButtons(activeId) {
-      refrescoDom.detailButtons.forEach((button) => {
-        const active = button.dataset.refrescoDetail === activeId;
-        button.setAttribute("aria-pressed", String(active));
-        button.closest("[data-refresco-catalog-card]")?.classList.toggle("is-detail-selected", active);
-      });
-      refrescoDom.detailLabels.forEach((label) => {
-        const active = label.dataset.refrescoDetailLabel === activeId;
-        label.textContent = t(active ? "catalog.selected" : "catalog.details");
+    function updateRefrescoDetailButtons(previousId, activeId) {
+      new Set([previousId, activeId].filter(Boolean)).forEach((id) => {
+        const active = id === activeId;
+        const button = refrescoDetailButtonById.get(id);
+        const label = refrescoDetailLabelById.get(id);
+        button?.setAttribute("aria-pressed", String(active));
+        button?.closest("[data-refresco-catalog-card]")?.classList.toggle("is-detail-selected", active);
+        if (label) label.textContent = t(active ? "catalog.selected" : "catalog.details");
       });
     }
 
@@ -1599,6 +1665,7 @@
     let refrescoFrame = 0;
     let refrescoInView = false;
     let refrescoPrepared = false;
+    let lastRefrescoFrameTime = performance.now();
     let lastRefrescoCandidates = new Set();
 
     function queueRefrescoDraw() {
@@ -1622,11 +1689,13 @@
     function drawRefrescoCarousel(frameTime = performance.now()) {
       refrescoFrame = 0;
       if (refrescoDom.carousel) {
+        const frameScale = clamp((frameTime - lastRefrescoFrameTime) / 16.667, 0.5, 3);
+        lastRefrescoFrameTime = frameTime;
         if (!refrescoState.dragging) {
           const delta = refrescoState.target - refrescoState.angle;
-          refrescoState.velocity += delta * 0.038;
-          refrescoState.velocity *= 0.84;
-          refrescoState.angle += refrescoState.velocity;
+          refrescoState.velocity += delta * 0.11 * frameScale;
+          refrescoState.velocity *= Math.pow(0.68, frameScale);
+          refrescoState.angle += refrescoState.velocity * frameScale;
           if (Math.abs(delta) < 0.0008 && Math.abs(refrescoState.velocity) < 0.0008) {
             refrescoState.angle = refrescoState.target;
             refrescoState.velocity = 0;
@@ -1641,10 +1710,11 @@
         const compactCarousel = window.innerWidth <= 820;
         const radius = clamp(shellWidth * (compactCarousel ? 0.58 : 0.52), compactCarousel ? 165 : 260, compactCarousel ? 250 : 450);
         const depth = clamp(shellWidth * 0.42, compactCarousel ? 145 : 220, compactCarousel ? 240 : 370);
-        const candidates = new Set([-2, -1, 0, 1, 2].map((offset) => modulo(refrescoState.selected + offset, drinkProducts.length)));
+        const candidates = new Set([-1, 0, 1].map((offset) => modulo(refrescoState.selected + offset, drinkProducts.length)));
         lastRefrescoCandidates.forEach((index) => {
           if (candidates.has(index)) return;
           const card = refrescoDom.cards[index];
+          card.classList.remove("is-rendered");
           card.style.opacity = "0";
           card.style.pointerEvents = "none";
           card.tabIndex = -1;
@@ -1652,6 +1722,7 @@
         });
         candidates.forEach((index) => {
           const card = refrescoDom.cards[index];
+          if (!lastRefrescoCandidates.has(index)) card.classList.add("is-rendered");
           const distance = refrescoDistance(index - refrescoState.angle);
           const absoluteDistance = Math.abs(distance);
           const selectedDistance = Math.abs(refrescoDistance(index - refrescoState.selected));
@@ -1666,11 +1737,13 @@
           const float = reducedMotion || mobileMode ? 0 : Math.sin(frameTime / 2100 + index * 2.1) * 3 * proximity;
           card.style.transform = `translate3d(${x.toFixed(1)}px, ${float.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotationY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
           card.style.opacity = isVisible ? String(0.38 + proximity * 0.62) : "0";
-          card.style.filter = proximity > 0.985 ? "none" : `blur(${((1 - proximity) * 2.6).toFixed(2)}px)`;
           card.style.zIndex = String(1000 + Math.round(z));
-          card.style.pointerEvents = isVisible ? "auto" : "none";
-          card.tabIndex = absoluteDistance < 0.55 ? 0 : -1;
-          card.setAttribute("aria-hidden", String(!isVisible));
+          const pointerEvents = isVisible ? "auto" : "none";
+          const tabIndex = absoluteDistance < 0.55 ? 0 : -1;
+          const ariaHidden = String(!isVisible);
+          if (card.style.pointerEvents !== pointerEvents) card.style.pointerEvents = pointerEvents;
+          if (card.tabIndex !== tabIndex) card.tabIndex = tabIndex;
+          if (card.getAttribute("aria-hidden") !== ariaHidden) card.setAttribute("aria-hidden", ariaHidden);
         });
         lastRefrescoCandidates = candidates;
       }
@@ -1822,6 +1895,7 @@
   const carouselVisibility = new IntersectionObserver((entries) => {
     carouselInView = entries.some((entry) => entry.isIntersecting);
     if (carouselInView) queueCarouselDraw();
+    else flushCarouselSideEffects();
   }, { rootMargin: "120px 0px" });
   carouselVisibility.observe(dom.carousel);
 

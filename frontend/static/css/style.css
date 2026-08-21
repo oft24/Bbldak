@@ -400,14 +400,15 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   cursor: inherit;
   transform-style: preserve-3d;
   translate: -50% -50%;
-  will-change: transform, opacity, filter;
+  will-change: auto;
   transform-origin: 50% 50%;
-  transition: opacity 220ms ease, filter 220ms ease;
+  transition: none;
   opacity: 0;
   pointer-events: none;
 }
 
 .product-pack.is-active { opacity: 1; pointer-events: auto; }
+.product-pack.is-rendered { will-change: transform, opacity; }
 
 .product-pack img {
   width: 100%;
@@ -416,7 +417,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   user-select: none;
   pointer-events: none;
   -webkit-user-drag: none;
-  filter: drop-shadow(0 38px 38px rgba(0, 0, 0, .31));
+  filter: none;
 }
 
 .drag-hint {
@@ -852,9 +853,9 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   cursor: inherit;
   transform-style: preserve-3d;
   translate: -50% -50%;
-  will-change: transform, opacity, filter;
+  will-change: auto;
   transform-origin: 50% 50%;
-  transition: opacity 220ms ease, filter 220ms ease;
+  transition: none;
 }
 .refrescos-carousel-shell .product-pack:focus-visible {
   outline: 2px solid #b3123f;
@@ -869,11 +870,8 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   user-select: none;
   pointer-events: none;
   -webkit-user-drag: none;
-  filter: drop-shadow(0 28px 24px rgba(26, 18, 21, .2));
-  transition: filter 260ms ease, transform 260ms var(--ease);
-}
-.refrescos-carousel-shell .product-pack.is-active img {
-  filter: drop-shadow(0 36px 30px rgba(26, 18, 21, .28));
+  filter: none;
+  transition: none;
 }
 .refrescos-carousel-shell .drag-hint {
   position: absolute;
