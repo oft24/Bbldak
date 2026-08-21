@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" class="{% if device_class == 'mobile' %}is-mobile-device{% endif %}" data-server-device="{{ device_class }}" data-device="{{ device_class }}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,9 +17,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css?v=35">
+    <script>
+      (() => {
+        const root = document.documentElement;
+        const width = window.innerWidth;
+        const compact = width <= 1100;
+        const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+        const phone = width <= 960;
+        const lightweight = phone || (coarsePointer && compact);
+        root.dataset.device = phone ? "mobile" : compact ? "tablet" : "desktop";
+        root.classList.toggle("is-mobile-device", lightweight);
+      })();
+    </script>
+    <link rel="stylesheet" href="/css/style.css?v=36">
     <script defer src="/js/i18n.js?v=18"></script>
-    <script defer src="/js/app.js?v=37"></script>
+    <script defer src="/js/app.js?v=38"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>

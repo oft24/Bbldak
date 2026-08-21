@@ -14,10 +14,26 @@
     .map((id) => catalogById.get(String(id)))
     .filter(Boolean);
   if (!carouselProducts.length) carouselProducts.push(...catalogProducts);
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const mobileMode = window.matchMedia("(max-width: 820px), (pointer: coarse)").matches;
   const root = document.documentElement;
-  root.classList.toggle("is-mobile-device", mobileMode);
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const phoneViewport = window.matchMedia("(max-width: 960px)");
+  const compactViewport = window.matchMedia("(max-width: 1100px)");
+  const coarsePointer = window.matchMedia("(pointer: coarse)");
+  let mobileMode = root.classList.contains("is-mobile-device");
+
+  function syncDevicePresentation() {
+    const phone = phoneViewport.matches;
+    const lightweight = phone || (coarsePointer.matches && compactViewport.matches);
+    const device = phone ? "mobile" : compactViewport.matches ? "tablet" : "desktop";
+    const changed = mobileMode !== lightweight || root.dataset.device !== device;
+
+    mobileMode = lightweight;
+    root.dataset.device = device;
+    root.classList.toggle("is-mobile-device", lightweight);
+    return changed;
+  }
+
+  syncDevicePresentation();
 
   function revealLoadedImage(image) {
     image.classList.add("is-loaded");
@@ -834,7 +850,7 @@
   }
 
   function onPointerMove(event) {
-    if (event.pointerType !== "touch") {
+    if (!mobileMode && event.pointerType === "mouse") {
       state.lookTargetX = clamp((event.clientX / window.innerWidth) * 2 - 1, -1, 1);
       state.lookTargetY = clamp((event.clientY / window.innerHeight) * 2 - 1, -1, 1);
       state.lookX += (state.lookTargetX - state.lookX) * 0.68;
@@ -1819,10 +1835,22 @@
   }
 
   window.addEventListener("scroll", queueHeaderUpdate, { passive: true });
-  window.addEventListener("resize", () => {
+  function handleViewportChange() {
+    const deviceChanged = syncDevicePresentation();
+    if (deviceChanged && mobileMode) {
+      state.lookX = 0;
+      state.lookY = 0;
+      state.lookTargetX = 0;
+      state.lookTargetY = 0;
+    }
     invalidateHeaderMetrics();
     queueHeaderUpdate();
     queueCarouselDraw();
+  }
+  window.addEventListener("resize", handleViewportChange, { passive: true });
+  window.addEventListener("orientationchange", handleViewportChange, { passive: true });
+  [phoneViewport, compactViewport, coarsePointer].forEach((query) => {
+    query.addEventListener?.("change", handleViewportChange);
   });
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) queueCarouselDraw();

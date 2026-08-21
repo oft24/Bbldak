@@ -30,9 +30,12 @@ class ShowroomTests(unittest.TestCase):
         self.assertNotIn(b"Referencia visual", response.data)
         self.assertNotIn(b"Referencia ", response.data)
         self.assertIn(b'data-language', response.data)
-        self.assertIn(b'css/style.css?v=35', response.data)
+        self.assertIn(b'css/style.css?v=36', response.data)
         self.assertIn(b'js/i18n.js?v=18', response.data)
-        self.assertIn(b'js/app.js?v=37', response.data)
+        self.assertIn(b'js/app.js?v=38', response.data)
+        self.assertIn(b'data-server-device="desktop"', response.data)
+        self.assertEqual(response.headers["X-Render-Device"], "desktop")
+        self.assertIn("Sec-CH-UA-Mobile", response.headers["Accept-CH"])
         self.assertIn(b'rel="preload" as="image" href="/assets/carbonara.webp?v=4"', response.data)
         self.assertIn(b'data-carousel-src=', response.data)
         self.assertEqual(response.data.count(b'data-deferred-src='), 154)
@@ -89,6 +92,41 @@ class ShowroomTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["status"], "ok")
         self.assertEqual(response.get_json()["service"], "dangoko")
+
+    def test_first_render_detects_phone_from_user_agent(self):
+        response = self.client.get(
+            "/",
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) "
+                    "AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1"
+                )
+            },
+        )
+        self.assertEqual(response.headers["X-Render-Device"], "mobile")
+        self.assertIn(b'class="is-mobile-device"', response.data)
+        self.assertIn(b'data-server-device="mobile"', response.data)
+
+    def test_client_hint_detects_mobile_with_desktop_user_agent(self):
+        response = self.client.get(
+            "/",
+            headers={"User-Agent": "Mozilla/5.0", "Sec-CH-UA-Mobile": "?1"},
+        )
+        self.assertEqual(response.headers["X-Render-Device"], "mobile")
+        self.assertIn(b'data-device="mobile"', response.data)
+
+    def test_first_render_keeps_tablet_separate_from_phone(self):
+        response = self.client.get(
+            "/",
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Linux; Android 14; Pixel Tablet) "
+                    "AppleWebKit/537.36 Chrome/128.0 Safari/537.36"
+                )
+            },
+        )
+        self.assertEqual(response.headers["X-Render-Device"], "tablet")
+        self.assertIn(b'class="" data-server-device="tablet"', response.data)
 
     def test_invalid_supabase_configuration_uses_local_fallback(self):
         fallback = [{"sku": "local-product"}]
@@ -341,11 +379,16 @@ class ShowroomTests(unittest.TestCase):
     def test_phone_catalog_uses_compact_two_column_layout(self):
         css_path = Path(__file__).resolve().parents[1] / "frontend" / "static" / "css" / "style.css"
         css = css_path.read_text(encoding="utf-8")
+        js_path = Path(__file__).resolve().parents[1] / "frontend" / "static" / "js" / "app.js"
+        js = js_path.read_text(encoding="utf-8")
         phone_rules = css[css.index("@media (max-width: 600px)") : css.index("@media (max-width: 380px)")]
+        self.assertIn("@media (max-width: 960px)", css)
         self.assertIn("grid-template-columns: repeat(2, minmax(0, 1fr))", phone_rules)
         self.assertIn(".catalog-card.reveal { opacity: 1; transform: none; transition: none; }", phone_rules)
         self.assertIn(".catalog-card__body > .intl-names { display: none; }", phone_rules)
         self.assertIn("content-visibility: auto", css)
+        self.assertIn('window.matchMedia("(max-width: 960px)")', js)
+        self.assertIn('window.addEventListener("orientationchange", handleViewportChange', js)
 
     def test_checkout_rejects_sold_out_product(self):
         response = self.client.post(

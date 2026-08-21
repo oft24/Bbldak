@@ -18,6 +18,27 @@ app = Flask(
     template_folder=str(FRONTEND_DIR / "templates"),
 )
 
+MOBILE_USER_AGENT = re.compile(
+    r"android.+mobile|iphone|ipod|blackberry|iemobile|windows phone|opera mini|mobile safari",
+    re.IGNORECASE,
+)
+TABLET_USER_AGENT = re.compile(
+    r"ipad|tablet|kindle|silk|playbook|android(?!.*mobile)",
+    re.IGNORECASE,
+)
+
+
+def request_device_class() -> str:
+    """Classify the first render; the browser refines this using its viewport."""
+    mobile_hint = request.headers.get("Sec-CH-UA-Mobile", "").strip()
+    user_agent = request.headers.get("User-Agent", "")
+
+    if mobile_hint == "?1" or MOBILE_USER_AGENT.search(user_agent):
+        return "mobile"
+    if TABLET_USER_AGENT.search(user_agent):
+        return "tablet"
+    return "desktop"
+
 
 PRODUCTS = [
     {
@@ -1535,6 +1556,7 @@ def carousel_catalog(catalog_products: list[dict]) -> list[dict]:
 @app.get("/")
 def index():
     catalog_products = current_catalog()
+    device_class = request_device_class()
     department_counts = {
         "noodles": sum(
             product.get("category") in {"soups", "bowls", "tteokbokki", "sauces"}
@@ -1555,6 +1577,7 @@ def index():
         refrescos_products=REFRESCOS_PRODUCTS,
         refrescos_categories=REFRESCOS_CATEGORIES,
         department_counts=department_counts,
+        device_class=device_class,
     )
 
 
@@ -1631,6 +1654,11 @@ def add_response_headers(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    if response.mimetype == "text/html":
+        response.headers["Accept-CH"] = "Sec-CH-UA-Mobile"
+        response.headers["X-Render-Device"] = request_device_class()
+        response.vary.add("Sec-CH-UA-Mobile")
+        response.vary.add("User-Agent")
     if request.path.startswith(("/assets/", "/css/", "/js/")):
         response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
     return response
