@@ -324,6 +324,23 @@
 
   // Set once the drinks section initialises; lets applyLanguage re-render it.
   let refreshRefrescos = null;
+  let stepActiveRefresco = null;
+
+  function centerTabInScroller(tab) {
+    const scroller = tab?.parentElement;
+    if (!scroller) return;
+    const left = tab.offsetLeft - (scroller.clientWidth - tab.offsetWidth) / 2;
+    scroller.scrollTo({
+      left: Math.max(0, left),
+      behavior: reducedMotion ? "auto" : "smooth"
+    });
+  }
+
+  function documentOffsetTop(element) {
+    let top = 0;
+    for (let node = element; node; node = node.offsetParent) top += node.offsetTop;
+    return top;
+  }
 
   function formatMoney(value) {
     return `$${Number(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -661,6 +678,10 @@
       const product = productById.get(element.dataset.refrescoCatalogName);
       if (product) element.textContent = localizedProduct(product).name;
     });
+    document.querySelectorAll("[data-refresco-catalog-description]").forEach((element) => {
+      const product = productById.get(element.dataset.refrescoCatalogDescription);
+      if (product) element.textContent = localizedProduct(product).description || "";
+    });
     refreshRefrescos?.();
 
     setTheme(state.selected, { syncDetail: false, centerTab: false });
@@ -727,11 +748,7 @@
       pendingCarouselTheme = null;
     }
     if (pendingTabIndex !== null) {
-      dom.tabs[pendingTabIndex]?.scrollIntoView({
-        behavior: reducedMotion ? "auto" : "smooth",
-        block: "nearest",
-        inline: "center"
-      });
+      centerTabInScroller(dom.tabs[pendingTabIndex]);
       pendingTabIndex = null;
     }
     schedulePendingStorySync();
@@ -1509,8 +1526,14 @@
     const dialogOpen = dom.searchDialog.open || dom.checkoutDialog.open || dom.legalDialog.open;
     if (event.key === "Escape" && dom.cartDrawer.classList.contains("is-open")) closeCart();
     if (dialogOpen || ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
-    if (event.key === "ArrowRight") step(1);
-    if (event.key === "ArrowLeft") step(-1);
+    if (event.key === "ArrowRight") {
+      if (state.currentView === "refrescos" && stepActiveRefresco) stepActiveRefresco(1);
+      else step(1);
+    }
+    if (event.key === "ArrowLeft") {
+      if (state.currentView === "refrescos" && stepActiveRefresco) stepActiveRefresco(-1);
+      else step(-1);
+    }
   });
 
   if (drinkProducts.length) {
@@ -1537,6 +1560,23 @@
       addSelected: document.querySelector("[data-refresco-add-selected]"),
       detailButtons: [...document.querySelectorAll("[data-refresco-detail]")],
       detailLabels: [...document.querySelectorAll("[data-refresco-detail-label]")],
+      story: document.querySelector("[data-refresco-story]"),
+      storyBrand: document.querySelector("[data-refresco-story-brand]"),
+      storyCategory: document.querySelector("[data-refresco-story-category]"),
+      storySku: document.querySelector("[data-refresco-story-sku]"),
+      storyTitle: document.querySelector("[data-refresco-story-title]"),
+      storyNameEn: document.querySelector("[data-refresco-story-name-en]"),
+      storyNameZh: document.querySelector("[data-refresco-story-name-zh]"),
+      storyDescription: document.querySelector("[data-refresco-story-description]"),
+      storySweetness: document.querySelector("[data-refresco-story-sweetness]"),
+      storyKcal: document.querySelector("[data-refresco-story-kcal]"),
+      storyKcalBasis: document.querySelector("[data-refresco-story-kcal-basis]"),
+      storyUnit: document.querySelector("[data-refresco-story-unit]"),
+      storyCase: document.querySelector("[data-refresco-story-case]"),
+      storyPrice: document.querySelector("[data-refresco-story-price]"),
+      storySource: document.querySelector("[data-refresco-story-source]"),
+      storyImage: document.querySelector("[data-refresco-story-image]"),
+      storyNote: document.querySelector("[data-refresco-story-note]"),
     };
 
     const refrescoState = {
@@ -1550,6 +1590,7 @@
       dragStartAngle: 0,
       lastX: 0,
       moved: 0,
+      detailProductId: String(drinkProducts[0].id),
     };
 
     function refrescoDistance(value) {
@@ -1580,6 +1621,43 @@
     const refrescoDetailLabelById = new Map(
       refrescoDom.detailLabels.map((label) => [label.dataset.refrescoDetailLabel, label])
     );
+
+    function renderRefrescoStoryById(id, { animate = true } = {}) {
+      const index = drinkProducts.findIndex((product) => product.id === String(id));
+      if (index < 0 || !refrescoDom.story) return;
+      const baseProduct = drinkProducts[index];
+      const product = localizedProduct(baseProduct);
+      const previousDetailId = refrescoState.detailProductId;
+
+      refrescoDom.story.dataset.detailId = product.id;
+      refrescoDom.story.dataset.category = baseProduct.category;
+      refrescoDom.story.classList.remove("is-changing");
+      if (animate) requestAnimationFrame(() => refrescoDom.story.classList.add("is-changing"));
+      if (refrescoDom.storyBrand) refrescoDom.storyBrand.textContent = product.brand;
+      if (refrescoDom.storyCategory) refrescoDom.storyCategory.textContent = t(`refrescos.filter.${baseProduct.category}`);
+      if (refrescoDom.storySku) refrescoDom.storySku.textContent = product.sku;
+      if (refrescoDom.storyTitle) refrescoDom.storyTitle.textContent = product.name;
+      if (refrescoDom.storyNameEn) refrescoDom.storyNameEn.textContent = product.name_en || "";
+      if (refrescoDom.storyNameZh) refrescoDom.storyNameZh.textContent = product.name_zh || "";
+      if (refrescoDom.storyDescription) refrescoDom.storyDescription.textContent = product.description || "";
+      if (refrescoDom.storySweetness) refrescoDom.storySweetness.textContent = `${product.sweetness_level}/5`;
+      if (refrescoDom.storyKcal) refrescoDom.storyKcal.textContent = product.kcal;
+      if (refrescoDom.storyKcalBasis) refrescoDom.storyKcalBasis.textContent = product.kcal_basis;
+      if (refrescoDom.storyUnit) refrescoDom.storyUnit.textContent = translateWeight(product.unit_size);
+      if (refrescoDom.storyCase) refrescoDom.storyCase.textContent = packLabel(product);
+      if (refrescoDom.storyPrice) refrescoDom.storyPrice.textContent = product.price_label;
+      if (refrescoDom.storySource) refrescoDom.storySource.href = product.nutrition_source_url || "#";
+      if (refrescoDom.storyImage) {
+        const image = product.image.replace("/refrescos/", "/refrescos/cutouts/");
+        if (refrescoDom.storyImage.getAttribute("src") !== image) refrescoDom.storyImage.src = image;
+      }
+      if (refrescoDom.storyNote) {
+        refrescoDom.storyNote.innerHTML = `${escapeHtml(product.brand)}<br>${escapeHtml(product.unit_size)}`;
+      }
+
+      refrescoState.detailProductId = String(product.id);
+      updateRefrescoDetailButtons(previousDetailId, refrescoState.detailProductId);
+    }
 
     function setRefrescoTheme(index, { centerTab = true, localizeControls = false } = {}) {
       const baseProduct = drinkProducts[index];
@@ -1631,13 +1709,7 @@
         refrescoDom.tabs[cardIndex]?.setAttribute("aria-pressed", String(active));
       });
       const activeTab = refrescoDom.tabs[index];
-      if (activeTab && centerTab) {
-        activeTab.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest", inline: "center" });
-      }
-      updateRefrescoDetailButtons(
-        String(drinkProducts[previousIndex]?.id || ""),
-        String(baseProduct.id)
-      );
+      if (activeTab && centerTab) centerTabInScroller(activeTab);
     }
 
     function updateRefrescoDetailButtons(previousId, activeId) {
@@ -1655,11 +1727,21 @@
       const index = drinkProducts.findIndex((product) => product.id === String(id));
       if (index < 0) return;
       goToRefresco(index);
-      const target = document.querySelector("[data-refrescos-section]");
-      target?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+      renderRefrescoStoryById(id);
+      const target = refrescoDom.story;
+      if (target) {
+        const scrollToStory = (behavior = reducedMotion ? "auto" : "smooth") => {
+          const headerOffset = dom.header?.getBoundingClientRect().height || 0;
+          const top = documentOffsetTop(target) - headerOffset - 20;
+          window.scrollTo({ top: Math.max(0, top), behavior });
+        };
+        scrollToStory();
+        window.setTimeout(() => scrollToStory("auto"), reducedMotion ? 0 : 850);
+        window.setTimeout(() => scrollToStory("auto"), reducedMotion ? 0 : 1700);
+      }
       window.setTimeout(
-        () => refrescoDom.name?.focus({ preventScroll: true }),
-        reducedMotion ? 0 : 650
+        () => refrescoDom.storyTitle?.focus({ preventScroll: true }),
+        reducedMotion ? 0 : 1850
       );
     }
 
@@ -1686,6 +1768,8 @@
     function stepRefresco(direction) {
       goToRefresco(refrescoState.selected + direction);
     }
+
+    stepActiveRefresco = stepRefresco;
 
     function drawRefrescoCarousel(frameTime = performance.now()) {
       refrescoFrame = 0;
@@ -1825,7 +1909,9 @@
     refreshRefrescos = () => {
       if (!refrescoInitialized) return;
       setRefrescoTheme(refrescoState.selected, { centerTab: false, localizeControls: true });
+      renderRefrescoStoryById(refrescoState.detailProductId, { animate: false });
     };
+    renderRefrescoStoryById(refrescoState.detailProductId, { animate: false });
     const refrescoVisibility = new IntersectionObserver((entries) => {
       refrescoInView = entries.some((entry) => entry.isIntersecting);
       if (refrescoInView) {

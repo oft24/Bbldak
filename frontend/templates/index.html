@@ -29,9 +29,9 @@
         root.classList.toggle("is-mobile-device", lightweight);
       })();
     </script>
-    <link rel="stylesheet" href="/css/style.css?v=38">
-    <script defer src="/js/i18n.js?v=18"></script>
-    <script defer src="/js/app.js?v=42"></script>
+    <link rel="stylesheet" href="/css/style.css?v=40">
+    <script defer src="/js/i18n.js?v=19"></script>
+    <script defer src="/js/app.js?v=44"></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
@@ -328,9 +328,9 @@
         </div>
 
         <div class="refrescos-layout">
-          <aside class="refrescos-info reveal" aria-live="polite">
+          <aside class="refrescos-info reveal" id="refresco-detail" data-refresco-detail-panel aria-labelledby="refresco-detail-name" aria-live="polite">
             <p class="eyebrow"><span data-refresco-category>{{ refrescos_products[0].category_label }}</span> · SKU <span data-refresco-sku>{{ refrescos_products[0].sku }}</span></p>
-            <h3 data-refresco-name tabindex="-1">{{ refrescos_products[0].name }}</h3>
+            <h3 id="refresco-detail-name" data-refresco-name tabindex="-1">{{ refrescos_products[0].name }}</h3>
             <p class="intl-names intl-names--detail">
               <span lang="en" data-refresco-name-en>{{ refrescos_products[0].name_en }}</span>
               <span lang="zh-CN" data-refresco-name-zh>{{ refrescos_products[0].name_zh }}</span>
@@ -450,7 +450,7 @@
                   <strong>{{ item.kcal }} kcal</strong><small>{{ item.kcal_basis_es }}</small>
                 </p>
                 <div class="catalog-card__footer">
-                  <strong>{{ item.description }}</strong>
+                  <strong data-refresco-catalog-description="{{ item.id }}">{{ item.description }}</strong>
                 </div>
                 <div class="catalog-card__actions">
                   <span class="catalog-card__price">{{ item.price_label }}<small class="unit-price">{{ item.unit_price_label }} <span data-i18n="wholesale.perUnit">por unidad</span></small></span>
@@ -471,6 +471,71 @@
               </div>
             </article>
           {% endfor %}
+        </div>
+      </section>
+
+      <section
+        class="story refresco-story section-pad"
+        id="refresco-story"
+        data-refresco-story
+        data-detail-id="{{ refrescos_products[0].id }}"
+        data-category="{{ refrescos_products[0].category }}"
+        aria-labelledby="refresco-story-title"
+      >
+        <div class="section-index reveal" data-i18n="refrescos.detailIndex">08 — La bebida seleccionada</div>
+        <div class="story-grid">
+          <div class="story-copy reveal">
+            <p class="eyebrow refresco-story__eyebrow">
+              <span data-refresco-story-brand>{{ refrescos_products[0].brand }}</span> ·
+              <span data-refresco-story-category>{{ refrescos_products[0].category_label }}</span> ·
+              SKU <span data-refresco-story-sku>{{ refrescos_products[0].sku }}</span>
+            </p>
+            <h2 id="refresco-story-title" data-refresco-story-title tabindex="-1">{{ refrescos_products[0].name }}</h2>
+            <p class="intl-names intl-names--detail refresco-story__names">
+              <span lang="en" data-refresco-story-name-en>{{ refrescos_products[0].name_en }}</span>
+              <span lang="zh-CN" data-refresco-story-name-zh>{{ refrescos_products[0].name_zh }}</span>
+            </p>
+            <p data-refresco-story-description>{{ refrescos_products[0].description }}</p>
+            <div class="stat-row refresco-story__stats">
+              <div>
+                <strong data-refresco-story-sweetness>{{ refrescos_products[0].sweetness_level }}/5</strong>
+                <span data-i18n="story.sweetness">Dulzura</span>
+              </div>
+              <div>
+                <strong><span data-refresco-story-kcal>{{ refrescos_products[0].kcal }}</span> kcal</strong>
+                <span data-refresco-story-kcal-basis>{{ refrescos_products[0].kcal_basis_es }}</span>
+              </div>
+              <div>
+                <strong data-refresco-story-unit>{{ refrescos_products[0].unit_size }}</strong>
+                <span data-i18n="hero.presentation">Presentación</span>
+              </div>
+              <div>
+                <strong data-refresco-story-case>{{ refrescos_products[0].pack_label }}</strong>
+                <span data-i18n="refrescos.case">Caja de mayoreo</span>
+              </div>
+              <div>
+                <strong data-refresco-story-price>{{ refrescos_products[0].price_label }}</strong>
+                <span data-i18n="wholesale.perCase">Precio por caja</span>
+              </div>
+            </div>
+            <p class="nutrition-note">
+              <span data-i18n="story.nutrition">Los datos del fabricante se muestran tal cual; ≈ indica una estimación por categoría y tamaño. Confirma siempre la etiqueta del producto.</span>
+              <a data-refresco-story-source href="{{ refrescos_products[0].nutrition_source_url }}" target="_blank" rel="noopener" data-i18n="story.source">Fuente nutricional</a>.
+            </p>
+          </div>
+          <div class="story-visual reveal" aria-hidden="true">
+            <span class="story-ring story-ring--one"></span>
+            <span class="story-ring story-ring--two"></span>
+            <img
+              data-refresco-story-image
+              src="{{ refrescos_products[0].image|replace('/refrescos/', '/refrescos/cutouts/') }}"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+            >
+            <span class="story-note" data-refresco-story-note>{{ refrescos_products[0].brand }}<br>{{ refrescos_products[0].unit_size }}</span>
+          </div>
         </div>
       </section>
       </div>
